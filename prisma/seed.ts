@@ -307,7 +307,7 @@ async function main() {
   });
 
   // --- Audit logs ----------------------------------------------------------
-  const logSeed: Array<[string, string, string, string?, string?]> = [
+  const logSeed: Array<[string, string, string, string | null | undefined, string | null | undefined]> = [
     ["c3", "Role.BUSINESS", "AUTH_LOGIN", "session", owner.id],
     ["c3", "Role.BUSINESS", "AGENT_CREATE", "agent", payablesAgent.id],
     ["c3", "Role.BUSINESS", "RULE_CREATE", "rule", null],
