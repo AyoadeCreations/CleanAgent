@@ -20,6 +20,7 @@ export interface TransactionInput {
   reference?: string;
   agentId?: string | null;
   dailyLimit?: number;
+  riskScore?: number;
 }
 
 export interface RuleDecision {
@@ -132,7 +133,7 @@ function mockValidation(tx: TransactionInput, rules: RuleLike[]): ValidationResu
   const decisions: RuleDecision[] = [];
   for (const rule of rules) {
     if (!rule.enabled) continue;
-    const decision = evaluateRule(rule, { ...tx, dailyLimit: tx.dailyLimit });
+    const decision = evaluateRule(rule, { ...tx, riskScore, dailyLimit: tx.dailyLimit });
     if (decision) decisions.push(decision);
   }
 

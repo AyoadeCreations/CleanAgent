@@ -220,7 +220,7 @@ async function main() {
       name: "Sanctions blocklist",
       description: "Block transfers to flagged addresses.",
       type: "BLOCKLIST",
-      conditions: { field: "receiver", operator: "not_in", value: [wallet("deadbeef")] },
+      conditions: { field: "receiver", operator: "in", value: [wallet("deadbeef")] },
       action: "BLOCK",
       priority: 5,
     },
