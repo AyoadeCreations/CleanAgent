@@ -4,8 +4,9 @@ import { fail, ok, requireApiUser, ApiError } from "@/lib/api";
 export async function GET() {
   try {
     const user = await requireApiUser();
+    const isOverseer = user.role === "COMPLIANCE" || user.role === "ADMIN";
     const rules = await db.rule.findMany({
-      where: { ownerId: user.id },
+      where: isOverseer ? {} : { ownerId: user.id },
       orderBy: [{ priority: "asc" }, { createdAt: "desc" }],
     });
     return ok({

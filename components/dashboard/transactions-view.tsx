@@ -1,0 +1,369 @@
+"use client";
+
+import * as React from "react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { PlusIcon, ShieldAlertIcon } from "lucide-react";
+import { useAgents, useTransactions, useTransactionActions } from "@/hooks/use-api";
+import { formatCurrency, formatNumber, formatDateTime, truncateAddress } from "@/lib/format";
+import type { TransactionDTO, TransactionStatus, TransactionType, Role } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+
+const STATUS_STYLES: Record<TransactionStatus, string> = {
+  PENDING: "bg-amber-500/10 text-amber-500 border-amber-500/30",
+  EXECUTED: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+  APPROVED: "bg-sky-500/10 text-sky-500 border-sky-500/30",
+  SUSPENDED: "bg-orange-500/10 text-orange-500 border-orange-500/30",
+  BLOCKED: "bg-red-500/10 text-red-500 border-red-500/30",
+  FAILED: "bg-rose-500/10 text-rose-500 border-rose-500/30",
+};
+
+const RISK_STYLES: Record<string, string> = {
+  LOW: "bg-emerald-500/10 text-emerald-500",
+  MEDIUM: "bg-amber-500/10 text-amber-500",
+  HIGH: "bg-orange-500/10 text-orange-500",
+  CRITICAL: "bg-red-500/10 text-red-500",
+};
+
+const TX_TYPES: TransactionType[] = ["PAYMENT", "PAYROLL", "SUPPLIER", "ESCROW", "TREASURY"];
+const STATUS_FILTERS = ["ALL", "PENDING", "EXECUTED", "APPROVED", "SUSPENDED", "BLOCKED"] as const;
+
+function StatusBadge({ status }: { status: TransactionStatus }) {
+  return (
+    <Badge variant="outline" className={cn("font-mono", STATUS_STYLES[status])}>
+      {status.toLowerCase()}
+    </Badge>
+  );
+}
+
+function RiskBadge({ riskLevel, score }: { riskLevel: string; score: number }) {
+  return (
+    <Badge variant="outline" className={cn("font-mono", RISK_STYLES[riskLevel] ?? "")}>
+      {riskLevel.toLowerCase()} · {score}
+    </Badge>
+  );
+}
+
+interface CreateForm {
+  receiver: string;
+  amount: string;
+  assetType: string;
+  type: TransactionType;
+  reference: string;
+  agentId: string;
+}
+
+export function TransactionsView({ role }: { role: Role }) {
+  const queryClient = useQueryClient();
+  const isOverseer = role === "COMPLIANCE" || role === "ADMIN";
+  const { data, isLoading } = useTransactions();
+  const { data: agentsData } = useAgents();
+  const actions = useTransactionActions();
+
+  const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
+  const [open, setOpen] = React.useState(false);
+  const [form, setForm] = React.useState<CreateForm>({
+    receiver: "",
+    amount: "",
+    assetType: "USDC",
+    type: "PAYMENT",
+    reference: "",
+    agentId: "",
+  });
+  const [creating, setCreating] = React.useState(false);
+
+  const transactions = (data?.transactions ?? []).filter(
+    (t) => statusFilter === "ALL" || t.status === statusFilter
+  );
+
+  function update<K extends keyof CreateForm>(key: K, value: CreateForm[K]) {
+    setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  async function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const res = await fetch("/api/transaction/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          receiver: form.receiver,
+          amount: Number(form.amount),
+          assetType: form.assetType,
+          type: form.type,
+          reference: form.reference || undefined,
+          agentId: form.agentId || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error ?? "Failed to create transaction");
+      toast.success(
+        data.data.transaction.status === "BLOCKED"
+          ? "Transaction blocked by compliance policy"
+          : `Transaction ${data.data.transaction.status.toLowerCase()}`
+      );
+      setOpen(false);
+      setForm({ receiver: "", amount: "", assetType: "USDC", type: "PAYMENT", reference: "", agentId: "" });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to create transaction");
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function runAction(id: string, action: string) {
+    const res = await actions.mutateAsync({ id, action });
+    if (!res.ok) {
+      toast.error(res.error ?? "Action failed");
+      return;
+    }
+    toast.success(`Transaction ${action.toLowerCase()}ed`);
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Select value={statusFilter} onValueChange={(v) => v && setStatusFilter(v)}>
+            <SelectTrigger className="w-36">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_FILTERS.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {s === "ALL" ? "All statuses" : s.toLowerCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={() => setOpen(true)}>
+          <PlusIcon />
+          New transaction
+        </Button>
+      </div>
+
+      <div className="rounded-lg border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Status</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>From → To</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Risk</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading && (
+              <TableRow>
+                <TableCell colSpan={7}>
+                  <Skeleton className="h-20 w-full" />
+                </TableCell>
+              </TableRow>
+            )}
+            {!isLoading && transactions.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} className="h-24 text-center text-sm text-muted-foreground">
+                  No transactions match this filter.
+                </TableCell>
+              </TableRow>
+            )}
+            {!isLoading &&
+              transactions.map((t) => (
+                <TableRow key={t.id}>
+                  <TableCell>
+                    <StatusBadge status={t.status} />
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{t.type.toLowerCase()}</TableCell>
+                  <TableCell className="font-mono text-xs">
+                    {truncateAddress(t.sender)} → {truncateAddress(t.receiver)}
+                    {t.agentName && <span className="text-muted-foreground"> · {t.agentName}</span>}
+                  </TableCell>
+                  <TableCell className="text-right font-mono text-xs">
+                    {formatNumber(t.amount)} {t.assetType}
+                  </TableCell>
+                  <TableCell>
+                    <RiskBadge riskLevel={t.riskLevel} score={t.riskScore} />
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">{formatDateTime(t.createdAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1.5">
+                      {isOverseer && t.status !== "BLOCKED" && t.status !== "FAILED" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={actions.isPending}
+                          onClick={() => runAction(t.id, "SUSPEND")}
+                        >
+                          Suspend
+                        </Button>
+                      )}
+                      {isOverseer && (t.status === "SUSPENDED" || t.status === "PENDING") && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={actions.isPending}
+                          onClick={() => runAction(t.id, "RELEASE")}
+                        >
+                          Release
+                        </Button>
+                      )}
+                      {isOverseer && t.status !== "BLOCKED" && t.status !== "FAILED" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={actions.isPending}
+                          onClick={() => runAction(t.id, "BLOCK")}
+                        >
+                          Block
+                        </Button>
+                      )}
+                      {t.status === "SUSPENDED" && (
+                        <Button size="sm" disabled={actions.isPending} onClick={() => runAction(t.id, "APPROVE")}>
+                          Approve
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>New transaction</DialogTitle>
+            <DialogDescription>
+              Evaluated against CCP rules, agent limits, and Cleanverse risk scoring.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleCreate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="tx-receiver">Receiver</Label>
+              <Input
+                id="tx-receiver"
+                placeholder="0x…"
+                className="font-mono"
+                value={form.receiver}
+                onChange={(e) => update("receiver", e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="tx-amount">Amount</Label>
+                <Input
+                  id="tx-amount"
+                  type="number"
+                  min="0"
+                  step="any"
+                  placeholder="100.00"
+                  value={form.amount}
+                  onChange={(e) => update("amount", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tx-asset">Asset</Label>
+                <Select value={form.assetType} onValueChange={(v) => update("assetType", v ?? "USDC")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["USDC", "USDT", "MON", "DAI"].map((a) => (
+                      <SelectItem key={a} value={a}>
+                        {a}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="tx-type">Type</Label>
+                <Select value={form.type} onValueChange={(v) => update("type", (v ?? "PAYMENT") as TransactionType)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TX_TYPES.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t.toLowerCase()}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tx-agent">Agent</Label>
+                <Select value={form.agentId} onValueChange={(v) => update("agentId", v ?? "")}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">—</SelectItem>
+                    {(agentsData?.agents ?? []).map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tx-ref">Reference (optional)</Label>
+              <Input
+                id="tx-ref"
+                placeholder="INV-0001"
+                value={form.reference}
+                onChange={(e) => update("reference", e.target.value)}
+              />
+            </div>
+            <div className="flex items-start gap-2 rounded-lg border bg-amber-500/5 p-3 text-xs text-muted-foreground">
+              <ShieldAlertIcon className="mt-0.5 size-4 shrink-0 text-amber-500" />
+              <span>
+                High-risk or policy-violating transactions are blocked automatically. Transactions sent to unknown
+                receivers are denied by default.
+              </span>
+            </div>
+            <DialogFooter>
+              <Button type="submit" disabled={creating || !form.receiver || !form.amount}>
+                {creating ? "Evaluating…" : "Create & evaluate"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
