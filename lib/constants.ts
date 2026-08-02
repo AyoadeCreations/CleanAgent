@@ -3,6 +3,46 @@ import type { Role, TransactionStatus, RiskLevel, TransactionType } from "@/lib/
 export const APP_NAME = "CleanFlow";
 export const APP_TAGLINE = "Trust Every Transaction";
 
+export function roleHome(role: Role): string {
+  switch (role) {
+    case "BUSINESS":
+      return "/business";
+    case "COMPLIANCE":
+      return "/compliance";
+    case "ADMIN":
+      return "/dashboard";
+    default:
+      return "/merchant";
+  }
+}
+
+export const DEMO_ACCOUNTS: Array<{ role: Role; email: string; label: string; description: string }> = [
+  {
+    role: "MERCHANT",
+    email: "merchant@cleanflow.dev",
+    label: "Merchant",
+    description: "Receive payments, invoices, and settlements.",
+  },
+  {
+    role: "BUSINESS",
+    email: "business@cleanflow.dev",
+    label: "Business",
+    description: "Suppliers, payroll runs, agents, and rules.",
+  },
+  {
+    role: "COMPLIANCE",
+    email: "compliance@cleanflow.dev",
+    label: "Compliance",
+    description: "Monitor, audit, and suspend activity.",
+  },
+  {
+    role: "ADMIN",
+    email: "admin@cleanflow.dev",
+    label: "Admin",
+    description: "Platform-wide visibility and control.",
+  },
+];
+
 export const ROLES: Record<Role, { label: string; description: string }> = {
   MERCHANT: { label: "Merchant", description: "Receive payments, create invoices, review settlements." },
   BUSINESS: { label: "Business", description: "Manage suppliers, payroll, agents and compliance rules." },
