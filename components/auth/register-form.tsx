@@ -39,7 +39,7 @@ export function RegisterForm() {
     }
     setSubmitting(true);
     try {
-      const user = await registerAccount({
+      await registerAccount({
         walletAddress: effectiveAddress,
         email: email.trim() || undefined,
         name: name.trim() || undefined,

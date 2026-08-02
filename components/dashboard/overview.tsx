@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 import { useDashboard } from "@/hooks/use-api";
-import { formatCompactCurrency, formatCurrency, formatNumber } from "@/lib/format";
+import { formatCompactCurrency, formatNumber } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 function StatCard({

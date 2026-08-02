@@ -1,7 +1,7 @@
 "use client";
 
 import { useRules, useAuditLogs, useTransactions } from "@/hooks/use-api";
-import { formatDateTime, truncateAddress } from "@/lib/format";
+import { truncateAddress } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";

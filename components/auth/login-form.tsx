@@ -56,7 +56,7 @@ export function LoginForm() {
     try {
       const result = await connectAsync({ connector: connectors[0] });
       const walletAddress = result.accounts[0];
-      const signature = await signMessageAsync({
+      await signMessageAsync({
         message: `Sign in to CleanFlow\n\nWallet: ${walletAddress}`,
       });
       const user = await loginWithWallet(walletAddress, true);

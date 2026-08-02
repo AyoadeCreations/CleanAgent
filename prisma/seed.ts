@@ -81,7 +81,7 @@ async function main() {
     },
   });
 
-  const adminUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: admin.email,
       name: admin.name,
@@ -121,7 +121,7 @@ async function main() {
     },
   });
 
-  const treasuryAgent = await prisma.agent.create({
+  await prisma.agent.create({
     data: {
       ownerId: owner.id,
       businessId: business.id,
@@ -138,7 +138,7 @@ async function main() {
     },
   });
 
-  const researchAgent = await prisma.agent.create({
+  await prisma.agent.create({
     data: {
       ownerId: owner.id,
       businessId: business.id,
@@ -151,7 +151,7 @@ async function main() {
     },
   });
 
-  const deactivatedAgent = await prisma.agent.create({
+  await prisma.agent.create({
     data: {
       ownerId: owner.id,
       businessId: business.id,

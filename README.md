@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CleanFlow — Trust, Compliance & Payment Orchestration
 
-## Getting Started
+**Trust Every Transaction.**
 
-First, run the development server:
+CleanFlow is an AI-powered trust, compliance, and payment orchestration MVP built on
+**Cleanverse** infrastructure (verified identity **CVI**, verified assets **CVA**, rule-based
+compliance **CCP**). It gives merchants, businesses, compliance officers, and autonomous
+agents a single workspace to verify counterparties, police transactions against policy,
+and keep an immutable audit trail.
+
+## Stack
+
+| Layer        | Tech |
+| ------------ | ---- |
+| Framework    | Next.js 16 (App Router) |
+| UI           | React 19, TypeScript, Tailwind v4, shadcn (base-ui) |
+| Data         | Prisma 7 + SQLite (dev), seeded demo data |
+| State/data   | TanStack Query (React Query) |
+| Web3         | wagmi / viem, Monad testnet |
+| Auth         | HMAC-signed session cookie (email or wallet) |
+| Cleanverse   | Mock-first integration in `lib/cleanverse/` |
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npx prisma db push
+npx prisma db seed      # demo users, business, agents, transactions, rules
+npm run dev             # http://localhost:3100
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Demo logins (passwordless, one-click on `/login`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Merchant: `merchant@cleanflow.dev`
+- Business: `business@cleanflow.dev`
+- Compliance: `compliance@cleanflow.dev`
+- Admin: `admin@cleanflow.dev`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Wallet login is supported via `/api/auth/session` with an EVM address.
 
-## Learn More
+## What it does
 
-To learn more about Next.js, take a look at the following resources:
+- **Verified identities (CVI)** — run an identity check against a wallet; results stored as
+  `Verification` records and reflected on the user (`verified`, `kycLevel`).
+- **Verified assets (CVA)** — register and score a token/NFT/receivable as a verified asset.
+- **Programmable compliance (CCP)** — transactions are scored against policy rules
+  (blocklists, allowlists, max-amount, risk thresholds) and an audit hash is generated.
+  Violations are auto-blocked; high-risk flows are auto-flagged.
+- **Autonomous agents** — agents with hard daily/monthly spending limits execute payments;
+  the web app enforces limits server-side before creating the transaction.
+- **Escrow-style flows** — `ESCROW` transaction type plus a reference Solidity escrow contract.
+- **Audit trail** — every sensitive action is recorded in `AuditLog`; compliance officers get a
+  full trail view and can suspend/release/block transactions.
+- **Signed reports** — 30-day compliance reports carry a generated audit hash.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the module map, request flows, and the
+reference smart contracts in [`contracts/`](./contracts/).
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev          # dev server
+npm run build        # production build
+npm run lint         # ESLint
+npm run db:seed      # reseed demo data
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Roadmap notes
+
+- The Cleanverse integration is mock-first (`CLEANVERSE_MOCK_ENABLED`); swap `lib/cleanverse/*`
+  for live SDK calls when keys are available.
+- Smart contracts in `contracts/` are reference implementations, not yet deployed.
+- Auth is session-cookie based; wallet signatures are collected client-side but not yet
+  verified server-side (documented MVP gap).
