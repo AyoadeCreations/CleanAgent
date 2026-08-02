@@ -1,7 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// CleanFlow data model — trust, compliance & payment orchestration on Cleanverse.
 
 generator client {
   provider = "prisma-client"
@@ -9,5 +6,235 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+}
+
+enum Role {
+  MERCHANT
+  BUSINESS
+  COMPLIANCE
+  ADMIN
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum BusinessStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum AgentStatus {
+  ACTIVE
+  PAUSED
+  SUSPENDED
+  DEACTIVATED
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  EXECUTED
+  FAILED
+  BLOCKED
+  SUSPENDED
+}
+
+enum TransactionType {
+  PAYMENT
+  PAYROLL
+  SUPPLIER
+  ESCROW
+  TREASURY
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AssetKind {
+  TOKEN
+  NFT
+  RECEIVABLE
+  POINT
+}
+
+model User {
+  id                 String             @id @default(cuid())
+  walletAddress      String             @unique
+  email              String?
+  name               String?
+  role               Role               @default(MERCHANT)
+  verified           Boolean            @default(false)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  kycLevel           Int                @default(0)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  businesses   Business[]
+  agents       Agent[]
+  verifications Verification[]
+  assets       Asset[]
+  auditLogs    AuditLog[]
+  reports      Report[]
+
+  @@map("users")
+}
+
+model Business {
+  id          String         @id @default(cuid())
+  ownerId     String
+  name        String
+  description String?
+  status      BusinessStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  owner  User   @relation(fields: [ownerId], references: [id])
+  agents Agent[]
+  rules  Rule[]
+
+  @@map("businesses")
+}
+
+model Agent {
+  id            String      @id @default(cuid())
+  ownerId       String
+  businessId    String?
+  name          String
+  description   String?
+  walletAddress String?
+  dailyLimit    Float       @default(1000)
+  monthlyLimit  Float       @default(30000)
+  permissions   Json
+  status        AgentStatus @default(ACTIVE)
+  lastUsedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  owner        User          @relation(fields: [ownerId], references: [id])
+  business     Business?     @relation(fields: [businessId], references: [id])
+  transactions Transaction[]
+
+  @@map("agents")
+}
+
+model Transaction {
+  id         String            @id @default(cuid())
+  sender     String
+  receiver   String
+  amount     Float
+  assetType  String
+  riskScore  Float             @default(0)
+  riskLevel  RiskLevel         @default(LOW)
+  status     TransactionStatus @default(PENDING)
+  type       TransactionType   @default(PAYMENT)
+  reference  String?
+  agentId    String?
+  metadata   Json?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  agent    Agent?     @relation(fields: [agentId], references: [id])
+  reports  Report[]
+  auditLogs AuditLog[]
+
+  @@map("transactions")
+}
+
+model Rule {
+  id          String   @id @default(cuid())
+  ownerId     String
+  businessId  String?
+  name        String
+  description String?
+  type        String
+  conditions  Json
+  action      String   @default("ALLOW")
+  priority    Int      @default(0)
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business Business? @relation(fields: [businessId], references: [id])
+
+  @@map("rules")
+}
+
+model Report {
+  id            String     @id @default(cuid())
+  userId        String?
+  transactionId String?
+  reportHash    String
+  type          String     @default("COMPLIANCE")
+  periodStart   DateTime?
+  periodEnd     DateTime?
+  data          Json?
+  createdAt     DateTime   @default(now())
+
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
+
+  @@map("reports")
+}
+
+model Verification {
+  id          String             @id @default(cuid())
+  userId      String
+  type        String
+  provider    String             @default("CVI")
+  status      VerificationStatus @default(PENDING)
+  reference   String?
+  metadata    Json?
+  createdAt   DateTime           @default(now())
+  verifiedAt  DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("verifications")
+}
+
+model Asset {
+  id              String    @id @default(cuid())
+  ownerId         String
+  name            String
+  symbol          String?
+  assetType       AssetKind @default(TOKEN)
+  contractAddress String?
+  chain           String    @default("monad-testnet")
+  riskScore       Float     @default(0)
+  verified        Boolean   @default(false)
+  metadata        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  owner User @relation(fields: [ownerId], references: [id])
+
+  @@map("assets")
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorId       String?
+  actorRole     String?
+  action        String
+  resourceType  String
+  resourceId    String?
+  transactionId String?
+  metadata      Json?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+
+  user        User?        @relation(fields: [actorId], references: [id])
+  transaction Transaction? @relation(fields: [transactionId], references: [id])
+
+  @@map("audit_logs")
 }
