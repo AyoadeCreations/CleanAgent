@@ -4,6 +4,7 @@ import { TrustedBy } from "@/components/landing/trusted-by";
 import { Features } from "@/components/landing/features";
 import { Workflow } from "@/components/landing/workflow";
 import { UseCases } from "@/components/landing/use-cases";
+import { Testimonials } from "@/components/landing/testimonials";
 import { Cta } from "@/components/landing/cta";
 import { SiteFooter } from "@/components/landing/site-footer";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <Features />
         <Workflow />
         <UseCases />
+        <Testimonials />
         <Cta />
       </main>
       <SiteFooter />

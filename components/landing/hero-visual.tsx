@@ -46,11 +46,11 @@ export function HeroVisual() {
         className="pointer-events-none absolute -inset-6 -z-10"
         aria-hidden="true"
         style={{
-          background: "radial-gradient(60% 50% at 50% 20%, oklch(0.6 0.22 255 / 0.16), transparent 70%)",
+          background: "radial-gradient(60% 50% at 50% 20%, oklch(0.55 0.2 255 / 0.1), transparent 70%)",
         }}
       />
 
-      <div className="rounded-2xl border bg-card/80 p-5 shadow-[0_20px_60px_-20px_rgba(2,6,23,0.6)] backdrop-blur-sm">
+      <div className="rounded-[24px] border bg-card p-5 shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">

@@ -1,110 +1,123 @@
-import { ShieldCheckIcon, DatabaseIcon, ScaleIcon, BotIcon, FileTextIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
+import {
+  ShieldCheckIcon,
+  DatabaseIcon,
+  ScaleIcon,
+  BotIcon,
+  FileTextIcon,
+  ArrowRightIcon,
+} from "lucide-react";
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
 import { cn } from "@/lib/utils";
 
 const features = [
   {
     icon: ShieldCheckIcon,
-    title: "Verified identity",
-    description:
+    title: "Verified identities",
+    subtitle:
       "Every counterparty passes Cleanverse identity verification (CVI) with on-chain attestation before a single transaction is approved.",
-    chips: ["CVI attestation", "On-chain proof"],
+    stat: "15,000+",
+    statLabel: "entities verified",
+    accent: "text-blue-600",
+    bg: "bg-blue-50",
+    href: "/onboarding",
   },
   {
     icon: DatabaseIcon,
     title: "Verified assets",
-    description:
+    subtitle:
       "Assets are screened through Cleanverse's asset registry (CVA) so only risk-verified collateral, tokens, and receivables move through your flows.",
-    chips: ["CVA screening", "Risk-reviewed assets"],
-  },
-  {
-    icon: ScaleIcon,
-    title: "Compliance engine",
-    description:
-      "Express compliance as code — allowlists, caps, blocklists, and risk thresholds enforced deterministically on every execution.",
-    chips: ["Rules as code", "Deterministic"],
+    stat: "100%",
+    statLabel: "assets screened",
+    accent: "text-emerald-600",
+    bg: "bg-emerald-50",
+    href: "/dashboard",
   },
   {
     icon: BotIcon,
-    title: "Autonomous agents",
-    description:
-      "Grant AI agents granular permissions and spending limits. They execute approved actions within boundaries you control.",
-    chips: ["Scoped permissions", "Spending caps"],
+    title: "AI agents",
+    subtitle:
+      "Grant agents granular permissions and spending limits. They execute approved actions within boundaries you control.",
+    stat: "0",
+    statLabel: "human approvals needed",
+    accent: "text-violet-600",
+    bg: "bg-violet-50",
+    href: "/dashboard/agents",
+  },
+  {
+    icon: ScaleIcon,
+    title: "Compliance automation",
+    subtitle:
+      "Express compliance as code — allowlists, caps, blocklists, and risk thresholds enforced deterministically on every execution.",
+    stat: "98.6%",
+    statLabel: "compliance rate",
+    accent: "text-amber-600",
+    bg: "bg-amber-50",
+    href: "/dashboard/compliance",
   },
   {
     icon: FileTextIcon,
-    title: "Audit reports",
-    description:
+    title: "Audit reporting",
+    subtitle:
       "Every decision is hashed and logged to an immutable audit trail, ready for regulators, auditors, and proof of control.",
-    chips: ["Immutable ledger", "Signed hashes"],
+    stat: "3.1s",
+    statLabel: "to signed report",
+    accent: "text-rose-600",
+    bg: "bg-rose-50",
+    href: "/dashboard/reports",
   },
 ];
 
 export function Features() {
   return (
     <section id="platform" className="scroll-mt-20 py-24">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <RevealContainer className="mx-auto mb-14 max-w-2xl text-center">
+      <div className="mx-auto w-full max-w-7xl px-6 lg:px-8">
+        <RevealContainer className="mx-auto mb-16 max-w-2xl text-center">
           <RevealItem>
-            <p className="mb-3 text-xs font-medium tracking-widest text-primary uppercase">
-              Platform
-            </p>
-            <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h2 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
               Every layer of trust, automated
             </h2>
           </RevealItem>
           <RevealItem>
-            <p className="mt-4 text-base text-muted-foreground">
+            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
               CleanFlow replaces manual KYC spreadsheets, ad-hoc approvals, and un-auditable
               treasury stacks with a single programmable layer.
             </p>
           </RevealItem>
         </RevealContainer>
 
-        <RevealContainer className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <RevealItem key={feature.title} className="h-full">
-              <Card className="group h-full transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_12px_40px_-16px_rgba(37,99,235,0.35)]">
-                <CardContent className="flex h-full flex-col p-6">
-                  <div
-                    className={cn(
-                      "mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20",
-                      "transition-transform duration-300 group-hover:scale-105",
-                    )}
-                  >
-                    <feature.icon className="size-5" aria-hidden="true" />
+        <RevealContainer className="grid gap-6 lg:grid-cols-5">
+          {features.map((feature, i) => (
+            <RevealItem
+              key={feature.title}
+              className={cn("h-full", i === 0 ? "lg:col-span-3" : "lg:col-span-2")}
+            >
+              <div className="group flex h-full flex-col gap-6 rounded-[24px] bg-card p-10 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(37,99,235,0.3)]">
+                <span className={cn("inline-flex size-14 items-center justify-center rounded-2xl", feature.bg, feature.accent)}>
+                  <feature.icon className="size-7" aria-hidden="true" />
+                </span>
+                <h3 className="text-2xl font-semibold tracking-tight">{feature.title}</h3>
+                <p className="flex-1 text-base leading-relaxed text-muted-foreground">
+                  {feature.subtitle}
+                </p>
+                <div className="flex items-end justify-between gap-4 border-t pt-6">
+                  <div>
+                    <p className={cn("font-mono text-3xl font-semibold tracking-tight", feature.accent)}>
+                      {feature.stat}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">{feature.statLabel}</p>
                   </div>
-                  <h3 className="font-heading text-base font-semibold tracking-tight">{feature.title}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    {feature.description}
-                  </p>
-                  <ul className="mt-5 flex flex-wrap gap-1.5">
-                    {feature.chips.map((chip) => (
-                      <li
-                        key={chip}
-                        className="rounded-md border bg-surface/60 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
-                      >
-                        {chip}
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+                  <Link
+                    href={feature.href}
+                    className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
+                  >
+                    Explore
+                    <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
+              </div>
             </RevealItem>
           ))}
-
-          <RevealItem className="h-full">
-            <Card className="h-full border-dashed bg-primary/[0.04]">
-              <CardContent className="flex h-full flex-col justify-center p-6">
-                <h3 className="font-heading text-base font-semibold tracking-tight">And more</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  Escrow releases, treasury sweeps, invoice settlement, and multi-entity payroll
-                  are all first-class citizens.
-                </p>
-              </CardContent>
-            </Card>
-          </RevealItem>
         </RevealContainer>
       </div>
     </section>

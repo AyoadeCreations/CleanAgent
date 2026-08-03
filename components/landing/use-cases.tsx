@@ -98,7 +98,7 @@ export function UseCases() {
                     />
                     <div
                       className="absolute inset-0"
-                      style={{ background: "linear-gradient(to top, oklch(0.2 0.05 260 / 0.5), transparent 55%)" }}
+                      style={{ background: "linear-gradient(to top, rgba(0,0,0,0.35), transparent 55%)" }}
                       aria-hidden="true"
                     />
                     <div className="absolute bottom-4 left-4 flex items-center gap-2 rounded-xl border bg-card/90 px-4 py-3 shadow-lg backdrop-blur">

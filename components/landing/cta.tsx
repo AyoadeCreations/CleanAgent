@@ -10,14 +10,14 @@ export function Cta() {
         <RevealContainer>
           <RevealItem>
             <div
-              className="relative overflow-hidden rounded-2xl border bg-card px-6 py-16 text-center sm:px-12"
+              className="relative overflow-hidden rounded-[24px] border bg-card px-6 py-20 text-center sm:px-12"
               aria-hidden="true"
             >
               <div
                 className="pointer-events-none absolute inset-0 -z-10"
                 style={{
                   background:
-                    "radial-gradient(60% 80% at 50% 0%, oklch(0.7 0.14 165 / 0.18), transparent 70%)",
+                    "radial-gradient(60% 80% at 50% 0%, oklch(0.5 0.16 255 / 0.08), transparent 70%)",
                 }}
               />
               <h2 className="mx-auto max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-4xl">

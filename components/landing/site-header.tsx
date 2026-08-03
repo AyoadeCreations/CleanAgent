@@ -8,10 +8,11 @@ import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#platform", label: "Features" },
-  { href: "#workflow", label: "Workflow" },
-  { href: "#use-cases", label: "Use cases" },
-  { href: "/demo", label: "Live demo" },
+  { href: "#platform", label: "Products" },
+  { href: "#workflow", label: "Solutions" },
+  { href: "#use-cases", label: "Developers" },
+  { href: "/reports", label: "Resources" },
+  { href: "/dashboard", label: "Pricing" },
 ];
 
 export function SiteHeader() {
@@ -51,9 +52,9 @@ export function SiteHeader() {
 
         <div className="hidden items-center gap-2 md:flex">
           <Button variant="ghost" render={<Link href="/login" />}>
-            Sign in
+            Login
           </Button>
-          <Button render={<Link href="/register" />}>Start building</Button>
+          <Button render={<Link href="/demo" />}>Start demo</Button>
         </div>
 
         <Button
@@ -83,10 +84,10 @@ export function SiteHeader() {
             ))}
             <div className="mt-2 flex flex-col gap-2">
               <Button variant="outline" render={<Link href="/login" onClick={() => setOpen(false)} />}>
-                Sign in
+                Login
               </Button>
-              <Button render={<Link href="/register" onClick={() => setOpen(false)} />}>
-                Start building
+              <Button render={<Link href="/demo" onClick={() => setOpen(false)} />}>
+                Start demo
               </Button>
             </div>
           </nav>
