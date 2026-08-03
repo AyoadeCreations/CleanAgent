@@ -106,7 +106,13 @@ export function TransactionTimeline({
             className="relative flex gap-3 pb-5 last:pb-0"
           >
             {i < steps.length - 1 && (
-              <span className="absolute top-6 left-[11px] h-[calc(100%-16px)] w-px bg-border" aria-hidden="true" />
+              <span
+                className={cn(
+                  "absolute top-6 left-[11px] h-[calc(100%-16px)] w-px transition-colors duration-500",
+                  step.state === "done" ? "bg-emerald-500/40" : "bg-border"
+                )}
+                aria-hidden="true"
+              />
             )}
             <span
               className={cn(
@@ -114,6 +120,12 @@ export function TransactionTimeline({
                 meta.dot
               )}
             >
+              {step.state === "active" && (
+                <span
+                  className="absolute inset-0 -m-1 animate-ping rounded-full bg-primary/20"
+                  aria-hidden="true"
+                />
+              )}
               {meta.icon && <meta.icon className={cn("size-3.5 text-background", meta.text)} />}
             </span>
             <div className={cn("min-w-0 flex-1 pt-0.5", step.state === "pending" && "opacity-60")}>

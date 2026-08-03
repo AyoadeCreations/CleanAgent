@@ -3,7 +3,17 @@
 import * as React from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { PlusIcon, ShieldAlertIcon, EyeIcon, FileCheck2Icon } from "lucide-react";
+import {
+  PlusIcon,
+  ShieldAlertIcon,
+  EyeIcon,
+  FileCheck2Icon,
+  SearchIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react";
 import { useAgents, useTransactions, useTransactionActions } from "@/hooks/use-api";
 import { formatNumber, formatDateTime, truncateAddress } from "@/lib/format";
 import type { TransactionStatus, TransactionType, Role, TransactionDTO } from "@/lib/types";
@@ -84,6 +94,12 @@ export function TransactionsView({ role }: { role: Role }) {
   const actions = useTransactionActions();
 
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
+  const [search, setSearch] = React.useState("");
+  const [sort, setSort] = React.useState<{ key: "amount" | "createdAt"; dir: "asc" | "desc" }>({
+    key: "createdAt",
+    dir: "desc",
+  });
+  const [page, setPage] = React.useState(1);
   const [open, setOpen] = React.useState(false);
   const [detail, setDetail] = React.useState<TransactionDTO | null>(null);
   const [form, setForm] = React.useState<CreateForm>({
@@ -96,9 +112,32 @@ export function TransactionsView({ role }: { role: Role }) {
   });
   const [creating, setCreating] = React.useState(false);
 
-  const transactions = (data?.transactions ?? []).filter(
-    (t) => statusFilter === "ALL" || t.status === statusFilter
-  );
+  const transactions = (data?.transactions ?? [])
+    .filter((t) => statusFilter === "ALL" || t.status === statusFilter)
+    .filter(
+      (t) =>
+        search.trim() === "" ||
+        (t.reference ?? "").toLowerCase().includes(search.trim().toLowerCase()) ||
+        t.sender.toLowerCase().includes(search.trim().toLowerCase()) ||
+        t.receiver.toLowerCase().includes(search.trim().toLowerCase())
+    )
+    .sort((a, b) => {
+      const dir = sort.dir === "asc" ? 1 : -1;
+      if (sort.key === "amount") return (a.amount - b.amount) * dir;
+      return (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) * dir;
+    });
+
+  const PAGE_SIZE = 8;
+  const pageCount = Math.max(1, Math.ceil(transactions.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const paged = transactions.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  function toggleSort(key: "amount" | "createdAt") {
+    setSort((s) => {
+      if (s.key === key) return { key, dir: s.dir === "asc" ? "desc" : "asc" };
+      return { key, dir: key === "createdAt" ? "desc" : "asc" };
+    });
+  }
 
   function update<K extends keyof CreateForm>(key: K, value: CreateForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -150,7 +189,19 @@ export function TransactionsView({ role }: { role: Role }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 flex-wrap items-center gap-2">
+          <div className="relative">
+            <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search reference or address…"
+              className="h-9 w-56 pl-8 text-sm"
+            />
+          </div>
           <Select value={statusFilter} onValueChange={(v) => v && setStatusFilter(v)}>
             <SelectTrigger className="w-36">
               <SelectValue />
@@ -177,9 +228,43 @@ export function TransactionsView({ role }: { role: Role }) {
               <TableHead>Status</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>From → To</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">
+                <button
+                  type="button"
+                  onClick={() => toggleSort("amount")}
+                  className="inline-flex items-center justify-end gap-1 hover:text-foreground"
+                >
+                  Amount
+                  {sort.key === "amount" ? (
+                    sort.dir === "asc" ? (
+                      <ChevronUpIcon className="size-3" />
+                    ) : (
+                      <ChevronDownIcon className="size-3" />
+                    )
+                  ) : (
+                    <ChevronUpIcon className="size-3 opacity-40" />
+                  )}
+                </button>
+              </TableHead>
               <TableHead>Risk</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>
+                <button
+                  type="button"
+                  onClick={() => toggleSort("createdAt")}
+                  className="inline-flex items-center gap-1 hover:text-foreground"
+                >
+                  Created
+                  {sort.key === "createdAt" ? (
+                    sort.dir === "asc" ? (
+                      <ChevronUpIcon className="size-3" />
+                    ) : (
+                      <ChevronDownIcon className="size-3" />
+                    )
+                  ) : (
+                    <ChevronUpIcon className="size-3 opacity-40" />
+                  )}
+                </button>
+              </TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -199,7 +284,7 @@ export function TransactionsView({ role }: { role: Role }) {
               </TableRow>
             )}
             {!isLoading &&
-              transactions.map((t) => (
+              paged.map((t) => (
                 <TableRow key={t.id}>
                   <TableCell>
                     <StatusBadge status={t.status} />
@@ -262,6 +347,32 @@ export function TransactionsView({ role }: { role: Role }) {
               ))}
           </TableBody>
         </Table>
+
+        {!isLoading && transactions.length > PAGE_SIZE && (
+          <div className="flex items-center justify-between border-t px-4 py-3">
+            <p className="text-xs text-muted-foreground">
+              {transactions.length} transactions · page {safePage} of {pageCount}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={safePage <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                <ChevronLeftIcon className="size-3.5" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={safePage >= pageCount}
+                onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+              >
+                <ChevronRightIcon className="size-3.5" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>

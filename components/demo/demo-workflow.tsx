@@ -174,7 +174,22 @@ export function DemoWorkflow() {
           </div>
         </motion.div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-3">
+            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+              <motion.div
+                className="h-full rounded-full bg-primary"
+                initial={{ width: 0 }}
+                animate={{ width: `${(Object.keys(results).length / STEPS.length) * 100}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
+            <span className="shrink-0 font-mono text-xs text-muted-foreground">
+              {Object.keys(results).length}/{STEPS.length} complete
+            </span>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-2xl border bg-card p-4">
               <ol className="space-y-1">
@@ -511,6 +526,7 @@ export function DemoWorkflow() {
               </div>
             </motion.section>
           </AnimatePresence>
+          </div>
         </div>
       )}
     </div>

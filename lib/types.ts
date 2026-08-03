@@ -124,5 +124,6 @@ export interface DashboardSummary {
   };
   volumeByType: Array<{ type: TransactionType; volume: number; count: number }>;
   volumeByDay: Array<{ date: string; volume: number; count: number }>;
+  activityByDay: Array<{ date: string; settlementCount: number; blockedCount: number; avgRisk: number }>;
   riskDistribution: Array<{ riskLevel: RiskLevel; count: number }>;
 }

@@ -8,7 +8,7 @@ import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#features", label: "Features" },
+  { href: "#platform", label: "Features" },
   { href: "#workflow", label: "Workflow" },
   { href: "#use-cases", label: "Use cases" },
   { href: "/demo", label: "Live demo" },

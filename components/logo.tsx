@@ -1,37 +1,88 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * Brand mark — a verified-flow glyph: a trust ring with a flowing check.
+ * Combines identity, verification, flow, and settlement in one mark.
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground",
+        "inline-flex size-8 items-center justify-center rounded-[10px] bg-primary text-primary-foreground shadow-[0_1px_2px_rgba(2,6,23,0.4)]",
         className,
       )}
       aria-hidden="true"
     >
       <svg viewBox="0 0 24 24" fill="none" className="size-4.5">
         <path
-          d="M12 3l6.5 2.5v5.2c0 4.1-2.6 7.6-6.5 9.3-3.9-1.7-6.5-5.2-6.5-9.3V5.5L12 3z"
+          d="M12 2.8A9.2 9.2 0 1 0 21.2 12"
           stroke="currentColor"
-          strokeWidth="1.7"
+          strokeWidth="2"
+          strokeLinecap="round"
+          opacity="0.45"
+        />
+        <path
+          d="M6.8 12.6l3.4 3.4 7-7.9"
+          stroke="currentColor"
+          strokeWidth="2.1"
+          strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
-          d="M8.8 11.8l2.2 2.2 4.2-4.4"
+          d="M18.6 3.2v3.4m0 0h3.4m-3.4 0l3-3"
           stroke="currentColor"
-          strokeWidth="1.7"
+          strokeWidth="1.9"
           strokeLinecap="round"
           strokeLinejoin="round"
+          opacity="0.9"
         />
       </svg>
     </span>
   );
 }
 
-export function Logo({ className, markClassName }: { className?: string; markClassName?: string }) {
+/** Monochrome mark — renders in currentColor with no tile, for low-contrast contexts. */
+export function LogoMarkMono({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={cn("size-6", className)} aria-hidden="true">
+      <path
+        d="M12 2.8A9.2 9.2 0 1 0 21.2 12"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        opacity="0.45"
+      />
+      <path
+        d="M6.8 12.6l3.4 3.4 7-7.9"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18.6 3.2v3.4m0 0h3.4m-3.4 0l3-3"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.9"
+      />
+    </svg>
+  );
+}
+
+export function Logo({
+  className,
+  markClassName,
+  monochrome = false,
+}: {
+  className?: string;
+  markClassName?: string;
+  monochrome?: boolean;
+}) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
-      <LogoMark className={markClassName} />
+      {monochrome ? <LogoMarkMono className={markClassName} /> : <LogoMark className={markClassName} />}
       <span className="font-heading text-base font-semibold tracking-tight">
         Clean<span className="text-primary">Flow</span>
       </span>

@@ -119,6 +119,26 @@ export async function buildDashboardSummary(user: SessionUser): Promise<Dashboar
     }
   }
 
+  const activityByDay: DashboardSummary["activityByDay"] = days.map((d) => ({
+    date: d.date,
+    settlementCount: 0,
+    blockedCount: 0,
+    avgRisk: 0,
+  }));
+  const activityIndex = new Map(activityByDay.map((a, i) => [a.date, i]));
+  for (const t of transactions) {
+    const i = activityIndex.get(t.createdAt.toISOString().slice(0, 10));
+    if (i === undefined) continue;
+    if (settled(t)) activityByDay[i].settlementCount += 1;
+    if (t.status === "BLOCKED") activityByDay[i].blockedCount += 1;
+  }
+  for (const a of activityByDay) {
+    const dayTx = transactions.filter((t) => t.createdAt.toISOString().slice(0, 10) === a.date);
+    a.avgRisk = dayTx.length
+      ? Math.round(dayTx.reduce((s, t) => s + t.riskScore, 0) / dayTx.length)
+      : 0;
+  }
+
   const riskMap = new Map<string, number>();
   for (const t of transactions) riskMap.set(t.riskLevel, (riskMap.get(t.riskLevel) ?? 0) + 1);
   const riskDistribution = Array.from(riskMap.entries()).map(([riskLevel, count]) => ({
@@ -147,6 +167,7 @@ export async function buildDashboardSummary(user: SessionUser): Promise<Dashboar
     },
     volumeByType,
     volumeByDay: days,
+    activityByDay,
     riskDistribution,
   };
 }

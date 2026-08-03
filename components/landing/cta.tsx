@@ -28,12 +28,12 @@ export function Cta() {
                 transaction in minutes.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Button size="lg" render={<Link href="/register" />}>
-                  Start building
+                <Button size="lg" render={<Link href="/demo" />}>
+                  Start Demo
                   <ArrowRightIcon className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" render={<Link href="/demo" />}>
-                  View demonstration
+                <Button size="lg" variant="outline" render={<Link href="/register" />}>
+                  Create account
                 </Button>
               </div>
             </div>
