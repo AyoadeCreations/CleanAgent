@@ -14,8 +14,8 @@ import { useDashboard, useTransactions } from "@/hooks/use-api";
 import { formatCompactCurrency, formatDateTime, truncateAddress } from "@/lib/format";
 import type { Role } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VerifiedEntityBadge, ComplianceBadge } from "@/components/compliance-badge";
 
 const ROLE_META: Record<
   Role,
@@ -87,9 +87,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
               <p className="mt-0.5 text-sm text-muted-foreground">{meta.description}</p>
             </div>
           </div>
-          <Badge variant="outline" className={verified ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"}>
-            {verified ? "Identity verified" : "Identity unverified"}
-          </Badge>
+          <VerifiedEntityBadge verified={verified} />
         </div>
         <div className="mt-5 flex flex-wrap gap-2">
           {meta.links.map((link) => (
@@ -171,9 +169,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
               {(txData?.transactions ?? []).slice(0, 6).map((t) => (
                 <div key={t.id} className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-accent/50">
                   <div className="w-24 shrink-0">
-                    <Badge variant="outline" className="font-mono text-[10px]">
-                      {t.status.toLowerCase()}
-                    </Badge>
+                    <ComplianceBadge status={t.status} />
                   </div>
                   <div className="min-w-0 flex-1 font-mono text-xs">
                     {truncateAddress(t.sender)} → {truncateAddress(t.receiver)}

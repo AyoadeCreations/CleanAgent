@@ -3,10 +3,11 @@
 import * as React from "react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { PlusIcon, ShieldAlertIcon } from "lucide-react";
+import { PlusIcon, ShieldAlertIcon, EyeIcon, FileCheck2Icon } from "lucide-react";
 import { useAgents, useTransactions, useTransactionActions } from "@/hooks/use-api";
 import { formatNumber, formatDateTime, truncateAddress } from "@/lib/format";
-import type { TransactionStatus, TransactionType, Role } from "@/lib/types";
+import type { TransactionStatus, TransactionType, Role, TransactionDTO } from "@/lib/types";
+import { TransactionTimeline } from "@/components/transaction-timeline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -84,6 +85,7 @@ export function TransactionsView({ role }: { role: Role }) {
 
   const [statusFilter, setStatusFilter] = React.useState<string>("ALL");
   const [open, setOpen] = React.useState(false);
+  const [detail, setDetail] = React.useState<TransactionDTO | null>(null);
   const [form, setForm] = React.useState<CreateForm>({
     receiver: "",
     amount: "",
@@ -168,7 +170,7 @@ export function TransactionsView({ role }: { role: Role }) {
         </Button>
       </div>
 
-      <div className="rounded-lg border bg-card">
+      <div className="overflow-x-auto rounded-lg border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -216,6 +218,9 @@ export function TransactionsView({ role }: { role: Role }) {
                   <TableCell className="text-xs text-muted-foreground">{formatDateTime(t.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1.5">
+                      <Button size="sm" variant="ghost" onClick={() => setDetail(t)} aria-label="View details">
+                        <EyeIcon />
+                      </Button>
                       {isOverseer && t.status !== "BLOCKED" && t.status !== "FAILED" && (
                         <Button
                           size="sm"
@@ -362,6 +367,92 @@ export function TransactionsView({ role }: { role: Role }) {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={detail !== null} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileCheck2Icon className="size-4 text-primary" />
+              Transaction audit trail
+            </DialogTitle>
+            <DialogDescription>
+              {detail && (
+                <span className="font-mono">
+                  {detail.reference ?? truncateAddress(detail.id)} · {formatDateTime(detail.createdAt)}
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          {detail && (
+            <div className="space-y-5">
+              <div className="grid grid-cols-2 gap-3 rounded-lg border bg-muted/30 p-3 text-sm">
+                <div>
+                  <div className="text-xs text-muted-foreground">From → To</div>
+                  <div className="mt-0.5 font-mono text-xs">
+                    {truncateAddress(detail.sender)} → {truncateAddress(detail.receiver)}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Amount</div>
+                  <div className="mt-0.5 font-mono">
+                    {formatNumber(detail.amount)} {detail.assetType}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Status</div>
+                  <div className="mt-1">
+                    <StatusBadge status={detail.status} />
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-muted-foreground">Risk score</div>
+                  <div className="mt-1">
+                    <RiskBadge riskLevel={detail.riskLevel} score={detail.riskScore} />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="mb-2 text-sm font-medium">Lifecycle</h4>
+                <TransactionTimeline
+                  status={detail.status}
+                  verified={detail.riskScore < 70}
+                  decisionsCount={detail.decisions.length}
+                  auditHash={detail.auditHash}
+                />
+              </div>
+
+              {detail.decisions.length > 0 && (
+                <div>
+                  <h4 className="mb-2 text-sm font-medium">Policy decisions</h4>
+                  <div className="space-y-1.5">
+                    {detail.decisions.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-1.5 text-xs">
+                        <span className="font-mono">{d.rule}</span>
+                        <span
+                          className={cn(
+                            "font-mono font-medium",
+                            d.result === "ALLOW" || d.result === "PASS" ? "text-emerald-500" : "text-red-500"
+                          )}
+                        >
+                          {d.result}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {detail.auditHash && (
+                <div className="rounded-lg border bg-emerald-500/5 p-3">
+                  <div className="text-xs text-muted-foreground">Audit hash</div>
+                  <div className="mt-1 break-all font-mono text-xs text-emerald-500">{detail.auditHash}</div>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

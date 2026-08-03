@@ -1,6 +1,6 @@
 import { db } from "@/lib/database/client";
 import { fail, ok, requireApiUser, ApiError } from "@/lib/api";
-import { generateAuditHash } from "@/lib/cleanverse";
+import { generateComplianceReport } from "@/lib/cleanverse";
 import { getScopedTransactionWhere } from "@/lib/database/summary";
 import type { SessionUser } from "@/lib/types";
 
@@ -12,25 +12,24 @@ async function generateReport(user: SessionUser) {
   periodStart.setDate(periodStart.getDate() - 30);
 
   const scoped = transactions.filter((t) => t.createdAt >= periodStart);
-  const totalVolume = scoped
-    .filter((t) => t.status === "EXECUTED" || t.status === "APPROVED")
-    .reduce((s, t) => s + t.amount, 0);
-  const flags = scoped.filter((t) => t.riskScore >= 50).length;
-  const suspensions = scoped.filter((t) => t.status === "SUSPENDED").length;
-  const blocked = scoped.filter((t) => t.status === "BLOCKED").length;
-
-  const reportData = {
-    periodStart: periodStart.toISOString(),
-    periodEnd: new Date().toISOString(),
-    totalVolume,
-    transactions: scoped.length,
-    flags,
-    suspensions,
-    blocked,
-    generatedBy: user.id,
-  };
-
-  const reportHash = generateAuditHash("report", reportData);
+  const { data, reportHash } = generateComplianceReport({
+    userId: user.id,
+    periodStart,
+    periodEnd: new Date(),
+    transactions: scoped.map((t) => ({
+      id: t.id,
+      reference: t.reference,
+      sender: t.sender,
+      receiver: t.receiver,
+      amount: t.amount,
+      assetType: t.assetType,
+      type: t.type,
+      createdAt: t.createdAt,
+      riskScore: t.riskScore,
+      riskLevel: t.riskLevel,
+      status: t.status,
+    })),
+  });
 
   const report = await db.report.create({
     data: {
@@ -39,7 +38,7 @@ async function generateReport(user: SessionUser) {
       type: "COMPLIANCE",
       periodStart,
       periodEnd: new Date(),
-      data: reportData as object,
+      data: data as object,
     },
   });
 
@@ -47,9 +46,9 @@ async function generateReport(user: SessionUser) {
     id: report.id,
     reportHash,
     type: report.type,
-    periodStart: reportData.periodStart,
-    periodEnd: reportData.periodEnd,
-    data: reportData,
+    periodStart: data.periodStart,
+    periodEnd: data.periodEnd,
+    data,
     createdAt: report.createdAt.toISOString(),
   };
 }

@@ -14,13 +14,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const appDescription =
+  "Verified identity, verified assets, programmable compliance, autonomous execution, and immutable audit trails — the application layer on Cleanverse.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cleanflow.dev"),
   title: {
     default: `${APP_NAME} — ${APP_TAGLINE}`,
     template: `%s · ${APP_NAME}`,
   },
-  description:
-    "Verified identity, verified assets, programmable compliance, autonomous execution, and immutable audit trails — the application layer on Cleanverse.",
+  description: appDescription,
+  applicationName: APP_NAME,
+  keywords: [
+    "CleanFlow",
+    "Cleanverse",
+    "compliance",
+    "payments",
+    "identity verification",
+    "blockchain",
+    "Monad",
+    "transaction orchestration",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: `${APP_NAME} — ${APP_TAGLINE}`,
+    description: appDescription,
+    url: "https://cleanflow.dev",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${APP_NAME} — ${APP_TAGLINE}`,
+    description: appDescription,
+  },
 };
 
 export default function RootLayout({

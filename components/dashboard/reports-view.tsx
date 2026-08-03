@@ -94,15 +94,16 @@ export function ReportsView() {
           {isLoading ? (
             <Skeleton className="h-40 w-full" />
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Generated</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead className="max-w-[240px]">Audit hash</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                </TableRow>
-              </TableHeader>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Generated</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead className="max-w-[240px]">Audit hash</TableHead>
+                    <TableHead className="text-right">Volume</TableHead>
+                  </TableRow>
+                </TableHeader>
               <TableBody>
                 {(data?.history ?? []).map((r) => (
                   <TableRow key={r.id}>
@@ -125,6 +126,7 @@ export function ReportsView() {
                 )}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

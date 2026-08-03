@@ -1,7 +1,8 @@
 import type { Role, TransactionStatus, RiskLevel, TransactionType } from "@/lib/types";
 
-export const APP_NAME = "CleanFlow";
-export const APP_TAGLINE = "Trust Every Transaction";
+export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "CleanFlow";
+export const APP_TAGLINE = process.env.NEXT_PUBLIC_APP_TAGLINE ?? "Trust Every Transaction";
+export const APP_CHAIN = process.env.NEXT_PUBLIC_CHAIN ?? "MONAD";
 
 export function roleHome(role: Role): string {
   switch (role) {

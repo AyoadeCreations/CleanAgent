@@ -32,7 +32,7 @@ export function Cta() {
                   Start building
                   <ArrowRightIcon className="size-4" />
                 </Button>
-                <Button size="lg" variant="outline" render={<Link href="/login" />}>
+                <Button size="lg" variant="outline" render={<Link href="/demo" />}>
                   View demonstration
                 </Button>
               </div>

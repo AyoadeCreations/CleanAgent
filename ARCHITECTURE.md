@@ -18,27 +18,33 @@ Next.js app/  ──────  app/api/*  (route handlers)
                      ├── rule                        tenant policy rules
                      ├── transaction, transaction/[id], transaction/create
                      ├── dashboard                   KPIs + volume charts
-                     ├── report, audit, asset, business
-                     └── (all require session cookie)
+                     ├── report                      signed compliance reports
+                     ├── demo                       guided no-login demo workflow
+                     ├── audit, asset, business
+                     └── (all require session cookie except /api/demo)
                           │
                           ▼
-                     lib/cleanverse/  (mock-first CVI, CVA, CCP)
+                     lib/cleanverse/  (mock-first CVI, CVA, CCP, risk engine)
                           │
                           ▼
                      Prisma 7 + SQLite (lib/database/)
 ```
 
+Public pages: `/` (landing), `/reports` (signed audit viewer), `/demo` (guided workflow).
+Authenticated pages: `/dashboard/*`, `/merchant`, `/business`, `/compliance`, `/agent`.
+
 ## Modules
 
 | Path | Responsibility |
 | ---- | -------------- |
-| `app/` | Pages (landing, auth, onboarding, role homes, dashboard) |
-| `app/api/` | REST endpoints; every handler requires a session user |
+| `app/` | Pages (landing, reports viewer, demo workflow, auth, onboarding, role homes, dashboard) |
+| `app/api/` | REST endpoints; every handler requires a session user (except `demo`) |
 | `lib/auth/session.ts` | HMAC-signed `cf_session` cookie helpers |
-| `lib/cleanverse/` | `cvi.ts` (identity), `cva.ts` (assets), `ccp.ts` (policy engine), `client.ts` (mock flag + fallback) |
-| `lib/database/` | Prisma client, scoped query helpers, mappers, audit writer |
+| `lib/cleanverse/` | `cvi.ts` (identity), `cva.ts` (assets), `ccp.ts` (policy engine), `risk.ts` (risk scoring + report generation), `client.ts` (mock flag + fallback) |
+| `lib/database/` | Prisma client, `summary.ts` (scoped KPIs + trends), `reports.ts` (public report accessor), mappers, audit writer |
+| `lib/nav.ts` | Shared sidebar/mobile navigation config |
 | `lib/blockchain/` | `monad.ts` (chain config), `wallet.ts` (wagmi config) |
-| `components/` | UI kit (`ui/`), landing, auth, onboarding, dashboard |
+| `components/` | UI kit (`ui/`), landing, `report-viewer.tsx`, `compliance-badge.tsx`, `transaction-timeline.tsx`, `demo/`, auth, onboarding, dashboard |
 | `hooks/` | `use-wallet.ts`, `use-api.ts` (typed React Query hooks) |
 | `contracts/` | Reference Solidity: `IdentityRegistry`, `AgentRegistry`, `Escrow` |
 
@@ -75,6 +81,33 @@ POST /api/transaction/create
 Each rule has `type` (`ALLOWLIST`, `BLOCKLIST`, `MAX_AMOUNT`, `RISK_THRESHOLD`) and
 `conditions`. `validateTransaction` returns `approved`, `riskScore`, `flags`, `decisions`,
 and an `auditHash`. Deny-by-default: unknown receivers fail the allowlist.
+`evaluateTransaction` is the public alias used by dashboards and the demo.
+
+### Risk engine (`lib/cleanverse/risk.ts`)
+
+- `calculateRiskScore(input)` — deterministic scoring from counterparty baseline, amount,
+  asset type, and verification signals (range 0–99).
+- `generateComplianceReport(input)` — builds a signed report payload (summary + per-transaction
+  validation entries) with a SHA-256 audit hash. Used by `app/api/report` and the demo's audit step.
+
+### Dashboard trends (`lib/database/summary.ts`)
+
+`buildDashboardSummary()` returns `overview` plus a `trends` object comparing the last 7 days
+to the previous 7 days for volume, transactions, settlements, agents, verified entities, and
+compliance score. `settlements` counts `EXECUTED`/`APPROVED` transactions.
+
+### Public reports (`app/reports` + `lib/database/reports.ts`)
+
+`getPublicReport()` reads the latest signed report and its per-transaction `entries`;
+`ReportViewer` (client) renders the ledger with `PASS / FLAGGED / REJECTED / PENDING` badges
+and risk scores, with filter chips and horizontal scroll on mobile.
+
+### Guided demo (`app/demo` + `app/api/demo`)
+
+`POST /api/demo` runs a stateless 8-step workflow (onboarding → CVI → CVA → agent → rules →
+transaction → settlement → audit). The audit step persists a signed report under a seeded demo
+compliance user so it appears on `/reports`. The client `DemoWorkflow` drives it with loading,
+block/retry, and confirmation states (Framer Motion).
 
 ### Identity verification
 

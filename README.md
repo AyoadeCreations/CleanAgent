@@ -46,17 +46,30 @@ Wallet login is supported via `/api/auth/session` with an EVM address.
 - **Programmable compliance (CCP)** — transactions are scored against policy rules
   (blocklists, allowlists, max-amount, risk thresholds) and an audit hash is generated.
   Violations are auto-blocked; high-risk flows are auto-flagged.
+- **Risk engine** — `lib/cleanverse/risk.ts` scores every transaction deterministically;
+  `evaluateTransaction` combines the risk score with policy decisions and returns a signed result.
 - **Autonomous agents** — agents with hard daily/monthly spending limits execute payments;
   the web app enforces limits server-side before creating the transaction.
 - **Escrow-style flows** — `ESCROW` transaction type plus a reference Solidity escrow contract.
 - **Audit trail** — every sensitive action is recorded in `AuditLog`; compliance officers get a
   full trail view and can suspend/release/block transactions.
-- **Signed reports** — 30-day compliance reports carry a generated audit hash.
+- **Signed reports** — 30-day compliance reports carry a generated audit hash and are published
+  to the public viewer at `/reports`.
+- **Guided demo** — `/demo` walks a payment from identity verification through policy evaluation,
+  settlement, and audit generation with a signed report — no account required.
+- **Transaction timeline** — every transaction shows its full lifecycle
+  (identity → asset → rules → approval → settlement → audit) with decision details.
 
 ## Architecture
 
 See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the module map, request flows, and the
 reference smart contracts in [`contracts/`](./contracts/).
+
+## Demo
+
+- `/demo` — eight-step guided walkthrough ending in a signed compliance report.
+- `/reports` — public audit report viewer with per-transaction validation ledger.
+- `DEMO_SCRIPT.md` — the exact demo script used for the submission video/screenshots.
 
 ## Scripts
 

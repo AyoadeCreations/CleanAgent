@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "#features", label: "Features" },
   { href: "#workflow", label: "Workflow" },
   { href: "#use-cases", label: "Use cases" },
+  { href: "/demo", label: "Live demo" },
 ];
 
 export function SiteHeader() {

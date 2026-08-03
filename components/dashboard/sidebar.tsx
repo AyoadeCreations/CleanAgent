@@ -12,19 +12,21 @@ import {
 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
 import { cn } from "@/lib/utils";
+import { navItemsFor, isNavActive } from "@/lib/nav";
 import type { Role } from "@/lib/types";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Overview", icon: LayoutDashboardIcon },
-  { href: "/dashboard/transactions", label: "Transactions", icon: ArrowLeftRightIcon },
-  { href: "/dashboard/agents", label: "Agents", icon: BotIcon },
-  { href: "/dashboard/compliance", label: "Compliance", icon: ShieldCheckIcon, overseerOnly: true },
-  { href: "/dashboard/reports", label: "Reports", icon: FileBarChart2Icon },
-  { href: "/dashboard/settings", label: "Settings", icon: SettingsIcon },
-];
+const ICONS = {
+  Overview: LayoutDashboardIcon,
+  Transactions: ArrowLeftRightIcon,
+  Agents: BotIcon,
+  Compliance: ShieldCheckIcon,
+  Reports: FileBarChart2Icon,
+  Settings: SettingsIcon,
+} as const;
 
 export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname();
+  const items = navItemsFor(role);
 
   return (
     <aside className="hidden w-60 shrink-0 border-r bg-card/40 lg:flex lg:flex-col">
@@ -34,8 +36,9 @@ export function Sidebar({ role }: { role: Role }) {
         </Link>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {NAV_ITEMS.filter((item) => !item.overseerOnly || role === "COMPLIANCE" || role === "ADMIN").map((item) => {
-          const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+        {items.map((item) => {
+          const Icon = ICONS[item.label as keyof typeof ICONS] ?? LayoutDashboardIcon;
+          const active = isNavActive(pathname, item.href);
           return (
             <Link
               key={item.href}
@@ -47,7 +50,7 @@ export function Sidebar({ role }: { role: Role }) {
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >
-              <item.icon className="size-4" />
+              <Icon className="size-4" />
               {item.label}
             </Link>
           );

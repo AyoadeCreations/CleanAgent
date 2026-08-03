@@ -77,6 +77,8 @@ export interface TransactionDTO {
   agentId: string | null;
   agentName: string | null;
   createdAt: string;
+  auditHash: string | null;
+  decisions: Array<{ rule: string; result: string }>;
 }
 
 export interface RuleDTO {
@@ -110,6 +112,15 @@ export interface DashboardSummary {
     transactionCount: number;
     pendingCount: number;
     blockedCount: number;
+    settlements: number;
+  };
+  trends: {
+    volumePercent: number;
+    transactionsPercent: number;
+    settlementsPercent: number;
+    agentsPercent: number;
+    verifiedPercent: number;
+    complianceDelta: number;
   };
   volumeByType: Array<{ type: TransactionType; volume: number; count: number }>;
   volumeByDay: Array<{ date: string; volume: number; count: number }>;

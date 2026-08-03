@@ -1,7 +1,8 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import type { RiskLevel } from "@/lib/types";
-import { cleanverseFetch, delay, hashToRange, riskScoreToLevel, withFallback } from "./client";
+import { cleanverseFetch, delay, riskScoreToLevel, withFallback } from "./client";
+import { calculateRiskScore } from "./risk";
 
 export interface RuleLike {
   id: string;
@@ -124,11 +125,15 @@ function evaluateRule(rule: RuleLike, tx: TransactionInput): RuleDecision | null
 }
 
 function mockValidation(tx: TransactionInput, rules: RuleLike[]): ValidationResult {
-  let riskScore = hashToRange(tx.receiver, 0, 30);
-  if (tx.amount > 10_000) riskScore += 12;
-  if (tx.amount > 50_000) riskScore += 25;
-  if (tx.assetType !== "USDC") riskScore += 8;
-  riskScore = Math.min(99, riskScore);
+  const riskScore = calculateRiskScore({
+    sender: tx.sender,
+    receiver: tx.receiver,
+    amount: tx.amount,
+    assetType: tx.assetType,
+    reference: tx.reference,
+    isVerified: true,
+    assetVerified: true,
+  });
 
   const decisions: RuleDecision[] = [];
   for (const rule of rules) {
@@ -171,6 +176,9 @@ export async function validateTransaction(
     () => mockValidation(tx, rules),
   );
 }
+
+/** Alias used by the demo and dashboard for a full transaction evaluation. */
+export const evaluateTransaction = validateTransaction;
 
 export function generateAuditHash(action: string, resource: object): string {
   const payload = JSON.stringify({ action, resource, nonce: Date.now() });

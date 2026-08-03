@@ -3,8 +3,8 @@
 import { useRules, useAuditLogs, useTransactions } from "@/hooks/use-api";
 import { truncateAddress } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ComplianceBadge } from "@/components/compliance-badge";
 import {
   Table,
   TableBody,
@@ -13,14 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
-
-const ACTION_STYLES: Record<string, string> = {
-  ALLOW: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
-  BLOCK: "bg-red-500/10 text-red-500 border-red-500/30",
-  FLAG: "bg-amber-500/10 text-amber-500 border-amber-500/30",
-  HOLD: "bg-orange-500/10 text-orange-500 border-orange-500/30",
-};
 
 export function ComplianceView() {
   const { data: rulesData, isLoading: rulesLoading } = useRules();
@@ -89,15 +81,11 @@ export function ComplianceView() {
                     </TableCell>
                     <TableCell className="font-mono text-xs">{rule.type}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={cn("font-mono", ACTION_STYLES[rule.action] ?? "")}>
-                        {rule.action.toLowerCase()}
-                      </Badge>
+                      <ComplianceBadge status={rule.action} />
                     </TableCell>
                     <TableCell className="font-mono text-xs">{rule.priority}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={rule.enabled ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground"}>
-                        {rule.enabled ? "enabled" : "disabled"}
-                      </Badge>
+                      <ComplianceBadge status={rule.enabled ? "VERIFIED" : "PAUSED"} label={rule.enabled ? "enabled" : "disabled"} />
                     </TableCell>
                     <TableCell className="max-w-[200px] truncate font-mono text-[10px] text-muted-foreground">
                       {JSON.stringify(rule.conditions)}
