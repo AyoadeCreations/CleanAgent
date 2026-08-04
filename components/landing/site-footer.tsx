@@ -4,21 +4,21 @@ import { Logo } from "@/components/logo";
 
 const columns = [
   {
-    title: "Company",
-    links: [
-      { label: "About", href: "/" },
-      { label: "Careers", href: "/" },
-      { label: "Security", href: "/" },
-      { label: "Contact", href: "/" },
-    ],
-  },
-  {
     title: "Products",
     links: [
       { label: "Verified identity", href: "#platform" },
       { label: "Verified assets", href: "#platform" },
       { label: "Compliance rules", href: "#platform" },
       { label: "Autonomous agents", href: "#platform" },
+    ],
+  },
+  {
+    title: "Solutions",
+    links: [
+      { label: "Payroll", href: "#use-cases" },
+      { label: "Merchant payments", href: "#use-cases" },
+      { label: "Supplier payments", href: "#use-cases" },
+      { label: "Treasury management", href: "#use-cases" },
     ],
   },
   {
@@ -31,12 +31,30 @@ const columns = [
     ],
   },
   {
-    title: "Use cases",
+    title: "Resources",
     links: [
-      { label: "Payroll", href: "#use-cases" },
-      { label: "Merchant payments", href: "#use-cases" },
-      { label: "Supplier payments", href: "#use-cases" },
-      { label: "Treasury management", href: "#use-cases" },
+      { label: "Audit reports", href: "/reports" },
+      { label: "Live demo", href: "/demo" },
+      { label: "Compliance center", href: "/compliance" },
+      { label: "Business hub", href: "/business" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/" },
+      { label: "Careers", href: "/" },
+      { label: "Security", href: "/" },
+      { label: "Contact", href: "/" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Privacy", href: "/" },
+      { label: "Terms", href: "/" },
+      { label: "Compliance", href: "/compliance" },
+      { label: "Licensing", href: "/" },
     ],
   },
 ];
@@ -45,7 +63,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t bg-surface/60">
       <div className="mx-auto w-full max-w-7xl px-6 py-16 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr_1fr]">
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_3fr_1fr]">
           <div className="max-w-sm">
             <Link href="/" aria-label="CleanFlow home" className="inline-flex">
               <Logo />
@@ -72,7 +90,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
             {columns.map((column) => (
               <nav key={column.title} aria-label={column.title}>
                 <h3 className="text-sm font-semibold">{column.title}</h3>

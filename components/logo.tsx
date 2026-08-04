@@ -75,16 +75,23 @@ export function Logo({
   className,
   markClassName,
   monochrome = false,
+  inverse = false,
 }: {
   className?: string;
   markClassName?: string;
   monochrome?: boolean;
+  inverse?: boolean;
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2", className)}>
       {monochrome ? <LogoMarkMono className={markClassName} /> : <LogoMark className={markClassName} />}
-      <span className="font-heading text-base font-semibold tracking-tight">
-        Clean<span className="text-primary">Flow</span>
+      <span
+        className={cn(
+          "font-heading text-base font-semibold tracking-tight",
+          inverse ? "text-white" : "text-foreground",
+        )}
+      >
+        Clean<span className={inverse ? "text-white/90" : "text-primary"}>Flow</span>
       </span>
     </span>
   );

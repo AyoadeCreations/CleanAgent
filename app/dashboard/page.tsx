@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
 import { Overview } from "@/components/dashboard/overview";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { QuickActions } from "@/components/dashboard/quick-actions";
@@ -25,6 +27,24 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <ActivityFeed />
         <QuickActions />
+      </div>
+
+      <div className="rounded-[24px] bg-card p-8 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-semibold tracking-tight">Reports</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Signed, immutable audit reports for every approved decision.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/reports"
+            className="group inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+          >
+            View reports
+            <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );

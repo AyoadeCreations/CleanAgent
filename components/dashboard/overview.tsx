@@ -1,11 +1,18 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import {
   TrendingUpIcon,
   TrendingDownIcon,
   MinusIcon,
   MoveRightIcon,
+  WalletIcon,
+  LandmarkIcon,
+  ShieldCheckIcon,
+  BotIcon,
+  UsersIcon,
+  ArrowLeftRightIcon,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -58,6 +65,8 @@ function StatCard({
   trend,
   isPoints,
   loading,
+  icon,
+  spark,
 }: {
   label: string;
   value: string;
@@ -65,23 +74,52 @@ function StatCard({
   trend?: number;
   isPoints?: boolean;
   loading?: boolean;
+  icon?: React.ReactNode;
+  spark?: Array<{ v: number }>;
 }) {
+  const gradientId = React.useId();
   return (
-    <Card className="group transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_10px_30px_-16px_rgba(37,99,235,0.35)]">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Card className="group overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <span className="inline-flex size-9 items-center justify-center rounded-xl bg-primary/8 text-primary">
+            {icon}
+          </span>
+          {trend !== undefined && <Trend value={trend} isPoints={isPoints} />}
+        </div>
         {loading ? (
           <Skeleton className="h-8 w-24" />
         ) : (
           <>
-            <div className="flex items-baseline gap-3">
-              <div className="text-2xl font-semibold tracking-tight tabular-nums">{value}</div>
-              {trend !== undefined && <Trend value={trend} isPoints={isPoints} />}
+            <div className="text-3xl font-semibold tracking-tight tabular-nums">{value}</div>
+            <div>
+              <p className="text-sm font-medium text-foreground">{label}</p>
+              {sub && <p className="mt-0.5 text-xs text-muted-foreground">{sub}</p>}
             </div>
-            {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
           </>
+        )}
+        {!loading && spark && spark.length > 0 && (
+          <div className="h-10 w-full -mx-8 mt-auto">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={spark} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2563eb" stopOpacity={0.25} />
+                    <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <Area
+                  type="monotone"
+                  dataKey="v"
+                  stroke="#2563eb"
+                  strokeWidth={1.5}
+                  fill={`url(#${gradientId})`}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -188,6 +226,11 @@ export function Overview() {
     };
   });
 
+  const volumeSpark = (data?.volumeByDay ?? []).map((d) => ({ v: d.volume }));
+  const settlementSpark = (data?.activityByDay ?? []).map((d) => ({ v: d.settlementCount }));
+  const complianceSpark = complianceByDay.map((d) => ({ v: d.score }));
+  const riskSpark = (data?.riskDistribution ?? []).map((r) => ({ v: r.count }));
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -195,6 +238,8 @@ export function Overview() {
           label="Total transaction volume"
           value={isLoading ? "" : formatCompactCurrency(o?.totalVolume ?? 0)}
           sub="Settled + approved volume"
+          icon={<WalletIcon className="size-4.5" />}
+          spark={volumeSpark}
           trend={t?.volumePercent}
           loading={isLoading}
         />
@@ -202,6 +247,8 @@ export function Overview() {
           label="Completed settlements"
           value={isLoading ? "" : formatNumber(o?.settlements ?? 0, 0)}
           sub={`${formatNumber(o?.pendingCount ?? 0, 0)} pending review`}
+          icon={<LandmarkIcon className="size-4.5" />}
+          spark={settlementSpark}
           trend={t?.settlementsPercent}
           loading={isLoading}
         />
@@ -209,6 +256,8 @@ export function Overview() {
           label="Compliance score"
           value={isLoading ? "" : `${o?.complianceScore ?? 0}`}
           sub="Out of 100 · this week"
+          icon={<ShieldCheckIcon className="size-4.5" />}
+          spark={complianceSpark}
           trend={t?.complianceDelta}
           isPoints
           loading={isLoading}
@@ -217,6 +266,8 @@ export function Overview() {
           label="Active agents"
           value={isLoading ? "" : formatNumber(o?.activeAgents ?? 0, 0)}
           sub="Agents executing payments"
+          icon={<BotIcon className="size-4.5" />}
+          spark={riskSpark}
           trend={t?.agentsPercent}
           loading={isLoading}
         />
@@ -224,6 +275,7 @@ export function Overview() {
           label="Verified entities"
           value={isLoading ? "" : formatNumber(o?.verifiedUsers ?? 0, 0)}
           sub="Passed CVI identity checks"
+          icon={<UsersIcon className="size-4.5" />}
           trend={t?.verifiedPercent}
           loading={isLoading}
         />
@@ -231,6 +283,7 @@ export function Overview() {
           label="Transactions"
           value={isLoading ? "" : formatNumber(o?.transactionCount ?? 0, 0)}
           sub={`${formatNumber(o?.blockedCount ?? 0, 0)} blocked by policy`}
+          icon={<ArrowLeftRightIcon className="size-4.5" />}
           trend={t?.transactionsPercent}
           loading={isLoading}
         />

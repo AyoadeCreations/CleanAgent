@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { APP_NAME, APP_TAGLINE } from "@/lib/constants";
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
 });
@@ -26,6 +32,11 @@ export const metadata: Metadata = {
   },
   description: appDescription,
   applicationName: APP_NAME,
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/apple-icon.svg",
+  },
   keywords: [
     "CleanFlow",
     "Cleanverse",
@@ -42,11 +53,13 @@ export const metadata: Metadata = {
     title: `${APP_NAME} — ${APP_TAGLINE}`,
     description: appDescription,
     url: "https://cleanflow.dev",
+    images: [{ url: "https://cleanflow.dev/opengraph-image", width: 1200, height: 630, alt: "CleanFlow" }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${APP_NAME} — ${APP_TAGLINE}`,
     description: appDescription,
+    images: ["https://cleanflow.dev/opengraph-image"],
   },
 };
 
@@ -58,7 +71,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${plusJakartaSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>{children}</Providers>

@@ -5,9 +5,37 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRightIcon, ShieldCheckIcon, LandmarkIcon, CoinsIcon } from "lucide-react";
 
 const FLOATING_CARDS = [
-  { icon: ShieldCheckIcon, label: "Identity verified", value: "CVI · on-chain", rotate: -8 },
-  { icon: CoinsIcon, label: "Assets screened", value: "CVA · risk-checked", rotate: 5 },
-  { icon: LandmarkIcon, label: "Settlement", value: "real-time", rotate: 8 },
+  {
+    icon: ShieldCheckIcon,
+    label: "Identity verified",
+    subtitle: "Merchant approved",
+    stat: "Risk score: 98",
+    rotate: -8,
+    x: -46,
+  },
+  {
+    icon: CoinsIcon,
+    label: "Asset screened",
+    subtitle: "CVA verified",
+    stat: "Approved",
+    rotate: 5,
+    x: 0,
+  },
+  {
+    icon: LandmarkIcon,
+    label: "Settlement completed",
+    subtitle: "USDC transfer",
+    stat: "Completed",
+    rotate: 8,
+    x: 46,
+  },
+];
+
+const METRICS = [
+  { value: "$12.4M", label: "Settled volume" },
+  { value: "98.6%", label: "Compliance rate" },
+  { value: "15,000", label: "Verified entities" },
+  { value: "8", label: "Networks live" },
 ];
 
 function Clouds() {
@@ -36,14 +64,26 @@ function Clouds() {
         animate={{ x: ["3%", "0%", "3%"] }}
         transition={{ duration: 55, repeat: Infinity, ease: "easeInOut" }}
       >
-        <g fill="white" opacity="0.55" filter="url(#b)">
-          <ellipse cx="80" cy="340" rx="440" ry="120" />
-          <ellipse cx="600" cy="300" rx="460" ry="110" />
-          <ellipse cx="1180" cy="340" rx="430" ry="120" />
+        <g fill="white" opacity="0.6">
+          <ellipse cx="60" cy="300" rx="300" ry="90" />
+          <ellipse cx="700" cy="330" rx="360" ry="100" />
+          <ellipse cx="1360" cy="300" rx="300" ry="90" />
+        </g>
+      </motion.svg>
+      <motion.svg
+        viewBox="0 0 1440 400"
+        preserveAspectRatio="none"
+        className="absolute bottom-0 left-0 h-full w-[110%]"
+        animate={{ x: ["-3%", "0%", "-3%"] }}
+        transition={{ duration: 65, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <g fill="white" opacity="0.4" filter="url(#b)">
+          <ellipse cx="350" cy="360" rx="520" ry="110" />
+          <ellipse cx="1050" cy="360" rx="520" ry="110" />
         </g>
         <defs>
           <filter id="b">
-            <feGaussianBlur stdDeviation="2" />
+            <feGaussianBlur stdDeviation="2.5" />
           </filter>
         </defs>
       </motion.svg>
@@ -65,7 +105,7 @@ export function Hero() {
         />
 
         {/* centered content */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-white">
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pb-56 text-white sm:pb-60">
           <div className="flex max-w-[700px] flex-col items-center text-center">
             <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md">
               <span className="size-1.5 rounded-full bg-lime" aria-hidden="true" />
@@ -96,26 +136,59 @@ export function Hero() {
                 Explore platform
               </Link>
             </div>
+
+            <div className="mt-14 grid grid-cols-2 gap-x-10 gap-y-6 sm:grid-cols-4 sm:gap-x-12">
+              {METRICS.map((metric) => (
+                <div key={metric.label} className="flex flex-col items-center text-center">
+                  <span className="text-2xl font-semibold tracking-tight sm:text-[28px]">{metric.value}</span>
+                  <span className="mt-1 text-xs font-medium uppercase tracking-wider text-white/70">
+                    {metric.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* floating cards in the clouds */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-10 flex items-end justify-center gap-5" aria-hidden="true">
+        <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex items-end justify-center" aria-hidden="true">
           {FLOATING_CARDS.map((card, i) => (
             <motion.div
               key={card.label}
-              initial={reduceMotion ? undefined : { opacity: 0, y: 40 }}
-              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-              style={{ rotate: card.rotate, zIndex: 10 - i }}
-              className="relative hidden h-[220px] w-[180px] flex-col justify-between rounded-3xl bg-white/95 p-6 text-black shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:flex"
+              initial={reduceMotion ? undefined : { opacity: 0, y: 60 }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : {
+                      opacity: 1,
+                      y: [60, 64, 60],
+                    }
+              }
+              transition={{
+                duration: 0.7,
+                delay: 0.2 + i * 0.15,
+                ease: [0.22, 1, 0.36, 1],
+                y: {
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: i * 0.6,
+                },
+              }}
+              style={{ rotate: card.rotate, marginLeft: card.x, marginRight: card.x, zIndex: 10 - i }}
+              className="relative hidden h-[232px] w-[184px] flex-col justify-between rounded-3xl bg-white/95 p-6 text-black shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:flex"
             >
-              <div className="flex size-10 items-center justify-center rounded-2xl bg-black/5">
-                <card.icon className="size-5 text-[#2563eb]" />
+              <div className="flex items-start justify-between">
+                <div className="flex size-10 items-center justify-center rounded-2xl bg-black/5">
+                  <card.icon className="size-5 text-[#2563eb]" />
+                </div>
+                <span className="rounded-full bg-lime/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black">
+                  {card.stat}
+                </span>
               </div>
               <div>
                 <p className="text-sm font-semibold">{card.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{card.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{card.subtitle}</p>
               </div>
             </motion.div>
           ))}

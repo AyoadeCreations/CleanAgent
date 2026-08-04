@@ -70,76 +70,152 @@ export function Features() {
           {/* Medium gray card — verified assets */}
           <RevealItem className="lg:col-span-1">
             <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
-                  <DatabaseIcon className="size-6 text-[#2563eb]" />
-                </span>
-                <span className="font-mono text-2xl font-semibold tracking-tight text-foreground">100%</span>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
+                    <DatabaseIcon className="size-6 text-[#2563eb]" />
+                  </span>
+                  <span className="font-mono text-2xl font-semibold tracking-tight text-foreground">100%</span>
+                </div>
+                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80"
+                    alt="Asset portfolio dashboard"
+                    fill
+                    sizes="(min-width: 1024px) 30vw, 100vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-6">
+                  <h3 className="text-2xl font-semibold tracking-tight">Verified assets</h3>
+                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                    Assets screened through Cleanverse&apos;s registry (CVA) — only risk-verified
+                    collateral and tokens move through your flows.
+                  </p>
+                </div>
               </div>
-              <div className="mt-8">
-                <h3 className="text-2xl font-semibold tracking-tight">Verified assets</h3>
-                <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                  Assets screened through Cleanverse&apos;s registry (CVA) — only risk-verified
-                  collateral and tokens move through your flows.
-                </p>
-              </div>
+              <Link
+                href="/dashboard"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
+              >
+                Explore assets
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </div>
           </RevealItem>
 
           {/* Lime card — AI agents */}
           <RevealItem className="lg:col-span-1">
             <div className="group flex h-full flex-col justify-between rounded-[24px] bg-lime p-8 text-black transition-transform duration-300 hover:-translate-y-2">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-black/10">
-                  <BotIcon className="size-6" />
-                </span>
-                <span className="font-mono text-2xl font-semibold tracking-tight">0 approvals</span>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-black/10">
+                    <BotIcon className="size-6" />
+                  </span>
+                  <span className="font-mono text-2xl font-semibold tracking-tight">0 approvals</span>
+                </div>
+                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+                    alt="Autonomous agent interface"
+                    fill
+                    sizes="(min-width: 1024px) 30vw, 100vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-6">
+                  <h3 className="text-2xl font-semibold tracking-tight">AI agents</h3>
+                  <p className="mt-2 text-base leading-relaxed text-black/70">
+                    Grant agents granular permissions and spending limits. They execute approved
+                    actions within boundaries you control.
+                  </p>
+                </div>
               </div>
-              <div className="mt-8">
-                <h3 className="text-2xl font-semibold tracking-tight">AI agents</h3>
-                <p className="mt-2 text-base leading-relaxed text-black/70">
-                  Grant agents granular permissions and spending limits. They execute approved
-                  actions within boundaries you control.
-                </p>
-              </div>
+              <Link
+                href="/dashboard/agents"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-black transition-transform group-hover:translate-x-0.5"
+              >
+                Create an agent
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </div>
           </RevealItem>
 
           {/* Black card — compliance automation */}
           <RevealItem className="lg:col-span-1">
             <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#111111] p-8 text-white transition-transform duration-300 hover:-translate-y-2">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10">
-                  <ScaleIcon className="size-6" />
-                </span>
-                <span className="font-mono text-2xl font-semibold tracking-tight">98.6%</span>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10">
+                    <ScaleIcon className="size-6" />
+                  </span>
+                  <span className="font-mono text-2xl font-semibold tracking-tight">98.6%</span>
+                </div>
+                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=80"
+                    alt="Team reviewing compliance policy"
+                    fill
+                    sizes="(min-width: 1024px) 30vw, 100vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-6">
+                  <h3 className="text-2xl font-semibold tracking-tight">Compliance automation</h3>
+                  <p className="mt-2 text-base leading-relaxed text-white/70">
+                    Compliance as code — allowlists, caps, and risk thresholds enforced
+                    deterministically on every execution.
+                  </p>
+                </div>
               </div>
-              <div className="mt-8">
-                <h3 className="text-2xl font-semibold tracking-tight">Compliance automation</h3>
-                <p className="mt-2 text-base leading-relaxed text-white/70">
-                  Compliance as code — allowlists, caps, and risk thresholds enforced
-                  deterministically on every execution.
-                </p>
-              </div>
+              <Link
+                href="/dashboard/compliance"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform group-hover:translate-x-0.5"
+              >
+                View compliance
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </div>
           </RevealItem>
 
           {/* Small gray card — audit reporting */}
           <RevealItem className="lg:col-span-1">
             <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
-                  <FileTextIcon className="size-6 text-[#2563eb]" />
-                </span>
-                <span className="font-mono text-2xl font-semibold tracking-tight">3.1s</span>
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
+                    <FileTextIcon className="size-6 text-[#2563eb]" />
+                  </span>
+                  <span className="font-mono text-2xl font-semibold tracking-tight">3.1s</span>
+                </div>
+                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+                  <Image
+                    src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80"
+                    alt="Signed audit report document"
+                    fill
+                    sizes="(min-width: 1024px) 30vw, 100vw"
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="mt-6">
+                  <h3 className="text-2xl font-semibold tracking-tight">Audit reporting</h3>
+                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                    Every decision is hashed and logged to an immutable trail, ready for regulators
+                    and proof of control.
+                  </p>
+                </div>
               </div>
-              <div className="mt-8">
-                <h3 className="text-2xl font-semibold tracking-tight">Audit reporting</h3>
-                <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                  Every decision is hashed and logged to an immutable trail, ready for regulators
-                  and proof of control.
-                </p>
-              </div>
+              <Link
+                href="/dashboard/reports"
+                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
+              >
+                View reports
+                <ArrowRightIcon className="size-4" />
+              </Link>
             </div>
           </RevealItem>
         </RevealContainer>

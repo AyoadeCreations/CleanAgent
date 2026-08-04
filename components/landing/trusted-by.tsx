@@ -1,6 +1,6 @@
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
 
-const brands = ["Stripe", "Coinbase", "Ramp", "Mercury", "Brex", "Monad", "Cleanverse"];
+const brands = ["Cleanverse", "Monad", "Stripe", "Ramp", "Mercury", "Coinbase", "Base"];
 
 export function TrustedBy() {
   return (

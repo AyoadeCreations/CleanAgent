@@ -8,10 +8,11 @@ import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#", label: "Home" },
-  { href: "#platform", label: "Services" },
-  { href: "#use-cases", label: "About us" },
-  { href: "/references", label: "More links" },
+  { href: "#platform", label: "Products" },
+  { href: "#use-cases", label: "Solutions" },
+  { href: "/compliance", label: "Developers" },
+  { href: "/reports", label: "Resources" },
+  { href: "/register", label: "Pricing" },
 ];
 
 export function SiteHeader() {
