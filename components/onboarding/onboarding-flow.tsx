@@ -170,6 +170,11 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
             <Button className="w-full" onClick={handleVerify} disabled={verifying || verified}>
               {verifying ? "Running checks…" : verified ? `Verified · KYC level ${kycLevel}` : "Run identity check"}
             </Button>
+            {verified && (
+              <Button variant="outline" className="w-full" onClick={() => setStep((s) => s + 1)}>
+                Continue
+              </Button>
+            )}
           </div>
         )}
 

@@ -129,7 +129,7 @@ export function LoginForm() {
           onClick={handleWallet}
           disabled={submitting !== null || connectPending}
         >
-          {address ? "Connect wallet" : "Connect wallet"}
+          {address ? "Connected" : "Connect wallet"}
         </Button>
         <p className="text-center text-xs text-muted-foreground">
           No account yet?{" "}

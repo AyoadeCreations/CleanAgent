@@ -4,6 +4,7 @@ export const CLEANVERSE_MOCK_ENABLED =
   process.env.NEXT_PUBLIC_CLEANVERSE_MOCK === "true" || !process.env.CLEANVERSE_BASE_URL;
 
 export async function delay(ms: number): Promise<void> {
+  if (CLEANVERSE_MOCK_ENABLED) return;
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 

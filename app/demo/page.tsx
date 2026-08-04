@@ -15,7 +15,8 @@ export default function DemoPage() {
       <SiteHeader />
       <main className="flex-1">
         <DemoWorkflow />
-      </main>      <SiteFooter />
+      </main>
+      <SiteFooter />
     </div>
   );
 }
