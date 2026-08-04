@@ -2,7 +2,6 @@ import { SiteHeader } from "@/components/landing/site-header";
 import { Hero } from "@/components/landing/hero";
 import { TrustedBy } from "@/components/landing/trusted-by";
 import { Features } from "@/components/landing/features";
-import { Workflow } from "@/components/landing/workflow";
 import { UseCases } from "@/components/landing/use-cases";
 import { Testimonials } from "@/components/landing/testimonials";
 import { Cta } from "@/components/landing/cta";
@@ -16,7 +15,6 @@ export default function Home() {
         <Hero />
         <TrustedBy />
         <Features />
-        <Workflow />
         <UseCases />
         <Testimonials />
         <Cta />

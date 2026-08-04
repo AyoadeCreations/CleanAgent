@@ -1,100 +1,127 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ArrowRightIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRightIcon, ShieldCheckIcon, LandmarkIcon, CoinsIcon } from "lucide-react";
 
-const HeroVisual = dynamic(() => import("./hero-visual").then((m) => m.HeroVisual), {
-  loading: () => <div className="h-[440px] w-full animate-pulse rounded-[24px] border bg-surface" />,
-});
-
-const METRICS = [
-  { value: "$12.4M", label: "settled" },
-  { value: "98.6%", label: "compliance rate" },
-  { value: "15,000", label: "verified entities" },
-  { value: "8", label: "networks" },
+const FLOATING_CARDS = [
+  { icon: ShieldCheckIcon, label: "Identity verified", value: "CVI · on-chain", rotate: -8 },
+  { icon: CoinsIcon, label: "Assets screened", value: "CVA · risk-checked", rotate: 5 },
+  { icon: LandmarkIcon, label: "Settlement", value: "real-time", rotate: 8 },
 ];
+
+function Clouds() {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 overflow-hidden" aria-hidden="true">
+      <motion.svg
+        viewBox="0 0 1440 400"
+        preserveAspectRatio="none"
+        className="absolute bottom-0 left-0 h-full w-[110%]"
+        animate={{ x: ["0%", "-6%", "0%"] }}
+        transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <g fill="white" opacity="0.9">
+          <ellipse cx="-60" cy="300" rx="420" ry="120" />
+          <ellipse cx="220" cy="260" rx="360" ry="100" />
+          <ellipse cx="520" cy="320" rx="500" ry="130" />
+          <ellipse cx="900" cy="270" rx="420" ry="110" />
+          <ellipse cx="1240" cy="320" rx="460" ry="120" />
+          <ellipse cx="1540" cy="280" rx="380" ry="100" />
+        </g>
+      </motion.svg>
+      <motion.svg
+        viewBox="0 0 1440 400"
+        preserveAspectRatio="none"
+        className="absolute bottom-0 left-0 h-full w-[110%]"
+        animate={{ x: ["3%", "0%", "3%"] }}
+        transition={{ duration: 55, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <g fill="white" opacity="0.55" filter="url(#b)">
+          <ellipse cx="80" cy="340" rx="440" ry="120" />
+          <ellipse cx="600" cy="300" rx="460" ry="110" />
+          <ellipse cx="1180" cy="340" rx="430" ry="120" />
+        </g>
+        <defs>
+          <filter id="b">
+            <feGaussianBlur stdDeviation="2" />
+          </filter>
+        </defs>
+      </motion.svg>
+    </div>
+  );
+}
 
 export function Hero() {
   const reduceMotion = useReducedMotion();
-  const fade: Variants = {
-    hidden: { opacity: 0, y: 18 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-  };
 
   return (
-    <section className="relative overflow-hidden">
-      <div
-        className="pointer-events-none absolute inset-0 -z-10"
-        aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(55% 45% at 70% 0%, oklch(0.55 0.2 255 / 0.08), transparent 70%), radial-gradient(45% 40% at 15% 10%, oklch(0.85 0.15 150 / 0.12), transparent 70%)",
-        }}
-      />
+    <section className="mx-auto w-full max-w-[1440px] px-6 py-12 lg:px-12">
+      <div className="relative h-[760px] overflow-hidden rounded-[32px] bg-gradient-to-b from-[#0a79d8] to-[#18a6ff]">
+        {/* light bloom */}
+        <div
+          className="pointer-events-none absolute -top-1/4 left-1/2 h-[80%] w-[80%] -translate-x-1/2 rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(255,255,255,0.55), transparent 65%)" }}
+          aria-hidden="true"
+        />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center px-4 pb-24 pt-24 sm:px-6 sm:pt-28 lg:px-8">
-        <motion.div variants={fade} initial={reduceMotion ? false : "hidden"} animate="visible" className="w-full max-w-3xl text-center">
-          <motion.div variants={fade} className="mb-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm font-medium text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+        {/* centered content */}
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-white">
+          <div className="flex max-w-[700px] flex-col items-center text-center">
+            <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md">
+              <span className="size-1.5 rounded-full bg-lime" aria-hidden="true" />
               Trust infrastructure for the programmable economy
             </span>
-          </motion.div>
 
-          <motion.h1
-            variants={fade}
-            className="text-balance text-5xl font-bold tracking-[-0.04em] text-foreground sm:text-6xl lg:text-[72px] lg:leading-[1.05]"
-          >
-            Payments that verify before they settle.
-          </motion.h1>
+            <h1 className="text-balance text-5xl font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl lg:text-[72px]">
+              Payments that verify before they settle.
+            </h1>
 
-          <motion.p
-            variants={fade}
-            className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-[1.8] text-muted-foreground"
-          >
-            CleanFlow combines verified identities, verified assets, intelligent agents,
-            compliance automation, and real-time settlement into one platform.
-          </motion.p>
+            <p className="mt-6 max-w-xl text-lg leading-[1.8] text-white/85">
+              CleanFlow combines verified identities, verified assets, autonomous agents,
+              compliance, and real-time settlement into one platform.
+            </p>
 
-          <motion.div
-            variants={fade}
-            className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
-          >
-            <Button size="lg" render={<Link href="/demo" />}>
-              Start demo
-              <ArrowRightIcon className="size-4" />
-            </Button>
-            <Button size="lg" variant="outline" render={<Link href="#platform" />}>
-              Explore platform
-            </Button>
-          </motion.div>
+            <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
+              <Link
+                href="/demo"
+                className="group inline-flex items-center gap-2 rounded-full bg-lime px-7 py-[18px] text-base font-semibold text-black transition-transform hover:scale-105"
+              >
+                Start demo
+                <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="#platform"
+                className="inline-flex items-center gap-2 rounded-full border border-white/70 px-7 py-[18px] text-base font-semibold text-white transition-transform hover:scale-105"
+              >
+                Explore platform
+              </Link>
+            </div>
+          </div>
+        </div>
 
-          <motion.dl
-            variants={fade}
-            className="mt-16 grid grid-cols-2 gap-8 border-t pt-10 sm:grid-cols-4"
-          >
-            {METRICS.map((m) => (
-              <div key={m.label} className="flex flex-col items-center gap-1 text-center">
-                <dt className="order-last text-sm text-muted-foreground">{m.label}</dt>
-                <dd className="font-mono text-3xl font-semibold tracking-tight text-foreground">
-                  {m.value}
-                </dd>
+        {/* floating cards in the clouds */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-10 flex items-end justify-center gap-5" aria-hidden="true">
+          {FLOATING_CARDS.map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={reduceMotion ? undefined : { opacity: 0, y: 40 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 + i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+              style={{ rotate: card.rotate, zIndex: 10 - i }}
+              className="relative hidden h-[220px] w-[180px] flex-col justify-between rounded-3xl bg-white/95 p-6 text-black shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:flex"
+            >
+              <div className="flex size-10 items-center justify-center rounded-2xl bg-black/5">
+                <card.icon className="size-5 text-[#2563eb]" />
               </div>
-            ))}
-          </motion.dl>
-        </motion.div>
+              <div>
+                <p className="text-sm font-semibold">{card.label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{card.value}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-20 w-full"
-        >
-          <HeroVisual />
-        </motion.div>
+        <Clouds />
       </div>
     </section>
   );

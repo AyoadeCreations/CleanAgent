@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ShieldCheckIcon,
@@ -8,116 +9,139 @@ import {
   ArrowRightIcon,
 } from "lucide-react";
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
-import { cn } from "@/lib/utils";
-
-const features = [
-  {
-    icon: ShieldCheckIcon,
-    title: "Verified identities",
-    subtitle:
-      "Every counterparty passes Cleanverse identity verification (CVI) with on-chain attestation before a single transaction is approved.",
-    stat: "15,000+",
-    statLabel: "entities verified",
-    accent: "text-blue-600",
-    bg: "bg-blue-50",
-    href: "/onboarding",
-  },
-  {
-    icon: DatabaseIcon,
-    title: "Verified assets",
-    subtitle:
-      "Assets are screened through Cleanverse's asset registry (CVA) so only risk-verified collateral, tokens, and receivables move through your flows.",
-    stat: "100%",
-    statLabel: "assets screened",
-    accent: "text-emerald-600",
-    bg: "bg-emerald-50",
-    href: "/dashboard",
-  },
-  {
-    icon: BotIcon,
-    title: "AI agents",
-    subtitle:
-      "Grant agents granular permissions and spending limits. They execute approved actions within boundaries you control.",
-    stat: "0",
-    statLabel: "human approvals needed",
-    accent: "text-violet-600",
-    bg: "bg-violet-50",
-    href: "/dashboard/agents",
-  },
-  {
-    icon: ScaleIcon,
-    title: "Compliance automation",
-    subtitle:
-      "Express compliance as code — allowlists, caps, blocklists, and risk thresholds enforced deterministically on every execution.",
-    stat: "98.6%",
-    statLabel: "compliance rate",
-    accent: "text-amber-600",
-    bg: "bg-amber-50",
-    href: "/dashboard/compliance",
-  },
-  {
-    icon: FileTextIcon,
-    title: "Audit reporting",
-    subtitle:
-      "Every decision is hashed and logged to an immutable audit trail, ready for regulators, auditors, and proof of control.",
-    stat: "3.1s",
-    statLabel: "to signed report",
-    accent: "text-rose-600",
-    bg: "bg-rose-50",
-    href: "/dashboard/reports",
-  },
-];
 
 export function Features() {
   return (
     <section id="platform" className="scroll-mt-20 py-24">
-      <div className="mx-auto w-full max-w-7xl px-6 lg:px-8">
-        <RevealContainer className="mx-auto mb-16 max-w-2xl text-center">
+      <div className="mx-auto w-full max-w-[1440px] px-6 lg:px-12">
+        <RevealContainer className="mb-16 max-w-2xl">
           <RevealItem>
-            <h2 className="text-balance text-4xl font-bold tracking-tight sm:text-5xl">
+            <h2 className="text-balance text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-[64px] lg:leading-[1.05]">
               Every layer of trust, automated
             </h2>
           </RevealItem>
           <RevealItem>
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+            <p className="mt-6 max-w-xl text-lg leading-[1.8] text-muted-foreground">
               CleanFlow replaces manual KYC spreadsheets, ad-hoc approvals, and un-auditable
               treasury stacks with a single programmable layer.
             </p>
           </RevealItem>
         </RevealContainer>
 
-        <RevealContainer className="grid gap-6 lg:grid-cols-5">
-          {features.map((feature, i) => (
-            <RevealItem
-              key={feature.title}
-              className={cn("h-full", i === 0 ? "lg:col-span-3" : "lg:col-span-2")}
-            >
-              <div className="group flex h-full flex-col gap-6 rounded-[24px] bg-card p-10 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(37,99,235,0.3)]">
-                <span className={cn("inline-flex size-14 items-center justify-center rounded-2xl", feature.bg, feature.accent)}>
-                  <feature.icon className="size-7" aria-hidden="true" />
+        <RevealContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Large card — verified identities (blue, photo) */}
+          <RevealItem className="md:col-span-2 lg:col-span-1 lg:row-span-2 lg:h-[450px]">
+            <div className="group flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-b from-[#3da7ff] to-[#2784e0] p-8 text-white transition-transform duration-300 hover:-translate-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur">
+                  <ShieldCheckIcon className="size-6" />
                 </span>
-                <h3 className="text-2xl font-semibold tracking-tight">{feature.title}</h3>
-                <p className="flex-1 text-base leading-relaxed text-muted-foreground">
-                  {feature.subtitle}
-                </p>
-                <div className="flex items-end justify-between gap-4 border-t pt-6">
-                  <div>
-                    <p className={cn("font-mono text-3xl font-semibold tracking-tight", feature.accent)}>
-                      {feature.stat}
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">{feature.statLabel}</p>
-                  </div>
-                  <Link
-                    href={feature.href}
-                    className="inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors hover:border-primary hover:text-primary"
-                  >
-                    Explore
-                    <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                </div>
+                <span className="font-mono text-sm font-semibold tracking-tight">15,000+</span>
               </div>
-            </RevealItem>
-          ))}
+
+              <div className="relative my-6 aspect-[4/3] w-full overflow-hidden rounded-2xl">
+                <Image
+                  src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80"
+                  alt="Team reviewing identity verification on a laptop"
+                  fill
+                  sizes="(min-width: 1024px) 30vw, 100vw"
+                  className="object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <div>
+                <h3 className="text-2xl font-semibold tracking-tight">Verified identities</h3>
+                <p className="mt-2 text-base leading-relaxed text-white/85">
+                  Every counterparty passes Cleanverse identity verification (CVI) with on-chain
+                  attestation before a single transaction is approved.
+                </p>
+                <Link
+                  href="/onboarding"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform group-hover:translate-x-0.5"
+                >
+                  Learn more
+                  <ArrowRightIcon className="size-4" />
+                </Link>
+              </div>
+            </div>
+          </RevealItem>
+
+          {/* Medium gray card — verified assets */}
+          <RevealItem className="lg:col-span-1">
+            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
+                  <DatabaseIcon className="size-6 text-[#2563eb]" />
+                </span>
+                <span className="font-mono text-2xl font-semibold tracking-tight text-foreground">100%</span>
+              </div>
+              <div className="mt-8">
+                <h3 className="text-2xl font-semibold tracking-tight">Verified assets</h3>
+                <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                  Assets screened through Cleanverse&apos;s registry (CVA) — only risk-verified
+                  collateral and tokens move through your flows.
+                </p>
+              </div>
+            </div>
+          </RevealItem>
+
+          {/* Lime card — AI agents */}
+          <RevealItem className="lg:col-span-1">
+            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-lime p-8 text-black transition-transform duration-300 hover:-translate-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-black/10">
+                  <BotIcon className="size-6" />
+                </span>
+                <span className="font-mono text-2xl font-semibold tracking-tight">0 approvals</span>
+              </div>
+              <div className="mt-8">
+                <h3 className="text-2xl font-semibold tracking-tight">AI agents</h3>
+                <p className="mt-2 text-base leading-relaxed text-black/70">
+                  Grant agents granular permissions and spending limits. They execute approved
+                  actions within boundaries you control.
+                </p>
+              </div>
+            </div>
+          </RevealItem>
+
+          {/* Black card — compliance automation */}
+          <RevealItem className="lg:col-span-1">
+            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#111111] p-8 text-white transition-transform duration-300 hover:-translate-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10">
+                  <ScaleIcon className="size-6" />
+                </span>
+                <span className="font-mono text-2xl font-semibold tracking-tight">98.6%</span>
+              </div>
+              <div className="mt-8">
+                <h3 className="text-2xl font-semibold tracking-tight">Compliance automation</h3>
+                <p className="mt-2 text-base leading-relaxed text-white/70">
+                  Compliance as code — allowlists, caps, and risk thresholds enforced
+                  deterministically on every execution.
+                </p>
+              </div>
+            </div>
+          </RevealItem>
+
+          {/* Small gray card — audit reporting */}
+          <RevealItem className="lg:col-span-1">
+            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
+                  <FileTextIcon className="size-6 text-[#2563eb]" />
+                </span>
+                <span className="font-mono text-2xl font-semibold tracking-tight">3.1s</span>
+              </div>
+              <div className="mt-8">
+                <h3 className="text-2xl font-semibold tracking-tight">Audit reporting</h3>
+                <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                  Every decision is hashed and logged to an immutable trail, ready for regulators
+                  and proof of control.
+                </p>
+              </div>
+            </div>
+          </RevealItem>
         </RevealContainer>
       </div>
     </section>

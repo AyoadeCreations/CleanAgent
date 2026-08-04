@@ -28,10 +28,13 @@ export function Cta() {
                 transaction in minutes.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Button size="lg" render={<Link href="/demo" />}>
+                <Link
+                  href="/demo"
+                  className="group inline-flex items-center gap-2 rounded-full bg-lime px-7 py-[18px] text-base font-semibold text-black transition-transform hover:scale-105"
+                >
                   Start Demo
-                  <ArrowRightIcon className="size-4" />
-                </Button>
+                  <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+                </Link>
                 <Button size="lg" variant="outline" render={<Link href="/register" />}>
                   Create account
                 </Button>
