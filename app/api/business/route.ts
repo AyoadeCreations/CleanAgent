@@ -1,6 +1,7 @@
 import { db } from "@/lib/database/client";
 import { fail, ok, requireApiUser, readJson, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
+import { parseOrThrow, businessCreateSchema } from "@/lib/validation";
 
 export async function GET() {
   try {
@@ -32,12 +33,11 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const user = await requireApiUser();
-    if (user.role === "MERCHANT") {
+    if (user.role !== "BUSINESS") {
       throw new ApiError("NOT_ALLOWED", 403, "Only business accounts can create a business.");
     }
     const body = await readJson(request);
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const description = typeof body.description === "string" ? body.description.trim() : null;
+    const { name, description } = parseOrThrow(businessCreateSchema, body);
     if (!name) throw new ApiError("MISSING_NAME", 400, "Business name is required.");
 
     const existing = await db.business.findFirst({ where: { ownerId: user.id } });

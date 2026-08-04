@@ -1,13 +1,9 @@
 import { NextRequest } from "next/server";
-import { db } from "@/lib/database/client";
 import { evaluateTransaction, generateComplianceReport, calculateRiskScore, riskScoreToLevel } from "@/lib/cleanverse";
 import { hashToRange, delay } from "@/lib/cleanverse/client";
 import { ok, fail } from "@/lib/api";
 
 export const runtime = "nodejs";
-
-const DEMO_COMPLIANCE_EMAIL = "demo-compliance@cleanflow.dev";
-const DEMO_WALLET = "0x00000000000000000000000000000000000c0de";
 
 function walletFor(seed: string): string {
   const base = "0x1f9090aae28b8a3dceadf281b0f12828e676c326";
@@ -167,58 +163,33 @@ async function runStep(step: string, body: Record<string, unknown>): Promise<Ste
         ? body.receiver
         : walletFor("f1");
 
-      let user = await db.user.findFirst({ where: { email: DEMO_COMPLIANCE_EMAIL } });
-      if (!user) {
-        user = await db.user.create({
-          data: {
-            email: DEMO_COMPLIANCE_EMAIL,
-            name: "Demo Compliance Officer",
-            walletAddress: DEMO_WALLET,
-            role: "COMPLIANCE",
-            verified: true,
-            verificationStatus: "VERIFIED",
-            kycLevel: 3,
-          },
-        });
-      }
-
       const periodStart = new Date(Date.now() - 30 * 24 * 3600 * 1000);
       const periodEnd = new Date();
+      const sender = walletFor("merchant-helios-logistics");
       const tx = {
         id: `demo-${hashToRange(`tx-${reference}`, 1000, 9999)}`,
         reference,
-        sender: walletFor("merchant-helios-logistics"),
+        sender,
         receiver,
         amount,
         assetType,
         type: "PAYMENT",
         createdAt: periodEnd,
-        riskScore: calculateRiskScore({ sender: walletFor("merchant-helios-logistics"), receiver, amount, assetType, reference, isVerified: true, assetVerified: true }),
+        riskScore: calculateRiskScore({ sender, receiver, amount, assetType, reference, isVerified: true, assetVerified: true }),
         riskLevel: "LOW",
         status: "EXECUTED",
       };
 
       const { data, reportHash } = generateComplianceReport({
-        userId: user.id,
+        userId: "demo",
         periodStart,
         periodEnd,
         transactions: [tx],
       });
 
-      const report = await db.report.create({
-        data: {
-          userId: user.id,
-          reportHash,
-          type: "COMPLIANCE",
-          periodStart,
-          periodEnd,
-          data: data as object,
-        },
-      });
-
       return {
         step,
-        reportId: report.id,
+        reportId: `demo-${hashToRange(`report-${reference}`, 1000, 9999)}`,
         reportHash,
         periodStart: data.periodStart,
         periodEnd: data.periodEnd,
@@ -228,7 +199,7 @@ async function runStep(step: string, body: Record<string, unknown>): Promise<Ste
         blocked: data.blocked,
         entries: data.entries,
         merchant: name,
-        message: "Signed compliance report published to /reports.",
+        message: "Signed compliance report generated for the demo walkthrough.",
       };
     }
 

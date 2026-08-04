@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useWallet } from "@/hooks/use-wallet";
-import { registerAccount, ClientApiError } from "@/lib/client-auth";
+import { registerAccount, requestWalletNonce, ClientApiError } from "@/lib/client-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export function RegisterForm() {
   const router = useRouter();
-  const { connectAsync, connectPending, address, connectors } = useWallet();
+  const { connectAsync, signMessageAsync, connectPending, address, connectors } = useWallet();
   const [walletAddress, setWalletAddress] = React.useState("");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -39,11 +39,16 @@ export function RegisterForm() {
     }
     setSubmitting(true);
     try {
+      const { nonce, message } = await requestWalletNonce(effectiveAddress);
+      const signature = await signMessageAsync({ message });
       await registerAccount({
         walletAddress: effectiveAddress,
+        nonce,
+        signature,
         email: email.trim() || undefined,
         name: name.trim() || undefined,
         role,
+        sign: async (msg) => signMessageAsync({ message: msg }),
       });
       toast.success("Account created");
       router.push("/onboarding");

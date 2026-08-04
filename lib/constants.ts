@@ -17,6 +17,8 @@ export function roleHome(role: Role): string {
   }
 }
 
+export const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD ?? "cleanflow-demo-pass";
+
 export const DEMO_ACCOUNTS: Array<{ role: Role; email: string; label: string; description: string }> = [
   {
     role: "MERCHANT",

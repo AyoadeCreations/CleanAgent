@@ -3,6 +3,7 @@
 import { useRules, useAuditLogs, useTransactions } from "@/hooks/use-api";
 import { truncateAddress } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ComplianceBadge } from "@/components/compliance-badge";
 import {
@@ -15,15 +16,26 @@ import {
 } from "@/components/ui/table";
 
 export function ComplianceView() {
-  const { data: rulesData, isLoading: rulesLoading } = useRules();
-  const { data: auditData, isLoading: auditLoading, error: auditError } = useAuditLogs();
-  const { data: txData, isLoading: txLoading } = useTransactions();
+  const { data: rulesData, isLoading: rulesLoading, error: rulesError, refetch: refetchRules, isFetching: rulesFetching } = useRules();
+  const { data: auditData, isLoading: auditLoading, error: auditError, refetch: refetchAudit, isFetching: auditFetching } = useAuditLogs();
+  const { data: txData, isLoading: txLoading, error: txError, refetch: refetchTx, isFetching: txFetching } = useTransactions();
 
   const pendingReviews = (txData?.transactions ?? []).filter((t) => t.status === "SUSPENDED").length;
   const highRisk = (txData?.transactions ?? []).filter((t) => t.riskLevel === "CRITICAL" || t.riskLevel === "HIGH").length;
 
   return (
     <div className="space-y-6">
+      {txError && (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-dashed p-4">
+          <p className="text-sm text-muted-foreground">
+            Couldn&apos;t load transaction summaries — {txError instanceof Error ? txError.message : "try again"}.
+          </p>
+          <Button variant="outline" size="sm" onClick={() => refetchTx()} disabled={txFetching}>
+            {txFetching ? "Retrying…" : "Retry"}
+          </Button>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>
@@ -58,6 +70,13 @@ export function ComplianceView() {
         <CardContent>
           {rulesLoading ? (
             <Skeleton className="h-32 w-full" />
+          ) : rulesError ? (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-10 text-center">
+              <p className="text-sm text-muted-foreground">Couldn&apos;t load compliance rules.</p>
+              <Button variant="outline" size="sm" onClick={() => refetchRules()} disabled={rulesFetching}>
+                {rulesFetching ? "Retrying…" : "Retry"}
+              </Button>
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -106,7 +125,16 @@ export function ComplianceView() {
           {auditLoading ? (
             <Skeleton className="h-40 w-full" />
           ) : auditError ? (
-            <p className="text-sm text-muted-foreground">Audit logs are restricted to compliance officers.</p>
+            <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-10 text-center">
+              <p className="text-sm text-muted-foreground">
+                {auditError instanceof Error && auditError.message === "Request failed"
+                  ? "Audit logs are restricted to compliance officers."
+                  : "Couldn&apos;t load the audit trail."}
+              </p>
+              <Button variant="outline" size="sm" onClick={() => refetchAudit()} disabled={auditFetching}>
+                {auditFetching ? "Retrying…" : "Retry"}
+              </Button>
+            </div>
           ) : (
             <div className="max-h-[480px] space-y-1 overflow-y-auto">
               {(auditData?.logs ?? []).map((log) => (

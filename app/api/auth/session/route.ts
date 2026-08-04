@@ -1,9 +1,13 @@
 import { db } from "@/lib/database/client";
-import { createSession, destroySession } from "@/lib/auth/session";
-import { toSessionUser } from "@/lib/auth/session";
+import { createSession, destroySession, toSessionUser } from "@/lib/auth/session";
+import { requireWalletProof } from "@/lib/auth/nonce";
+import { verifyPassword } from "@/lib/auth/password";
 import { fail, ok, readJson, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
+import { parseOrThrow, loginEmailSchema, walletLoginSchema } from "@/lib/validation";
 import type { SessionUser } from "@/lib/types";
+
+const WALLET_RE = /^0x[0-9a-fA-F]{40}$/;
 
 function toUserDto(user: SessionUser) {
   return {
@@ -21,7 +25,10 @@ export async function POST(request: Request) {
   try {
     const body = await readJson(request);
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : undefined;
+    const password = typeof body.password === "string" ? body.password : undefined;
     const walletAddress = typeof body.walletAddress === "string" ? body.walletAddress.trim().toLowerCase() : undefined;
+    const nonce = typeof body.nonce === "string" ? body.nonce : undefined;
+    const signature = typeof body.signature === "string" ? body.signature : undefined;
     const name = typeof body.name === "string" ? body.name.trim() : undefined;
     const autoRegister = body.autoRegister === true;
     const ipAddress = request.headers.get("x-forwarded-for") ?? "local";
@@ -29,17 +36,23 @@ export async function POST(request: Request) {
     let user: SessionUser | null = null;
 
     if (email) {
-      const found = await db.user.findFirst({ where: { email } });
-      if (!found) throw new ApiError("INVALID_CREDENTIALS", 401, "No account found for this email.");
+      const { email: validEmail, password: validPassword } = parseOrThrow(loginEmailSchema, { email, password });
+      const found = await db.user.findFirst({ where: { email: validEmail } });
+      if (!found || !found.passwordHash || !verifyPassword(validPassword, found.passwordHash)) {
+        throw new ApiError("INVALID_CREDENTIALS", 401, "Invalid email or password.");
+      }
       user = toSessionUser(found);
     } else if (walletAddress) {
-      if (!/^0x[0-9a-f]{40}$/.test(walletAddress)) {
+      if (!WALLET_RE.test(walletAddress)) {
         throw new ApiError("INVALID_WALLET", 400, "Wallet address must be a valid EVM address.");
       }
-      let found = await db.user.findUnique({ where: { walletAddress } });
+      const proof = parseOrThrow(walletLoginSchema, { walletAddress, nonce, signature });
+      await requireWalletProof(proof.walletAddress, proof.nonce, proof.signature);
+
+      let found = await db.user.findUnique({ where: { walletAddress: proof.walletAddress } });
       if (!found && autoRegister) {
         found = await db.user.create({
-          data: { walletAddress, name: name ?? null, role: "MERCHANT" },
+          data: { walletAddress: proof.walletAddress, name: name ?? null, role: "MERCHANT" },
         });
         await writeAuditLog({
           actorId: found.id,
@@ -53,7 +66,7 @@ export async function POST(request: Request) {
       if (!found) throw new ApiError("NOT_REGISTERED", 404, "Wallet not registered. Create an account first.");
       user = toSessionUser(found);
     } else {
-      throw new ApiError("MISSING_CREDENTIALS", 400, "Provide an email or wallet address.");
+      throw new ApiError("MISSING_CREDENTIALS", 400, "Provide an email and password, or a wallet signature.");
     }
 
     await createSession(user);

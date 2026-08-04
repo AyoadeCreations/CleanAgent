@@ -3,6 +3,7 @@ import { db } from "@/lib/database/client";
 import { fail, ok, readJson, requireApiUser, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
 import { toTransactionDto } from "@/lib/database/mappers";
+import { parseOrThrow, transactionActionSchema } from "@/lib/validation";
 import type { TransactionStatus } from "@/lib/types";
 
 const ACTIONS: Record<string, TransactionStatus> = {
@@ -17,7 +18,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const user = await requireApiUser();
     const { id } = await params;
     const body = await readJson(request);
-    const action = typeof body.action === "string" ? body.action.toUpperCase() : "";
+    const { action } = parseOrThrow(transactionActionSchema, { action: typeof body.action === "string" ? body.action.toUpperCase() : "" });
 
     const transaction = await db.transaction.findUnique({ where: { id } });
     if (!transaction) throw new ApiError("NOT_FOUND", 404, "Transaction not found.");

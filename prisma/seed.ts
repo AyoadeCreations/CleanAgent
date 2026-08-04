@@ -1,5 +1,6 @@
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { PrismaClient } from "../lib/generated/prisma/client";
+import { hashPassword } from "../lib/auth/password";
 import {
   Role,
   AgentStatus,
@@ -14,6 +15,8 @@ import {
 const prisma = new PrismaClient({
   adapter: new PrismaBetterSqlite3({ url: process.env.DATABASE_URL ?? "file:./dev.db" }),
 });
+
+const DEMO_PASSWORD_HASH = hashPassword("cleanflow-demo-pass");
 
 const wallet = (seed: string) => `0x${seed.padStart(40, "0").slice(0, 40)}`;
 
@@ -71,6 +74,7 @@ async function main() {
         verified: true,
         verificationStatus: VerificationStatus.VERIFIED,
         kycLevel: i === 2 ? 1 : 2,
+        passwordHash: DEMO_PASSWORD_HASH,
         createdAt: daysAgo(60 - i * 4),
       },
     });
@@ -89,6 +93,7 @@ async function main() {
         verified: true,
         verificationStatus: VerificationStatus.VERIFIED,
         kycLevel: i === 0 ? 2 : 1,
+        passwordHash: DEMO_PASSWORD_HASH,
         createdAt: daysAgo(55 - i * 3),
       },
     });
@@ -104,6 +109,7 @@ async function main() {
       verified: true,
       verificationStatus: VerificationStatus.VERIFIED,
       kycLevel: 3,
+      passwordHash: DEMO_PASSWORD_HASH,
       createdAt: daysAgo(70),
     },
   });
@@ -117,6 +123,7 @@ async function main() {
       verified: true,
       verificationStatus: VerificationStatus.VERIFIED,
       kycLevel: 3,
+      passwordHash: DEMO_PASSWORD_HASH,
       createdAt: daysAgo(70),
     },
   });
@@ -503,6 +510,7 @@ async function main() {
   console.log("  business    →", businessOwners[0].email);
   console.log("  compliance  →", compliance.email);
   console.log("  admin       →", admin.email);
+  console.log("  password    → cleanflow-demo-pass");
 }
 
 main()

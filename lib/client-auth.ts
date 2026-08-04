@@ -8,50 +8,57 @@ export class ClientApiError extends Error {
   }
 }
 
-export async function loginWithEmail(email: string): Promise<SessionUser> {
-  const res = await fetch("/api/auth/session", {
+async function postJson<T>(url: string, body: unknown): Promise<T> {
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify(body),
   });
   const data = await res.json();
-  if (!data.ok) throw new ClientApiError(data.error ?? "Login failed", data.code);
-  return data.data.user as SessionUser;
+  if (!data.ok) throw new ClientApiError(data.error ?? "Request failed", data.code);
+  return data.data as T;
 }
 
-export async function loginWithWallet(walletAddress: string, autoRegister = true): Promise<SessionUser> {
-  const res = await fetch("/api/auth/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress, autoRegister }),
-  });
-  const data = await res.json();
-  if (!data.ok) throw new ClientApiError(data.error ?? "Login failed", data.code);
-  return data.data.user as SessionUser;
+export async function requestWalletNonce(walletAddress: string): Promise<{ nonce: string; message: string }> {
+  return postJson<{ nonce: string; message: string }>("/api/auth/nonce", { walletAddress });
+}
+
+export async function loginWithEmail(email: string, password: string): Promise<SessionUser> {
+  const data = await postJson<{ user: SessionUser }>("/api/auth/session", { email, password });
+  return data.user;
+}
+
+export async function loginWithWallet(
+  walletAddress: string,
+  nonce: string,
+  signature: string,
+  autoRegister = true
+): Promise<SessionUser> {
+  const data = await postJson<{ user: SessionUser }>("/api/auth/session", { walletAddress, nonce, signature, autoRegister });
+  return data.user;
 }
 
 export async function registerAccount(input: {
   walletAddress: string;
+  nonce: string;
+  signature: string;
   email?: string;
   name?: string;
   role?: "MERCHANT" | "BUSINESS";
+  sign: (message: string) => Promise<string>;
 }): Promise<SessionUser> {
-  const res = await fetch("/api/user/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
+  await postJson("/api/user/create", {
+    walletAddress: input.walletAddress,
+    nonce: input.nonce,
+    signature: input.signature,
+    email: input.email,
+    name: input.name,
+    role: input.role,
   });
-  const data = await res.json();
-  if (!data.ok) throw new ClientApiError(data.error ?? "Registration failed", data.code);
 
-  const session = await fetch("/api/auth/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress: input.walletAddress, autoRegister: false }),
-  });
-  const sessionData = await session.json();
-  if (!sessionData.ok) throw new ClientApiError(sessionData.error ?? "Login failed", sessionData.code);
-  return sessionData.data.user as SessionUser;
+  const fresh = await requestWalletNonce(input.walletAddress);
+  const freshSignature = await input.sign(fresh.message);
+  return loginWithWallet(input.walletAddress, fresh.nonce, freshSignature, false);
 }
 
 export async function logout(): Promise<void> {
@@ -64,26 +71,17 @@ export async function verifyIdentity(walletAddress?: string): Promise<{
   reference: string;
   checkCount: number;
 }> {
-  const res = await fetch("/api/verify", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ walletAddress }),
-  });
-  const data = await res.json();
-  if (!data.ok) throw new ClientApiError(data.error ?? "Verification failed", data.code);
-  return data.data.status;
+  return postJson<{
+    verified: boolean;
+    level: number;
+    reference: string;
+    checkCount: number;
+  }>("/api/verify", { walletAddress });
 }
 
 export async function createBusiness(input: {
   name: string;
   description?: string;
 }): Promise<{ id: string; name: string; status: string }> {
-  const res = await fetch("/api/business", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(input),
-  });
-  const data = await res.json();
-  if (!data.ok) throw new ClientApiError(data.error ?? "Failed to create business", data.code);
-  return data.data.business;
+  return postJson("/api/business", input);
 }

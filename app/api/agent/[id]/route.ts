@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/database/client";
 import { fail, ok, readJson, requireApiUser, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
+import { parseOrThrow, agentUpdateSchema } from "@/lib/validation";
 import type { AgentStatus } from "@/lib/types";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -14,6 +15,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     if (!agent) throw new ApiError("NOT_FOUND", 404, "Agent not found.");
     if (agent.ownerId !== user.id) throw new ApiError("FORBIDDEN", 403, "You do not own this agent.");
 
+    const input = parseOrThrow(agentUpdateSchema, {
+      name: body.name,
+      description: body.description,
+      dailyLimit: body.dailyLimit,
+      monthlyLimit: body.monthlyLimit,
+      status: body.status,
+    });
+
     const data: {
       name?: string;
       description?: string | null;
@@ -23,14 +32,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       status?: AgentStatus;
     } = {};
 
-    if (typeof body.name === "string") data.name = body.name.trim();
-    if (typeof body.description === "string") data.description = body.description.trim();
-    if (typeof body.dailyLimit === "number") data.dailyLimit = body.dailyLimit;
-    if (typeof body.monthlyLimit === "number") data.monthlyLimit = body.monthlyLimit;
+    if (input.name) data.name = input.name.trim();
+    if (typeof input.description === "string") data.description = input.description.trim();
+    if (typeof input.dailyLimit === "number") data.dailyLimit = input.dailyLimit;
+    if (typeof input.monthlyLimit === "number") data.monthlyLimit = input.monthlyLimit;
     if (body.permissions && typeof body.permissions === "object") data.permissions = body.permissions as object;
-    if (typeof body.status === "string" && ["ACTIVE", "PAUSED", "SUSPENDED", "DEACTIVATED"].includes(body.status)) {
-      data.status = body.status as AgentStatus;
-    }
+    if (input.status) data.status = input.status;
 
     const updated = await db.agent.update({ where: { id }, data });
 

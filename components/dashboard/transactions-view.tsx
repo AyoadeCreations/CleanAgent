@@ -89,7 +89,7 @@ interface CreateForm {
 export function TransactionsView({ role }: { role: Role }) {
   const queryClient = useQueryClient();
   const isOverseer = role === "COMPLIANCE" || role === "ADMIN";
-  const { data, isLoading } = useTransactions();
+  const { data, isLoading, error, refetch, isFetching } = useTransactions();
   const { data: agentsData } = useAgents();
   const actions = useTransactionActions();
 
@@ -131,6 +131,23 @@ export function TransactionsView({ role }: { role: Role }) {
   const pageCount = Math.max(1, Math.ceil(transactions.length / PAGE_SIZE));
   const safePage = Math.min(page, pageCount);
   const paged = transactions.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16 text-center">
+        <ShieldAlertIcon className="size-8 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium">Couldn&apos;t load transactions</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {error instanceof Error ? error.message : "Something went wrong."}
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+          {isFetching ? "Retrying…" : "Retry"}
+        </Button>
+      </div>
+    );
+  }
 
   function toggleSort(key: "amount" | "createdAt") {
     setSort((s) => {

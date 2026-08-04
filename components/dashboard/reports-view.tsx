@@ -20,7 +20,7 @@ import {
 
 export function ReportsView() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useReports();
+  const { data, isLoading, error, refetch, isFetching } = useReports();
   const [generating, setGenerating] = React.useState(false);
 
   async function generate() {
@@ -38,7 +38,25 @@ export function ReportsView() {
     }
   }
 
-  const latest = data?.report;
+  const latest = data?.reports?.[0];
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-12 text-center">
+        <FileBarChart2Icon className="size-8 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium">Couldn&apos;t load reports</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {error instanceof Error ? error.message : "Something went wrong."}
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCwIcon />
+          {isFetching ? "Retrying…" : "Retry"}
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -105,7 +123,7 @@ export function ReportsView() {
                   </TableRow>
                 </TableHeader>
               <TableBody>
-                {(data?.history ?? []).map((r) => (
+                {(data?.reports ?? []).map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="text-xs text-muted-foreground">{formatDateTime(r.createdAt)}</TableCell>
                     <TableCell className="font-mono text-xs">{r.type.toLowerCase()}</TableCell>
@@ -117,7 +135,7 @@ export function ReportsView() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {(data?.history ?? []).length === 0 && (
+                {(data?.reports ?? []).length === 0 && (
                   <TableRow>
                     <TableCell colSpan={4} className="h-20 text-center text-sm text-muted-foreground">
                       No reports generated yet.

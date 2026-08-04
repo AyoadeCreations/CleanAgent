@@ -46,3 +46,7 @@ next-env.d.ts
 *.db
 *.db-journal
 *.sqlite
+
+# dev/prod server logs
+*.log
+

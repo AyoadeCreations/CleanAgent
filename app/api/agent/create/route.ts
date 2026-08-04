@@ -1,17 +1,19 @@
 import { db } from "@/lib/database/client";
 import { fail, ok, readJson, requireApiUser, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
+import { parseOrThrow, agentCreateSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
   try {
     const user = await requireApiUser();
     const body = await readJson(request);
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const description = typeof body.description === "string" ? body.description.trim() : null;
-    const dailyLimit = typeof body.dailyLimit === "number" ? body.dailyLimit : 0;
-    const monthlyLimit = typeof body.monthlyLimit === "number" ? body.monthlyLimit : 0;
+    const input = parseOrThrow(agentCreateSchema, body);
+    const name = input.name;
+    const description = input.description?.trim() ? input.description.trim() : null;
+    const dailyLimit = input.dailyLimit;
+    const monthlyLimit = input.monthlyLimit;
     const permissions = (body.permissions as Record<string, unknown>) ?? {};
-    const walletAddress = typeof body.walletAddress === "string" ? body.walletAddress.trim().toLowerCase() : null;
+    const walletAddress = input.walletAddress?.trim().toLowerCase() || null;
 
     if (!name) throw new ApiError("MISSING_NAME", 400, "Agent name is required.");
     if (dailyLimit < 0 || monthlyLimit < 0) throw new ApiError("INVALID_LIMITS", 400, "Limits cannot be negative.");

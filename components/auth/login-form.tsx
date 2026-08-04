@@ -3,9 +3,10 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { z } from "zod";
 import { useWallet } from "@/hooks/use-wallet";
-import { loginWithEmail, loginWithWallet, ClientApiError } from "@/lib/client-auth";
-import { DEMO_ACCOUNTS, roleHome } from "@/lib/constants";
+import { loginWithEmail, loginWithWallet, requestWalletNonce, ClientApiError } from "@/lib/client-auth";
+import { DEMO_ACCOUNTS, DEMO_PASSWORD, roleHome } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 
+const emailSchema = z.string().trim().email("Enter a valid email address.");
+const passwordSchema = z.string().min(6, "Password must be at least 6 characters.");
+
 export function LoginForm() {
   const router = useRouter();
   const { connectAsync, signMessageAsync, connectPending, address, connectors } = useWallet();
   const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [submitting, setSubmitting] = React.useState<"demo" | "email" | "wallet" | null>(null);
 
   async function go(user: { role: string }) {
@@ -26,7 +31,7 @@ export function LoginForm() {
   async function handleDemo(accountEmail: string, label: string) {
     setSubmitting("demo");
     try {
-      const user = await loginWithEmail(accountEmail);
+      const user = await loginWithEmail(accountEmail, DEMO_PASSWORD);
       toast.success(`Signed in as ${label}`);
       await go(user);
     } catch (error) {
@@ -38,10 +43,19 @@ export function LoginForm() {
 
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    const parsedEmail = emailSchema.safeParse(email);
+    const parsedPassword = passwordSchema.safeParse(password);
+    if (!parsedEmail.success) {
+      toast.error(parsedEmail.error.issues[0].message);
+      return;
+    }
+    if (!parsedPassword.success) {
+      toast.error(parsedPassword.error.issues[0].message);
+      return;
+    }
     setSubmitting("email");
     try {
-      const user = await loginWithEmail(email.trim());
+      const user = await loginWithEmail(parsedEmail.data, parsedPassword.data);
       toast.success("Signed in");
       await go(user);
     } catch (error) {
@@ -56,10 +70,9 @@ export function LoginForm() {
     try {
       const result = await connectAsync({ connector: connectors[0] });
       const walletAddress = result.accounts[0];
-      await signMessageAsync({
-        message: `Sign in to CleanFlow\n\nWallet: ${walletAddress}`,
-      });
-      const user = await loginWithWallet(walletAddress, true);
+      const { nonce, message } = await requestWalletNonce(walletAddress);
+      const signature = await signMessageAsync({ message });
+      const user = await loginWithWallet(walletAddress, nonce, signature, true);
       toast.success(`Connected ${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}`);
       await go(user);
     } catch (error) {
@@ -102,8 +115,8 @@ export function LoginForm() {
       <Separator className="bg-border/60" />
 
       <form onSubmit={handleEmail} className="space-y-3">
-        <Label htmlFor="login-email">Email</Label>
-        <div className="flex gap-2">
+        <div className="space-y-1">
+          <Label htmlFor="login-email">Email</Label>
           <Input
             id="login-email"
             type="email"
@@ -113,10 +126,22 @@ export function LoginForm() {
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card"
           />
-          <Button type="submit" disabled={!email.trim() || submitting !== null}>
-            Continue
-          </Button>
         </div>
+        <div className="space-y-1">
+          <Label htmlFor="login-password">Password</Label>
+          <Input
+            id="login-password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="bg-card"
+          />
+        </div>
+        <Button type="submit" className="w-full" disabled={!email.trim() || !password || submitting !== null}>
+          Sign in
+        </Button>
       </form>
 
       <Separator className="bg-border/60" />

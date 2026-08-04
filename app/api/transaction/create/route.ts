@@ -5,6 +5,7 @@ import { validateTransaction, generateAuditHash } from "@/lib/cleanverse";
 import { writeAuditLog } from "@/lib/database/audit";
 import { toTransactionDto } from "@/lib/database/mappers";
 import { riskScoreToLevel } from "@/lib/cleanverse/client";
+import { parseOrThrow, transactionCreateSchema } from "@/lib/validation";
 
 const WALLET_RE = /^0x[0-9a-fA-F]{40}$/;
 
@@ -14,12 +15,21 @@ export async function POST(request: Request) {
     const body = await readJson(request);
     const ipAddress = request.headers.get("x-forwarded-for") ?? "local";
 
-    const receiver = typeof body.receiver === "string" ? body.receiver.trim().toLowerCase() : "";
-    const amount = typeof body.amount === "number" ? body.amount : Number(body.amount);
-    const assetType = typeof body.assetType === "string" ? body.assetType : "USDC";
-    const type = typeof body.type === "string" ? body.type.toUpperCase() : "PAYMENT";
-    const reference = typeof body.reference === "string" && body.reference.trim() ? body.reference.trim().toUpperCase() : null;
-    const agentId = typeof body.agentId === "string" && body.agentId ? body.agentId : null;
+    const input = parseOrThrow(transactionCreateSchema, {
+      receiver: body.receiver,
+      amount: body.amount,
+      assetType: body.assetType,
+      type: body.type,
+      reference: body.reference,
+      agentId: body.agentId,
+    });
+
+    const receiver = input.receiver;
+    const amount = input.amount;
+    const assetType = input.assetType;
+    const type = input.type;
+    const reference = input.reference?.trim().toUpperCase() || null;
+    const agentId = input.agentId?.trim() || null;
 
     if (!WALLET_RE.test(receiver)) {
       throw new ApiError("INVALID_RECEIVER", 400, "Receiver must be a valid EVM address.");

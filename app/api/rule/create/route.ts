@@ -1,18 +1,31 @@
 import { db } from "@/lib/database/client";
 import { fail, ok, readJson, requireApiUser, ApiError } from "@/lib/api";
 import { writeAuditLog } from "@/lib/database/audit";
+import { z } from "zod";
+import { parseOrThrow } from "@/lib/validation";
+
+const ruleCreateSchema = z.object({
+  name: z.string().trim().min(1).max(200),
+  description: z.string().trim().max(400).optional().or(z.literal("")),
+  type: z.enum(["ALLOWLIST", "BLOCKLIST", "MAX_AMOUNT", "RISK_THRESHOLD", "SPEND_LIMIT", "TIME_WINDOW"]),
+  action: z.enum(["ALLOW", "BLOCK", "FLAG"]).default("ALLOW"),
+  priority: z.number().int().nonnegative().max(100).optional(),
+  enabled: z.boolean().optional(),
+  conditions: z.record(z.string(), z.unknown()).optional(),
+});
 
 export async function POST(request: Request) {
   try {
     const user = await requireApiUser();
     const body = await readJson(request);
-    const name = typeof body.name === "string" ? body.name.trim() : "";
-    const description = typeof body.description === "string" ? body.description.trim() : null;
-    const type = typeof body.type === "string" ? body.type : "";
-    const action = typeof body.action === "string" ? body.action.toUpperCase() : "ALLOW";
-    const priority = typeof body.priority === "number" ? body.priority : 0;
-    const enabled = body.enabled !== false;
-    const conditions = (body.conditions as Record<string, unknown>) ?? {};
+    const input = parseOrThrow(ruleCreateSchema, body);
+    const name = input.name;
+    const description = input.description?.trim() ? input.description.trim() : null;
+    const type = input.type;
+    const action = input.action;
+    const priority = input.priority ?? 0;
+    const enabled = input.enabled !== false;
+    const conditions = (input.conditions ?? {}) as Record<string, unknown>;
 
     if (!name) throw new ApiError("MISSING_NAME", 400, "Rule name is required.");
     if (!type) throw new ApiError("MISSING_TYPE", 400, "Rule type is required.");

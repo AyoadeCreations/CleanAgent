@@ -43,7 +43,7 @@ const EMPTY: FormState = { name: "", description: "", walletAddress: "", dailyLi
 
 export function AgentsView() {
   const queryClient = useQueryClient();
-  const { data, isLoading } = useAgents();
+  const { data, isLoading, error, refetch, isFetching } = useAgents();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [editAgent, setEditAgent] = React.useState<AgentDTO | null>(null);
   const [form, setForm] = React.useState<FormState>(EMPTY);
@@ -152,8 +152,23 @@ export function AgentsView() {
         </Button>
       </div>
 
+      {error && (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16 text-center">
+          <BotIcon className="size-8 text-muted-foreground" />
+          <div>
+            <p className="text-sm font-medium">Couldn&apos;t load agents</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {error instanceof Error ? error.message : "Something went wrong."}
+            </p>
+          </div>
+          <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+            {isFetching ? "Retrying…" : "Retry"}
+          </Button>
+        </div>
+      )}
+
       {isLoading && <Skeleton className="h-40 w-full" />}
-      {!isLoading && (data?.agents ?? []).length === 0 && (
+      {!isLoading && !error && (data?.agents ?? []).length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border bg-card py-16 text-center">
           <BotIcon className="size-8 text-muted-foreground" />
           <p className="mt-3 text-sm font-medium">No agents yet</p>

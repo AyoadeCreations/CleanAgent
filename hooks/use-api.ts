@@ -85,8 +85,7 @@ export interface ReportEntry {
 export function useReports() {
   return useQuery({
     queryKey: ["reports"],
-    queryFn: () =>
-      fetcher<{ report: ReportEntry; history: ReportEntry[] }>("/api/report"),
+    queryFn: () => fetcher<{ reports: ReportEntry[] }>("/api/report"),
   });
 }
 

@@ -1,6 +1,8 @@
 import { db } from "@/lib/database/client";
 import { fail, ok, readJson, ApiError } from "@/lib/api";
+import { requireWalletProof } from "@/lib/auth/nonce";
 import { writeAuditLog } from "@/lib/database/audit";
+import { parseOrThrow, registerSchema } from "@/lib/validation";
 
 const WALLET_RE = /^0x[0-9a-fA-F]{40}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -8,15 +10,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function POST(request: Request) {
   try {
     const body = await readJson(request);
-    const walletAddress = typeof body.walletAddress === "string" ? body.walletAddress.trim().toLowerCase() : "";
-    const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : null;
-    const name = typeof body.name === "string" ? body.name.trim() : null;
-    const role = body.role === "BUSINESS" ? "BUSINESS" : "MERCHANT";
+    const input = parseOrThrow(registerSchema, body);
+    const walletAddress = input.walletAddress.toLowerCase();
+    const email = input.email ? input.email.toLowerCase() : null;
+    const name = input.name ?? null;
+    const role = input.role === "BUSINESS" ? "BUSINESS" : "MERCHANT";
     const ipAddress = request.headers.get("x-forwarded-for") ?? "local";
 
     if (!WALLET_RE.test(walletAddress)) {
       throw new ApiError("INVALID_WALLET", 400, "Wallet address must be a valid EVM address (0x + 40 hex chars).");
     }
+    await requireWalletProof(walletAddress, input.nonce, input.signature);
     if (email && !EMAIL_RE.test(email)) {
       throw new ApiError("INVALID_EMAIL", 400, "Enter a valid email address.");
     }
