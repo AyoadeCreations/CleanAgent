@@ -267,7 +267,7 @@ export function Hero() {
               <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
 
-            <h1 className="mt-8 text-balance text-[clamp(4rem,7vw,7rem)] font-bold leading-none tracking-[-0.04em]">
+            <h1 className="mt-8 text-balance text-[clamp(2.75rem,8vw,7rem)] font-bold leading-none tracking-[-0.04em]">
               Payments that verify before they settle.
             </h1>
 

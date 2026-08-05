@@ -413,7 +413,7 @@ export function DemoWorkflow() {
                                 </p>
                               </div>
                               <div className="flex gap-2">
-                                {(txResult.decisions as Array<{ rule: string; result: string; reason: string }>).map((d, i) => (
+                                {(txResult.decisions as Array<{ ruleName: string; result: string; reason: string }>).map((d, i) => (
                                   <Badge
                                     key={i}
                                     variant="outline"
@@ -422,7 +422,7 @@ export function DemoWorkflow() {
                                       d.result === "ALLOW" ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500"
                                     )}
                                   >
-                                    {d.result === "ALLOW" ? "✓" : "✗"} {d.rule.toLowerCase()}
+                                    {d.result === "ALLOW" ? "✓" : "✗"} {d.ruleName.toLowerCase()}
                                   </Badge>
                                 ))}
                               </div>
@@ -510,7 +510,7 @@ export function DemoWorkflow() {
                           </ul>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          <Button render={<Link href="/reports" />}>
+                          <Button nativeButton={false} render={<Link href="/reports" />}>
                             <FileCheck2Icon />
                             View your record
                           </Button>

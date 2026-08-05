@@ -29,7 +29,7 @@ export function Cta() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <DemoButton className="px-7 py-[18px] text-base" />
-                <Button size="lg" variant="outline" render={<Link href="/register" />}>
+                <Button size="lg" variant="outline" nativeButton={false} render={<Link href="/register" />}>
                   Create account
                 </Button>
               </div>

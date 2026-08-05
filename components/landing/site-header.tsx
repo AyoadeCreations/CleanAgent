@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { href: "#how-it-works", label: "How it works" },
   { href: "#who-its-for", label: "Who it&apos;s for" },
   { href: "/reports", label: "Resources" },
-  { href: "/register", label: "Pricing" },
+  { href: "/register", label: "Get started" },
 ];
 
 export function SiteHeader() {
@@ -51,7 +51,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" render={<Link href="/login" />}>
+          <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
             Login
           </Button>
           <DemoButton className="px-6 py-2.5" />
@@ -83,7 +83,7 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Button variant="outline" render={<Link href="/login" onClick={() => setOpen(false)} />}>
+              <Button variant="outline" nativeButton={false} render={<Link href="/login" onClick={() => setOpen(false)} />}>
                 Login
               </Button>
               <DemoButton className="w-full px-6 py-2.5" />

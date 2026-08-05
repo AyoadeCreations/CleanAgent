@@ -275,6 +275,7 @@ export function MerchantDashboard({
             return (
               <Button
                 key={a.label}
+                nativeButton={false}
                 render={<Link href={a.href} />}
                 className="border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               >

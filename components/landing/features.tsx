@@ -10,12 +10,14 @@ import {
   ArrowUpRightIcon,
 } from "lucide-react";
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
+import { cn } from "@/lib/utils";
 
 interface Feature {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   image: string;
   imageAlt: string;
+  position: string;
   title: string;
   description: string;
   cta: { label: string; href: string };
@@ -25,44 +27,49 @@ const FEATURES: Feature[] = [
   {
     icon: BadgeCheckIcon,
     label: "Identity",
-    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Team verifying a business on a laptop",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow dashboard showing verified businesses",
+    position: "object-left",
     title: "Business verification",
     description: "Confirm the identity of every company before payments are approved.",
-    cta: { label: "Verify your business", href: "/onboarding" },
+    cta: { label: "See it in action", href: "/demo" },
   },
   {
     icon: ShieldCheckIcon,
     label: "Safety",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Payment protection dashboard",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow payment protection checks",
+    position: "object-center",
     title: "Payment protection",
     description: "Protect transfers using automated verification checks.",
-    cta: { label: "Explore payments", href: "/dashboard" },
+    cta: { label: "See it in action", href: "/demo" },
   },
   {
     icon: BotIcon,
     label: "Automation",
-    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Autonomous payment automation",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow automation workflow",
+    position: "object-right",
     title: "AI automations",
     description: "Create intelligent workflows that operate inside predefined rules.",
-    cta: { label: "Create an automation", href: "/dashboard/agents" },
+    cta: { label: "See it in action", href: "/demo" },
   },
   {
     icon: GlobeIcon,
     label: "Network",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Cross-border payment network",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow cross-border payments",
+    position: "object-left",
     title: "Cross-border payments",
     description: "Move money internationally in real time.",
-    cta: { label: "Send a payment", href: "/dashboard/transactions" },
+    cta: { label: "See it in action", href: "/demo" },
   },
   {
     icon: ZapIcon,
     label: "Speed",
-    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Instant settlement speed",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow instant settlement",
+    position: "object-center",
     title: "Instant settlement",
     description: "Complete transactions within seconds.",
     cta: { label: "See it in action", href: "/demo" },
@@ -70,11 +77,12 @@ const FEATURES: Feature[] = [
   {
     icon: FileBarChart2Icon,
     label: "Records",
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
-    imageAlt: "Activity records document",
+    image: "/dashboard.png",
+    imageAlt: "CleanFlow activity history",
+    position: "object-right",
     title: "Activity history",
     description: "Track every payment from beginning to end.",
-    cta: { label: "View activity", href: "/dashboard/reports" },
+    cta: { label: "See it in action", href: "/demo" },
   },
 ];
 
@@ -115,13 +123,13 @@ export function Features() {
                     </span>
                   </div>
 
-                  <div className="relative mt-6 aspect-[16/10] w-full overflow-hidden rounded-2xl">
+                  <div className="relative mt-6 aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 ring-border/60">
                     <Image
                       src={feature.image}
                       alt={feature.imageAlt}
                       fill
                       sizes="(min-width: 1024px) 30vw, 100vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className={cn("object-cover transition-transform duration-500 group-hover:scale-105", feature.position)}
                       loading="lazy"
                     />
                   </div>

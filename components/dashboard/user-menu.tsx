@@ -134,7 +134,7 @@ export function UserMenu({ user }: { user: SessionUser | null }) {
 
   if (!user) {
     return (
-      <Button variant="outline" size="sm" render={<Link href="/login" />}>
+      <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/login" />}>
         <LogInIcon className="size-4" />
         Sign in
       </Button>
@@ -178,7 +178,7 @@ export function UserMenu({ user }: { user: SessionUser | null }) {
       fallback={
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="flex size-8 items-center justify-center rounded-full bg-muted">?</span>
-          <Button variant="outline" size="sm" render={<Link href="/dashboard" />}>
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/dashboard" />}>
             Go to dashboard
           </Button>
         </div>
