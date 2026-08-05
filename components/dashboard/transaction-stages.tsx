@@ -21,12 +21,12 @@ interface StageDef {
 }
 
 const STAGES: StageDef[] = [
-  { key: "analyze", label: "Analyzing transaction", icon: Loader2Icon },
-  { key: "identity", label: "Checking identity", icon: FingerprintIcon },
-  { key: "assets", label: "Checking assets", icon: CoinsIcon },
-  { key: "rules", label: "Checking rules", icon: ScaleIcon },
-  { key: "approval", label: "Settlement approved", icon: BadgeCheckIcon },
-  { key: "audit", label: "Audit report generated", icon: FileCheck2Icon },
+  { key: "analyze", label: "Preparing your payment", icon: Loader2Icon },
+  { key: "identity", label: "Confirming your business", icon: FingerprintIcon },
+  { key: "assets", label: "Checking available funds", icon: CoinsIcon },
+  { key: "rules", label: "Running safety checks", icon: ScaleIcon },
+  { key: "approval", label: "Payment approved", icon: BadgeCheckIcon },
+  { key: "audit", label: "Activity recorded", icon: FileCheck2Icon },
 ];
 
 const ACTIVE_DWELL = 700;
@@ -165,7 +165,7 @@ export function TransactionVerificationStages({
                   !isActive && !isDone && !isFailed && "text-muted-foreground"
                 )}
               >
-                {isFailed ? "Settlement blocked by policy" : def.label} …
+                {isFailed ? "Payment declined by safety checks" : def.label} …
               </span>
             </div>
           );
@@ -179,8 +179,8 @@ export function TransactionVerificationStages({
           className={cn("pt-1 text-sm font-medium", blocked ? "text-red-500" : "text-emerald-500")}
         >
           {blocked
-            ? "Settlement was blocked by compliance policy."
-            : "Settlement approved · audit report generated."}
+            ? "This payment was declined by your account's safety checks."
+            : "Payment approved and ready to send."}
         </motion.p>
       )}
     </div>

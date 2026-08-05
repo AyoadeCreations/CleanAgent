@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "CleanFlow — trust infrastructure for the programmable economy";
+export const alt = "CleanFlow — trusted payments for modern businesses";
 
 export default async function OpenGraphImage() {
   return new ImageResponse(
@@ -39,10 +39,10 @@ export default async function OpenGraphImage() {
           <div style={{ fontSize: 38, fontWeight: 700, letterSpacing: -1 }}>CleanFlow</div>
         </div>
         <div style={{ marginTop: 36, fontSize: 64, fontWeight: 700, letterSpacing: -2, lineHeight: 1.05, maxWidth: 900 }}>
-          Payments that verify before they settle.
+          Payments you can trust, without the busywork.
         </div>
         <div style={{ marginTop: 24, fontSize: 26, color: "#ffffffcc", maxWidth: 820 }}>
-          Trust infrastructure for the programmable economy.
+          Send, receive, approve, and track payments from one secure workspace.
         </div>
       </div>
     ),

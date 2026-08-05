@@ -8,10 +8,10 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/transactions", label: "Transactions" },
-  { href: "/dashboard/agents", label: "Agents" },
-  { href: "/dashboard/compliance", label: "Compliance", overseerOnly: true },
-  { href: "/dashboard/reports", label: "Reports" },
+  { href: "/dashboard/transactions", label: "Payments" },
+  { href: "/dashboard/agents", label: "Automations" },
+  { href: "/dashboard/compliance", label: "Account health", overseerOnly: true },
+  { href: "/dashboard/reports", label: "Activity" },
   { href: "/dashboard/settings", label: "Settings" },
 ];
 

@@ -28,41 +28,41 @@ const ROLE_META: Record<
 > = {
   MERCHANT: {
     title: "Merchant workspace",
-    description: "Receive verified payments, issue invoices, and track settlements.",
+    description: "Send, receive, approve, and track payments from one place.",
     icon: WalletIcon,
     links: [
-      { href: "/dashboard/transactions", label: "Transactions", icon: ArrowLeftRightIcon },
-      { href: "/dashboard/reports", label: "Reports", icon: FileBarChart2Icon },
+      { href: "/dashboard/transactions", label: "Payments", icon: ArrowLeftRightIcon },
+      { href: "/dashboard/reports", label: "Activity history", icon: FileBarChart2Icon },
     ],
   },
   BUSINESS: {
     title: "Business workspace",
-    description: "Operate agents, enforce payment policy, and manage payroll and suppliers.",
+    description: "Run payment automations, set account rules, and manage payroll and suppliers.",
     icon: BotIcon,
     links: [
-      { href: "/dashboard/agents", label: "Agents", icon: BotIcon },
-      { href: "/dashboard/transactions", label: "Transactions", icon: ArrowLeftRightIcon },
-      { href: "/dashboard/compliance", label: "Compliance", icon: ShieldCheckIcon },
+      { href: "/dashboard/agents", label: "Automations", icon: BotIcon },
+      { href: "/dashboard/transactions", label: "Payments", icon: ArrowLeftRightIcon },
+      { href: "/dashboard/compliance", label: "Account health", icon: ShieldCheckIcon },
     ],
   },
   COMPLIANCE: {
-    title: "Compliance workspace",
-    description: "Monitor policy, review flags, and keep the audit trail honest.",
+    title: "Review workspace",
+    description: "Review payments that need attention and keep your activity history clean.",
     icon: ShieldCheckIcon,
     links: [
-      { href: "/dashboard/compliance", label: "Compliance", icon: ShieldCheckIcon },
-      { href: "/dashboard/transactions", label: "Transactions", icon: ArrowLeftRightIcon },
-      { href: "/dashboard/reports", label: "Reports", icon: FileBarChart2Icon },
+      { href: "/dashboard/compliance", label: "Review center", icon: ShieldCheckIcon },
+      { href: "/dashboard/transactions", label: "Payments", icon: ArrowLeftRightIcon },
+      { href: "/dashboard/reports", label: "Activity history", icon: FileBarChart2Icon },
     ],
   },
   ADMIN: {
     title: "Admin workspace",
-    description: "Platform-wide visibility across identities, transactions, and policy.",
+    description: "Platform-wide visibility across businesses and payments.",
     icon: FingerprintIcon,
     links: [
       { href: "/dashboard", label: "Overview", icon: ArrowLeftRightIcon },
-      { href: "/dashboard/compliance", label: "Compliance", icon: ShieldCheckIcon },
-      { href: "/dashboard/reports", label: "Reports", icon: FileBarChart2Icon },
+      { href: "/dashboard/compliance", label: "Review center", icon: ShieldCheckIcon },
+      { href: "/dashboard/reports", label: "Activity history", icon: FileBarChart2Icon },
     ],
   },
 };
@@ -107,7 +107,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total volume</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Money sent</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -119,7 +119,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Transactions</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Payments</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -131,7 +131,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active agents</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active automations</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -143,7 +143,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Compliance score</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Account health</CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -163,7 +163,7 @@ export function RoleHome({ role, verified }: { role: Role; verified: boolean }) 
           {isLoading ? (
             <Skeleton className="h-32 w-full" />
           ) : (txData?.transactions ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No transactions yet.</p>
+            <p className="text-sm text-muted-foreground">No payments yet. Send your first payment to get started.</p>
           ) : (
             <div className="space-y-1">
               {(txData?.transactions ?? []).slice(0, 6).map((t) => (

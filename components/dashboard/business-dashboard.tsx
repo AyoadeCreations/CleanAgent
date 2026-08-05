@@ -14,7 +14,7 @@ import {
   ShieldCheckIcon,
 } from "lucide-react";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { useDashboard, useTransactions, useAgents, useBusiness, useReports } from "@/hooks/use-api";
+import { useDashboard, useTransactions, useAgents, useReports } from "@/hooks/use-api";
 import { formatCompactCurrency, formatNumber, formatRelativeTime, truncateAddress } from "@/lib/format";
 import { WORLD, greeting } from "@/lib/world";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,6 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
   const { data, isLoading } = useDashboard();
   const { data: txData, isLoading: txLoading } = useTransactions();
   const { data: agentsData, isLoading: agentsLoading } = useAgents();
-  const { data: businessData } = useBusiness();
   const { data: reportsData, isLoading: reportsLoading } = useReports();
 
   const o = data?.overview;
@@ -64,12 +63,12 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
         <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">{WORLD.business.name}</h1>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-200 sm:text-base">{WORLD.business.tagline}.</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <ShieldCheckIcon className="size-3" />
-            {verified ? "identity verified" : "identity pending"}
+            {verified ? "Verified business" : "Verification pending"}
           </Badge>
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
-            {businessData?.business?.status ?? "ACTIVE"}
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
+            Payments enabled
           </Badge>
         </div>
       </motion.div>
@@ -95,18 +94,18 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
           sparkColor="#8b5cf6"
         />
         <StatCard
-          label="Active agents"
+          label="Active automations"
           value={activeAgents.length}
-          sub="Agents executing within limits"
+          sub="Agents working within limits"
           icon={<BotIcon className="size-4.5" />}
           trend={t?.agentsPercent}
           loading={agentsLoading}
           sparkColor="#10b981"
         />
         <StatCard
-          label="Compliance score"
+          label="Account health"
           value={o?.complianceScore ?? 0}
-          sub="Out of 100 · rolling"
+          sub="Good standing · out of 100"
           icon={<ShieldCheckIcon className="size-4.5" />}
           trend={t?.complianceDelta}
           loading={isLoading}
@@ -117,18 +116,18 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
       <div className="grid gap-4 lg:grid-cols-3">
         <SectionCard icon={<WalletIcon className="size-4 text-primary" />} title="Treasury position" actionLabel="View" href="/dashboard/transactions">
           <dl className="mt-4 grid gap-2">
-            <Row label="Total volume" value={formatCompactCurrency(o?.totalVolume ?? 0)} />
-            <Row label="Settlements" value={formatNumber(o?.settlements ?? 0, 0)} />
-            <Row label="Pending review" value={formatNumber(o?.pendingCount ?? 0, 0)} />
-            <Row label="Blocked by policy" value={formatNumber(o?.blockedCount ?? 0, 0)} />
+            <Row label="Total balance" value={formatCompactCurrency(o?.totalVolume ?? 0)} />
+            <Row label="Completed payments" value={formatNumber(o?.settlements ?? 0, 0)} />
+            <Row label="Awaiting approval" value={formatNumber(o?.pendingCount ?? 0, 0)} />
+            <Row label="Declined by safety checks" value={formatNumber(o?.blockedCount ?? 0, 0)} />
           </dl>
         </SectionCard>
-        <SectionCard icon={<BotIcon className="size-4 text-primary" />} title="Active agents" actionLabel="Manage" href="/dashboard/agents">
+        <SectionCard icon={<BotIcon className="size-4 text-primary" />} title="Active automations" actionLabel="Manage" href="/dashboard/agents">
           <div className="mt-4 space-y-2.5">
             {agentsLoading ? (
               <Skeleton className="h-28 w-full" />
             ) : activeAgents.length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">No active agents.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">No automations running yet.</p>
             ) : (
               activeAgents.slice(0, 4).map((a) => (
                 <div key={a.id} className="flex items-center justify-between rounded-lg border bg-background/60 px-3 py-2.5">
@@ -147,12 +146,14 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
             )}
           </div>
         </SectionCard>
-        <SectionCard icon={<FileBarChart2Icon className="size-4 text-primary" />} title="Recent reports" actionLabel="Reports" href="/dashboard/reports">
+        <SectionCard icon={<FileBarChart2Icon className="size-4 text-primary" />} title="Activity history" actionLabel="View" href="/dashboard/reports">
           <div className="mt-4 space-y-2.5">
             {reportsLoading ? (
               <Skeleton className="h-28 w-full" />
             ) : (reportsData?.reports ?? []).length === 0 ? (
-              <p className="py-8 text-center text-sm text-muted-foreground">No reports generated yet.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                You don&apos;t have any activity records yet. Records appear here after your first payment.
+              </p>
             ) : (
               (reportsData?.reports ?? []).slice(0, 4).map((r) => (
                 <div key={r.id} className="flex items-center justify-between rounded-lg border bg-background/60 px-3 py-2.5">
@@ -160,7 +161,7 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
                     <p className="truncate font-mono text-xs">{truncateAddress(r.reportHash, 10, 6)}</p>
                     <p className="text-xs text-muted-foreground">{formatRelativeTime(r.createdAt)}</p>
                   </div>
-                  <span className="font-mono text-xs text-emerald-500">signed</span>
+                  <span className="font-mono text-xs text-emerald-500">recorded</span>
                 </div>
               ))
             )}
@@ -186,8 +187,8 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
                 <TableHead>Type</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Risk</TableHead>
-                <TableHead>Agent</TableHead>
+                <TableHead>Review</TableHead>
+                <TableHead>Automation</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -200,7 +201,7 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
               ) : recent.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-24 text-center text-sm text-muted-foreground">
-                    No activity yet.
+                    You haven&apos;t sent any payments yet. Create your first payment to get started.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -213,12 +214,12 @@ export function BusinessDashboard({ userName, verified }: { userName?: string; v
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className={cn("font-mono", STATUS_STYLES[t.status])}>
-                        {t.status.toLowerCase()}
+                        {STATUS_LABELS[t.status] ?? t.status.toLowerCase()}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className={cn("font-mono", RISK_STYLES[t.riskLevel] ?? "")}>
-                        {t.riskLevel.toLowerCase()} · {t.riskScore}
+                        {RISK_LABELS[t.riskLevel] ?? t.riskLevel.toLowerCase()}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{t.agentName ?? "—"}</TableCell>
@@ -240,6 +241,22 @@ const STATUS_STYLES: Record<string, string> = {
   SUSPENDED: "bg-orange-500/10 text-orange-500 border-orange-500/30",
   BLOCKED: "bg-red-500/10 text-red-500 border-red-500/30",
   FAILED: "bg-rose-500/10 text-rose-500 border-rose-500/30",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Awaiting approval",
+  APPROVED: "Approved",
+  EXECUTED: "Sent",
+  SUSPENDED: "Needs review",
+  BLOCKED: "Declined",
+  FAILED: "Failed",
+};
+
+const RISK_LABELS: Record<string, string> = {
+  LOW: "Passed checks",
+  MEDIUM: "Passed checks",
+  HIGH: "Needs review",
+  CRITICAL: "Needs review",
 };
 
 const RISK_STYLES: Record<string, string> = {

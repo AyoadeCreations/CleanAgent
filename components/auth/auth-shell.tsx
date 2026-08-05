@@ -22,19 +22,19 @@ export function AuthShell({
         <Logo inverse />
         <div className="relative max-w-md">
           <h2 className="text-balance text-3xl font-semibold tracking-tight">
-            Trust Every Transaction
+            Payments you can trust, without the busywork
           </h2>
           <p className="mt-4 text-base leading-7 text-white/85">
-            Verified identity, verified assets, programmable compliance, autonomous execution,
-            and immutable audit trails — the application layer on Cleanverse.
+            Send, receive, and approve payments from one secure workspace. We check every
+            payment so your money only goes where it should.
           </p>
           <dl className="mt-10 grid grid-cols-2 gap-4 text-sm">
             <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur">
-              <dt className="text-white/70">Verified identities</dt>
+              <dt className="text-white/70">Verified businesses</dt>
               <dd className="mt-1 font-mono text-lg font-semibold">15,000+</dd>
             </div>
             <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur">
-              <dt className="text-white/70">Settled volume</dt>
+              <dt className="text-white/70">Payments processed</dt>
               <dd className="mt-1 font-mono text-lg font-semibold">$12.4M</dd>
             </div>
           </dl>

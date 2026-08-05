@@ -4,8 +4,8 @@ import { getSessionUser } from "@/lib/auth/session";
 import { AgentsView } from "@/components/dashboard/agents-view";
 
 export const metadata: Metadata = {
-  title: "Agents",
-  description: "Agent management",
+  title: "Automations",
+  description: "Payment automation management",
 };
 
 export default async function AgentsPage() {
@@ -15,9 +15,9 @@ export default async function AgentsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Agents</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Automations</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Autonomous payment agents with enforced daily and monthly spending limits.
+          Payment automations with enforced daily and monthly spending limits.
         </p>
       </div>
       <AgentsView />

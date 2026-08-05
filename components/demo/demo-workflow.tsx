@@ -36,17 +36,24 @@ interface StepMeta {
 }
 
 const STEPS: StepMeta[] = [
-  { key: "merchant", label: "Merchant onboarding", description: "Register the business identity", icon: RocketIcon },
-  { key: "cvi", label: "Identity verification", description: "Cleanverse Identity (CVI)", icon: FingerprintIcon },
-  { key: "cva", label: "Asset verification", description: "Cleanverse Asset (CVA)", icon: CoinsIcon },
-  { key: "agent", label: "Agent creation", description: "Scoped payment agent", icon: BotIcon },
-  { key: "rules", label: "Rule creation", description: "Compliance policies (CCP)", icon: ScaleIcon },
-  { key: "transaction", label: "Transaction execution", description: "Risk scoring + policy evaluation", icon: ArrowLeftRightIcon },
-  { key: "settlement", label: "Settlement", description: "Funds released on-chain", icon: LandmarkIcon },
-  { key: "audit", label: "Audit generation", description: "Signed compliance report", icon: FileCheck2Icon },
+  { key: "merchant", label: "Welcome", description: "Meet your business", icon: RocketIcon },
+  { key: "cvi", label: "Verify your business", description: "Confirm who you are", icon: FingerprintIcon },
+  { key: "cva", label: "Check your funds", description: "Make sure you can pay", icon: CoinsIcon },
+  { key: "agent", label: "Create automation", description: "Set a payment limit", icon: BotIcon },
+  { key: "rules", label: "Choose safety checks", description: "Decide what's allowed", icon: ScaleIcon },
+  { key: "transaction", label: "Create a payment", description: "Enter amount and recipient", icon: ArrowLeftRightIcon },
+  { key: "settlement", label: "Approve & send", description: "Release the funds", icon: LandmarkIcon },
+  { key: "audit", label: "Download the report", description: "Keep your records", icon: FileCheck2Icon },
 ];
 
-const STATUS_LINE = ["Identity verified", "Asset verified", "Rules validated", "Settlement complete", "Audit report generated"];
+const STATUS_LINE = [
+  "Business verified",
+  "Funds checked",
+  "Safety checks passed",
+  "Payment approved",
+  "Payment sent",
+  "Activity recorded",
+];
 
 interface StepResult {
   step: StepKey;
@@ -69,7 +76,7 @@ interface DemoInput {
 const DEFAULT_INPUT: DemoInput = {
   name: "BluePeak Logistics",
   industry: "Freight & logistics",
-  agentName: "Settlement Agent",
+  agentName: "Payroll Agent",
   dailyLimit: 10_000,
   amount: 4_200,
   assetType: "USDC",
@@ -149,10 +156,10 @@ export function DemoWorkflow() {
             <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <SparklesIcon className="size-6" />
             </div>
-            <h1 className="mt-5 text-3xl font-semibold tracking-tight">See the full trust workflow</h1>
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight">Send your first payment</h1>
             <p className="mt-3 text-muted-foreground">
-              A guided walkthrough of how a payment is verified, governed, settled, and audited — from identity
-              onboarding to a signed compliance report. No account required.
+              A guided walkthrough of how a payment goes from request to sent — verify your
+              business, create the payment, approve it, and download your record. No account required.
             </p>
             <ol className="mt-8 space-y-2">
               {STEPS.map((s, i) => (
@@ -168,7 +175,7 @@ export function DemoWorkflow() {
             <div className="mt-8">
               <Button size="lg" onClick={() => setStarted(true)} className="w-full sm:w-auto">
                 <RocketIcon />
-                Start demonstration
+                Start the walkthrough
               </Button>
             </div>
           </div>
@@ -272,32 +279,31 @@ export function DemoWorkflow() {
                           <Input id="demo-industry" value={input.industry} onChange={(e) => update("industry", e.target.value)} />
                         </div>
                         <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
-                          Submitting documents: Certificate of incorporation, UEN, beneficial ownership · KYC level 2
+                          Documents we&apos;ll check: certificate of incorporation, UEN, beneficial ownership
                         </div>
                       </div>
                     )}
 
                     {step.key === "cvi" && result && (
                       <StepSuccess
-                        title="Identity verified"
+                        title="Business verified"
                         rows={[
                           ["Reference", String(result.reference)],
-                          ["Provider", "Cleanverse Identity (CVI)"],
+                          ["Status", "Verified"],
                           ["Documents", (result.documents as string[])?.join(", ")],
-                          ["Identity score", `${result.identityScore}/100`],
+                          ["Verification score", `${result.identityScore}/100`],
                         ]}
                       />
                     )}
 
                     {step.key === "cva" && result && (
                       <StepSuccess
-                        title="Asset verified"
+                        title="Funds ready"
                         rows={[
                           ["Reference", String(result.reference)],
-                          ["Provider", "Cleanverse Asset (CVA)"],
                           ["Asset", String(result.assetType)],
                           ["Liquidity", String(result.liquidity)],
-                          ["Asset score", `${result.assetScore}/100`],
+                          ["Funds score", `${result.assetScore}/100`],
                         ]}
                       />
                     )}
@@ -306,7 +312,7 @@ export function DemoWorkflow() {
                       <div className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div className="space-y-2">
-                            <Label htmlFor="demo-agent">Agent name</Label>
+                            <Label htmlFor="demo-agent">Automation name</Label>
                             <Input id="demo-agent" value={input.agentName} onChange={(e) => update("agentName", e.target.value)} />
                           </div>
                           <div className="space-y-2">
@@ -321,10 +327,9 @@ export function DemoWorkflow() {
                         </div>
                         {result && (
                           <StepSuccess
-                            title="Agent created"
+                            title="Automation ready"
                             rows={[
-                              ["Agent ID", String(result.agentId)],
-                              ["Wallet", String(result.walletAddress)],
+                              ["Automation ID", String(result.agentId)],
                               ["Permissions", (result.permissions as string[])?.join(", ")],
                               ["Monthly limit", formatNumber(result.monthlyLimit as number)],
                             ]}
@@ -336,8 +341,7 @@ export function DemoWorkflow() {
                     {step.key === "rules" && result && (
                       <div className="space-y-3">
                         <p className="text-sm text-muted-foreground">
-                          {String(result.ruleCount)} policies compiled into the tenant&apos;s Compliance Control Plane (CCP).
-                          Evaluated in priority order on every transaction.
+                          These are the safety checks that will run on every payment you make.
                         </p>
                         {(result.rules as Array<{ name: string; type: string; action: string; priority: number }>).map((r) => (
                           <div key={r.type} className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-2.5 text-sm">
@@ -359,8 +363,7 @@ export function DemoWorkflow() {
                           </div>
                         ))}
                         <div className="rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
-                          Allowlist: {(result.allowlist as string[]).slice(0, 3).join(", ")} · cap 25,000 per transaction ·
-                          blocklisted addresses denied
+                          Choose which receivers to allow, set a per-payment cap, and let safety checks decline risky payments.
                         </div>
                       </div>
                     )}
@@ -403,10 +406,10 @@ export function DemoWorkflow() {
                             <div className="flex items-center justify-between">
                               <div>
                                 <p className={cn("font-mono text-lg font-semibold", txResult.approved ? "text-emerald-500" : "text-red-500")}>
-                                  {txResult.approved ? "Approved" : "Blocked"}
+                                  {txResult.approved ? "Approved" : "Declined"}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  Risk {String(txResult.riskLevel)} · score {String(txResult.riskScore)}
+                                  {txResult.approved ? "All safety checks passed" : "A safety check was not passed"}
                                 </p>
                               </div>
                               <div className="flex gap-2">
@@ -435,11 +438,11 @@ export function DemoWorkflow() {
 
                         <div className="flex gap-2">
                           <Button onClick={runCurrent} disabled={loading}>
-                            {txResult ? "Re-evaluate" : "Evaluate transaction"}
+                            {txResult ? "Re-check" : "Check payment"}
                           </Button>
                           {Boolean(txResult?.approved) && (
                             <Button onClick={next} className="ml-auto">
-                              Settle funds <ArrowRightIcon />
+                              Approve & send <ArrowRightIcon />
                             </Button>
                           )}
                         </div>
@@ -448,11 +451,11 @@ export function DemoWorkflow() {
 
                     {step.key === "settlement" && result && (
                       <StepSuccess
-                        title="Settlement complete"
+                        title="Payment sent"
                         rows={[
                           ["Reference", String(result.reference)],
                           ["Amount", `${formatNumber(result.amount as number)} ${result.assetType}`],
-                          ["Settlement ID", String(result.settlementRef)],
+                          ["Payment ID", String(result.settlementRef)],
                           ["Network fee", `${formatNumber(result.fee as number)} ${result.assetType}`],
                         ]}
                       />
@@ -461,12 +464,12 @@ export function DemoWorkflow() {
                     {step.key === "audit" && result && (
                       <div className="space-y-5">
                         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                          <AuditStat label="Volume" value={formatNumber(result.totalVolume as number)} />
-                          <AuditStat label="Transactions" value={String(result.transactions)} />
-                          <AuditStat label="Flags" value={String(result.flags)} />
-                          <AuditStat label="Blocked" value={String(result.blocked)} />                        </div>
+                          <AuditStat label="Money sent" value={formatNumber(result.totalVolume as number)} />
+                          <AuditStat label="Payments" value={String(result.transactions)} />
+                          <AuditStat label="Flagged" value={String(result.flags)} />
+                          <AuditStat label="Declined" value={String(result.blocked)} />                        </div>
                         <div className="rounded-lg border bg-muted/30 p-3">
-                          <div className="text-xs text-muted-foreground">Signed report identifier</div>
+                          <div className="text-xs text-muted-foreground">Record identifier</div>
                           <div className="mt-1 break-all font-mono text-xs text-emerald-500">{String(result.reportHash)}</div>
                         </div>
                         <div className="rounded-xl border bg-emerald-500/5 p-6 text-center">
@@ -483,9 +486,9 @@ export function DemoWorkflow() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.25 }}
                           >
-                            <p className="mt-4 text-lg font-semibold text-emerald-500">Workflow complete</p>
+                            <p className="mt-4 text-lg font-semibold text-emerald-500">Payment completed</p>
                             <p className="mt-1 text-sm text-muted-foreground">
-                              Every stage cleared — the payment is verified, governed, settled, and audit-signed.
+                              Your payment was verified, approved, and sent — and your record is ready to download.
                             </p>
                           </motion.div>
                           <ul className="mx-auto mt-5 max-w-md space-y-2 text-left">
@@ -509,7 +512,7 @@ export function DemoWorkflow() {
                         <div className="flex flex-wrap gap-2">
                           <Button render={<Link href="/reports" />}>
                             <FileCheck2Icon />
-                            View signed report
+                            View your record
                           </Button>
                           <Button variant="outline" onClick={restart}>
                             Run again
@@ -530,12 +533,12 @@ export function DemoWorkflow() {
                   {isLast && result ? (
                     <Button onClick={restart}>
                       <RocketIcon />
-                      Restart demo
+                      Restart walkthrough
                     </Button>
                   ) : step.key === "transaction" ? null : step.key === "audit" ? (
                     <Button onClick={runCurrent} disabled={loading}>
                       <FileCheck2Icon />
-                      Generate signed report
+                      Generate record
                     </Button>
                   ) : (
                     <Button onClick={runCurrent} disabled={loading}>
@@ -566,7 +569,7 @@ function StepLoading({ label }: { label: string }) {
         <Loader2Icon className="absolute inset-0 m-auto size-5 animate-pulse text-primary" />
       </div>
       <p className="text-sm font-medium">{label}…</p>
-      <p className="text-xs text-muted-foreground">Querying Cleanverse · signing hash · recording decision</p>
+      <p className="text-xs text-muted-foreground">Running checks · verifying · recording</p>
     </div>
   );
 }

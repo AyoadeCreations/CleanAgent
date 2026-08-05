@@ -52,6 +52,22 @@ const STATUS_STYLES: Record<TransactionStatus, string> = {
   FAILED: "bg-rose-500/10 text-rose-500 border-rose-500/30",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Awaiting approval",
+  APPROVED: "Approved",
+  EXECUTED: "Sent",
+  SUSPENDED: "Needs review",
+  BLOCKED: "Declined",
+  FAILED: "Failed",
+};
+
+const RISK_LABELS: Record<string, string> = {
+  LOW: "Passed",
+  MEDIUM: "Passed",
+  HIGH: "Needs review",
+  CRITICAL: "Needs review",
+};
+
 const RISK_STYLES: Record<string, string> = {
   LOW: "bg-emerald-500/10 text-emerald-500",
   MEDIUM: "bg-amber-500/10 text-amber-500",
@@ -65,7 +81,7 @@ const STATUS_FILTERS = ["ALL", "PENDING", "EXECUTED", "APPROVED", "SUSPENDED", "
 function StatusBadge({ status }: { status: TransactionStatus }) {
   return (
     <Badge variant="outline" className={cn("font-mono", STATUS_STYLES[status])}>
-      {status.toLowerCase()}
+      {STATUS_LABELS[status] ?? status.toLowerCase()}
     </Badge>
   );
 }
@@ -73,7 +89,7 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
 function RiskBadge({ riskLevel, score }: { riskLevel: string; score: number }) {
   return (
     <Badge variant="outline" className={cn("font-mono", RISK_STYLES[riskLevel] ?? "")}>
-      {riskLevel.toLowerCase()} · {score}
+      {RISK_LABELS[riskLevel] ?? riskLevel.toLowerCase()} · {score}
     </Badge>
   );
 }
@@ -141,7 +157,7 @@ export function TransactionsView({ role }: { role: Role }) {
       <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16 text-center">
         <ShieldAlertIcon className="size-8 text-muted-foreground" />
         <div>
-          <p className="text-sm font-medium">Couldn&apos;t load transactions</p>
+          <p className="text-sm font-medium">Couldn&apos;t load payments</p>
           <p className="mt-1 text-xs text-muted-foreground">
             {error instanceof Error ? error.message : "Something went wrong."}
           </p>
@@ -196,7 +212,7 @@ export function TransactionsView({ role }: { role: Role }) {
   }
 
   function onStagesComplete() {
-    toast.success(stageBlocked ? "Transaction blocked by compliance policy" : "Transaction approved & settled");
+    toast.success(stageBlocked ? "Payment declined by your account's safety checks" : "Payment approved & sent");
     setOpen(false);
     setForm({ receiver: "", amount: "", assetType: "USDC", type: "PAYMENT", reference: "", agentId: "" });
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
@@ -235,7 +251,7 @@ export function TransactionsView({ role }: { role: Role }) {
             <SelectContent>
               {STATUS_FILTERS.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {s === "ALL" ? "All statuses" : s.toLowerCase()}
+                  {s === "ALL" ? "All statuses" : STATUS_LABELS[s] ?? s.toLowerCase()}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -243,7 +259,7 @@ export function TransactionsView({ role }: { role: Role }) {
         </div>
         <Button onClick={() => setOpen(true)}>
           <PlusIcon />
-          New transaction
+          New payment
         </Button>
       </div>
 
@@ -272,7 +288,7 @@ export function TransactionsView({ role }: { role: Role }) {
                   )}
                 </button>
               </TableHead>
-              <TableHead>Risk</TableHead>
+              <TableHead>Checks</TableHead>
               <TableHead>
                 <button
                   type="button"
@@ -305,7 +321,7 @@ export function TransactionsView({ role }: { role: Role }) {
             {!isLoading && transactions.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center text-sm text-muted-foreground">
-                  No transactions match this filter.
+                  No payments match this filter.
                 </TableCell>
               </TableRow>
             )}
@@ -404,9 +420,9 @@ export function TransactionsView({ role }: { role: Role }) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>New transaction</DialogTitle>
+            <DialogTitle>New payment</DialogTitle>
             <DialogDescription>
-              Evaluated against CCP rules, agent limits, and Cleanverse risk scoring.
+              Your payment is checked automatically for safety before it&apos;s sent.
             </DialogDescription>
           </DialogHeader>
           {showStages ? (
@@ -504,8 +520,7 @@ export function TransactionsView({ role }: { role: Role }) {
             <div className="flex items-start gap-2 rounded-lg border bg-amber-500/5 p-3 text-xs text-muted-foreground">
               <ShieldAlertIcon className="mt-0.5 size-4 shrink-0 text-amber-500" />
               <span>
-                High-risk or policy-violating transactions are blocked automatically. Transactions sent to unknown
-                receivers are denied by default.
+                Payments that fail safety checks are declined automatically. Payments to unknown receivers are denied by default.
               </span>
             </div>
             <DialogFooter>
@@ -523,7 +538,7 @@ export function TransactionsView({ role }: { role: Role }) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileCheck2Icon className="size-4 text-primary" />
-              Transaction audit trail
+              Payment activity
             </DialogTitle>
             <DialogDescription>
               {detail && (
@@ -555,7 +570,7 @@ export function TransactionsView({ role }: { role: Role }) {
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">Risk score</div>
+                  <div className="text-xs text-muted-foreground">Transaction checks</div>
                   <div className="mt-1">
                     <RiskBadge riskLevel={detail.riskLevel} score={detail.riskScore} />
                   </div>
@@ -563,7 +578,7 @@ export function TransactionsView({ role }: { role: Role }) {
               </div>
 
               <div>
-                <h4 className="mb-2 text-sm font-medium">Lifecycle</h4>
+                <h4 className="mb-2 text-sm font-medium">Payment history</h4>
                 <TransactionTimeline
                   status={detail.status}
                   verified={detail.riskScore < 70}
@@ -574,7 +589,7 @@ export function TransactionsView({ role }: { role: Role }) {
 
               {detail.decisions.length > 0 && (
                 <div>
-                  <h4 className="mb-2 text-sm font-medium">Policy decisions</h4>
+                  <h4 className="mb-2 text-sm font-medium">Safety check results</h4>
                   <div className="space-y-1.5">
                     {detail.decisions.map((d, i) => (
                       <div key={i} className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-1.5 text-xs">
@@ -595,7 +610,7 @@ export function TransactionsView({ role }: { role: Role }) {
 
               {detail.auditHash && (
                 <div className="rounded-lg border bg-emerald-500/5 p-3">
-                  <div className="text-xs text-muted-foreground">Audit hash</div>
+                  <div className="text-xs text-muted-foreground">Record hash</div>
                   <div className="mt-1 break-all font-mono text-xs text-emerald-500">{detail.auditHash}</div>
                 </div>
               )}

@@ -67,22 +67,22 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
         <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">{WORLD.compliance.name}</h1>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-emerald-50 sm:text-base">{WORLD.compliance.tagline}.</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <ShieldCheckIcon className="size-3" />
-            {verified ? "identity verified" : "identity pending"}
+            {verified ? "Verified business" : "Verification pending"}
           </Badge>
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <CheckCircle2Icon className="size-3" />
-            audit trail live
+            activity history live
           </Badge>
         </div>
       </motion.div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Blocked transactions"
+          label="Declined payments"
           value={o?.blockedCount ?? 0}
-          sub="Denied by sanctions or policy"
+          sub="Stopped by your account's safety checks"
           icon={<BanIcon className="size-4.5" />}
           spark={activitySpark}
           trend={t?.transactionsPercent}
@@ -90,9 +90,9 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
           sparkColor="#ef4444"
         />
         <StatCard
-          label="Flagged transactions"
+          label="Needs review"
           value={flagged.length}
-          sub="High & critical risk, or suspended"
+          sub="Payments that need attention"
           icon={<FlagIcon className="size-4.5" />}
           spark={riskSpark}
           trend={t?.settlementsPercent}
@@ -100,17 +100,17 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
           sparkColor="#f59e0b"
         />
         <StatCard
-          label="Audit reports"
+          label="Activity history"
           value={(reportsData?.reports ?? []).length}
-          sub="Signed & tamper-evident"
+          sub="Records ready to export"
           icon={<FileBarChart2Icon className="size-4.5" />}
           loading={reportsLoading}
           sparkColor="#8b5cf6"
         />
         <StatCard
-          label="Risk score"
+          label="Account health"
           value={o?.complianceScore ?? 0}
-          sub="Org-wide compliance score · /100"
+          sub="Account health · /100"
           icon={<GaugeIcon className="size-4.5" />}
           spark={scoreSpark}
           trend={t?.complianceDelta}
@@ -123,7 +123,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
       <div className="rounded-[20px] bg-card p-5 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-2">
           <GaugeIcon className="size-4 text-primary" />
-          <h3 className="text-sm font-medium">Risk distribution</h3>
+          <h3 className="text-sm font-medium">Payment safety overview</h3>
         </div>
         {isLoading ? (
           <Skeleton className="mt-4 h-20 w-full" />
@@ -137,11 +137,11 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
                     style={{ height: `${Math.max(4, (r.count / maxRisk) * 100)}%` }}
                   />
                 </div>
-                <span className="text-[10px] uppercase text-muted-foreground">{r.riskLevel}</span>
+                <span className="text-[10px] uppercase text-muted-foreground">{RISK_LABELS[r.riskLevel] ?? r.riskLevel}</span>
                 <span className="font-mono text-xs tabular-nums">{r.count}</span>
               </div>
             ))}
-            {riskDist.length === 0 && <p className="text-sm text-muted-foreground">No transactions scored yet.</p>}
+            {riskDist.length === 0 && <p className="text-sm text-muted-foreground">No payments reviewed yet.</p>}
           </div>
         )}
       </div>
@@ -152,7 +152,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
           <div className="flex items-center justify-between border-b px-5 py-4">
             <div className="flex items-center gap-2">
               <AlertTriangleIcon className="size-4 text-amber-500" />
-              <h3 className="text-sm font-medium">Blocked & flagged</h3>
+              <h3 className="text-sm font-medium">Declined & needs review</h3>
             </div>
             <Link href="/dashboard/transactions" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80">
               Review <MoveRightIcon className="size-3.5" />
@@ -164,7 +164,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
                 <TableRow>
                   <TableHead>Ref</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
-                  <TableHead>Risk</TableHead>
+                  <TableHead>Checks</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Submitted</TableHead>
                 </TableRow>
@@ -179,7 +179,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
                 ) : blocked.concat(flagged.filter((f) => !blocked.includes(f))).slice(0, 6).length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-24 text-center text-sm text-muted-foreground">
-                      No blocked or flagged transactions.
+                      Nothing needs your attention right now.
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -191,12 +191,12 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("font-mono", RISK_STYLES[t.riskLevel] ?? "")}>
-                          {t.riskLevel.toLowerCase()} · {t.riskScore}
+                          {RISK_LABELS[t.riskLevel] ?? t.riskLevel.toLowerCase()}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("font-mono", STATUS_STYLES[t.status])}>
-                          {t.status.toLowerCase()}
+                          {STATUS_LABELS[t.status] ?? t.status.toLowerCase()}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">{formatRelativeTime(t.createdAt)}</TableCell>
@@ -224,11 +224,11 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
         </div>
       </div>
 
-      {/* Audit trail */}
+      {/* Activity history */}
       <div className="rounded-[20px] bg-card ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
         <div className="flex items-center gap-2 border-b px-5 py-4">
           <ShieldCheckIcon className="size-4 text-primary" />
-          <h3 className="text-sm font-medium">Audit trail</h3>
+          <h3 className="text-sm font-medium">Activity history</h3>
           <span className="ml-auto text-xs text-muted-foreground">Most recent first</span>
         </div>
         {auditLoading ? (
@@ -249,7 +249,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
               </div>
             ))}
             {(auditData?.logs ?? []).length === 0 && (
-              <p className="p-4 text-sm text-muted-foreground">No audit events yet.</p>
+              <p className="p-4 text-sm text-muted-foreground">No activity recorded yet.</p>
             )}
           </div>
         )}
@@ -257,7 +257,7 @@ export function ComplianceDashboard({ userName, verified }: { userName?: string;
 
       {/* Officers */}
       <div className="rounded-[20px] bg-card p-5 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-        <h3 className="text-sm font-medium">Compliance team</h3>
+        <h3 className="text-sm font-medium">Review team</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {COMPLIANCE_OFFICERS.map((officer) => (
             <div key={officer.name} className="flex items-center gap-3 rounded-lg border bg-background/60 p-3">
@@ -283,6 +283,22 @@ const STATUS_STYLES: Record<string, string> = {
   SUSPENDED: "bg-orange-500/10 text-orange-500 border-orange-500/30",
   BLOCKED: "bg-red-500/10 text-red-500 border-red-500/30",
   FAILED: "bg-rose-500/10 text-rose-500 border-rose-500/30",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  PENDING: "Awaiting approval",
+  APPROVED: "Approved",
+  EXECUTED: "Sent",
+  SUSPENDED: "Needs review",
+  BLOCKED: "Declined",
+  FAILED: "Failed",
+};
+
+const RISK_LABELS: Record<string, string> = {
+  LOW: "Passed",
+  MEDIUM: "Passed",
+  HIGH: "Needs review",
+  CRITICAL: "Needs review",
 };
 
 const RISK_STYLES: Record<string, string> = {

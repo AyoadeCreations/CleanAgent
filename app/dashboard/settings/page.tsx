@@ -16,7 +16,7 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Profile, identity, and business settings.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Profile, business, and account settings.</p>
       </div>
       <SettingsView user={user} />
     </div>

@@ -15,12 +15,12 @@ import {
 import { cn } from "@/lib/utils";
 
 const STAGES = [
-  { label: "Merchant", detail: "Onboarding · KYC", icon: StoreIcon, tone: "text-sky-400" },
-  { label: "Identity verification", detail: "CVI attestation", icon: FingerprintIcon, tone: "text-emerald-400" },
-  { label: "Asset verification", detail: "CVA screening", icon: CoinsIcon, tone: "text-emerald-400" },
-  { label: "Rule engine", detail: "CCP policy check", icon: ScaleIcon, tone: "text-amber-400" },
-  { label: "Settlement", detail: "Funds released", icon: LandmarkIcon, tone: "text-blue-400" },
-  { label: "Audit generation", detail: "Signed report", icon: FileCheck2Icon, tone: "text-violet-400" },
+  { label: "Business", detail: "Set up · welcome", icon: StoreIcon, tone: "text-sky-400" },
+  { label: "Business verified", detail: "Identity confirmed", icon: FingerprintIcon, tone: "text-emerald-400" },
+  { label: "Funds checked", detail: "Funds verified", icon: CoinsIcon, tone: "text-emerald-400" },
+  { label: "Safety checks", detail: "Rules reviewed", icon: ScaleIcon, tone: "text-amber-400" },
+  { label: "Payment sent", detail: "Funds released", icon: LandmarkIcon, tone: "text-blue-400" },
+  { label: "Activity recorded", detail: "Record saved", icon: FileCheck2Icon, tone: "text-violet-400" },
 ] as const;
 
 const CYCLE_MS = 620;
@@ -54,9 +54,9 @@ export function HeroVisual() {
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-              Transaction pipeline
+              Payment flow
             </p>
-            <p className="mt-0.5 text-sm font-medium">Live verification flow</p>
+            <p className="mt-0.5 text-sm font-medium">Live payment status</p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-emerald-500">
             <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
@@ -114,7 +114,7 @@ export function HeroVisual() {
                         done ? "text-emerald-500" : isActive ? "text-primary" : "text-muted-foreground/60",
                       )}
                     >
-                      {done ? "verified" : isActive ? "processing" : "queued"}
+                      {done ? "done" : isActive ? "processing" : "queued"}
                     </span>
                   </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">{stage.detail}</p>

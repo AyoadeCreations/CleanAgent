@@ -4,8 +4,8 @@ import { getSessionUser } from "@/lib/auth/session";
 import { TransactionsView } from "@/components/dashboard/transactions-view";
 
 export const metadata: Metadata = {
-  title: "Transactions",
-  description: "Transaction activity and policy decisions",
+  title: "Payments",
+  description: "Payment activity",
 };
 
 export default async function TransactionsPage() {
@@ -15,9 +15,9 @@ export default async function TransactionsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Transactions</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Payments</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Every payment is scored, policed, and recorded on the audit trail.
+          Every payment is checked, approved, and recorded in your history.
         </p>
       </div>
       <TransactionsView role={user.role} />

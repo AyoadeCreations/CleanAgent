@@ -4,8 +4,8 @@ import { getSessionUser } from "@/lib/auth/session";
 import { ReportsView } from "@/components/dashboard/reports-view";
 
 export const metadata: Metadata = {
-  title: "Reports",
-  description: "Compliance reports",
+  title: "Activity history",
+  description: "Payment activity records",
 };
 
 export default async function ReportsPage() {
@@ -15,9 +15,9 @@ export default async function ReportsPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Reports</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Activity history</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Signed compliance reports over the last 30 days.
+          Clean activity records over the last 30 days.
         </p>
       </div>
       <ReportsView />

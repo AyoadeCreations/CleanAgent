@@ -18,12 +18,12 @@ import { CheckIcon } from "lucide-react";
 
 const STEPS = [
   { label: "Account", description: "Review your profile" },
-  { label: "Identity", description: "Verify via CVI" },
+  { label: "Verify", description: "Verify your business" },
   { label: "Business", description: "Company profile" },
   { label: "Done", description: "You're ready" },
 ];
 
-const IDENTITY_CHECKS = ["Wallet ownership", "Sanctions screening", "Adverse media", "Risk score"];
+const IDENTITY_CHECKS = ["Wallet ownership", "Sanctions screening", "News screening", "Fraud check"];
 
 export function OnboardingFlow({ user }: { user: SessionUser }) {
   const router = useRouter();
@@ -32,7 +32,6 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
   const [step, setStep] = React.useState(0);
   const [verifying, setVerifying] = React.useState(false);
   const [verified, setVerified] = React.useState(user.verified);
-  const [kycLevel, setKycLevel] = React.useState(user.kycLevel);
   const [businessName, setBusinessName] = React.useState("");
   const [businessDescription, setBusinessDescription] = React.useState("");
   const [savingBusiness, setSavingBusiness] = React.useState(false);
@@ -44,11 +43,10 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
     try {
       const status = await verifyIdentity(user.walletAddress);
       setVerified(status.verified);
-      setKycLevel(status.level);
       toast.success(
         status.verified
-          ? `Identity verified — ${status.checkCount} checks passed`
-          : "Identity verification rejected"
+          ? `Business verified — ${status.checkCount} checks passed`
+          : "Verification was not approved"
       );
       setStep((s) => s + 1);
     } catch (error) {
@@ -91,7 +89,6 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
         <Logo />
         <Badge variant="outline">{user.role.toLowerCase()}</Badge>
       </div>
-
       <div>
         <Progress value={((activeIndex + 1) / steps.length) * 100} className="h-1.5" />
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
@@ -142,12 +139,12 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
           </div>
         )}
 
-        {steps[activeIndex].label === "Identity" && (
+        {steps[activeIndex].label === "Verify" && (
           <div className="space-y-4">
             <div>
-              <h2 className="text-lg font-semibold">Verify your identity</h2>
+              <h2 className="text-lg font-semibold">Verify your business</h2>
               <p className="text-sm text-muted-foreground">
-                We run a Cleanverse CVI check against your wallet. This is a simulated check in the MVP.
+                We run a quick verification check against your wallet. This is a simulated check in the MVP.
               </p>
             </div>
             <ul className="grid gap-2">
@@ -168,7 +165,7 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
               ))}
             </ul>
             <Button className="w-full" onClick={handleVerify} disabled={verifying || verified}>
-              {verifying ? "Running checks…" : verified ? `Verified · KYC level ${kycLevel}` : "Run identity check"}
+              {verifying ? "Running checks…" : verified ? "Verified" : "Run verification check"}
             </Button>
             {verified && (
               <Button variant="outline" className="w-full" onClick={() => setStep((s) => s + 1)}>
@@ -182,7 +179,7 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
           <div className="space-y-4">
             <div>
               <h2 className="text-lg font-semibold">Business profile</h2>
-              <p className="text-sm text-muted-foreground">Tell us about your company. Agents and rules attach here.</p>
+              <p className="text-sm text-muted-foreground">Tell us about your company. Your automations and safety checks attach here.</p>
             </div>
             <div className="space-y-3">
               <div className="space-y-2">
@@ -219,8 +216,8 @@ export function OnboardingFlow({ user }: { user: SessionUser }) {
               <h2 className="text-lg font-semibold">You’re all set</h2>
               <p className="text-sm text-muted-foreground">
                 {verified
-                  ? "Identity verified. You can now create transactions and agents."
-                  : "You can continue, but you’ll be prompted to verify identity before payments."}
+                  ? "Your business is verified. You can now send payments and create automations."
+                  : "You can continue, but you’ll be prompted to verify before sending payments."}
               </p>
             </div>
             <Button className="w-full" onClick={finish}>

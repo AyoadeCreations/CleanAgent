@@ -7,35 +7,35 @@ import { ArrowRightIcon, ShieldCheckIcon, LandmarkIcon, CoinsIcon } from "lucide
 const FLOATING_CARDS = [
   {
     icon: ShieldCheckIcon,
-    label: "Identity verified",
-    subtitle: "Merchant approved",
-    stat: "Risk score: 98",
+    label: "Business verified",
+    subtitle: "Ready to pay",
+    stat: "Approved",
     rotate: -8,
     x: -46,
   },
   {
     icon: CoinsIcon,
-    label: "Asset screened",
-    subtitle: "CVA verified",
+    label: "Funds checked",
+    subtitle: "Payment approved",
     stat: "Approved",
     rotate: 5,
     x: 0,
   },
   {
     icon: LandmarkIcon,
-    label: "Settlement completed",
-    subtitle: "USDC transfer",
-    stat: "Completed",
+    label: "Payment sent",
+    subtitle: "Recipient notified",
+    stat: "Sent",
     rotate: 8,
     x: 46,
   },
 ];
 
 const METRICS = [
-  { value: "$12.4M", label: "Settled volume" },
-  { value: "98.6%", label: "Compliance rate" },
-  { value: "15,000", label: "Verified entities" },
-  { value: "8", label: "Networks live" },
+  { value: "$12.4M", label: "Payments processed" },
+  { value: "99.2%", label: "Payments approved" },
+  { value: "15,000", label: "Verified businesses" },
+  { value: "24/7", label: "Payments running" },
 ];
 
 function Clouds() {
@@ -109,16 +109,15 @@ export function Hero() {
           <div className="flex max-w-[700px] flex-col items-center text-center">
             <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md">
               <span className="size-1.5 rounded-full bg-lime" aria-hidden="true" />
-              Trust infrastructure for the programmable economy
+              Trusted payments for modern businesses
             </span>
 
             <h1 className="text-balance text-5xl font-bold leading-[1.02] tracking-[-0.04em] sm:text-6xl lg:text-[72px]">
-              Payments that verify before they settle.
+              Trusted payments for modern businesses.
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-[1.8] text-white/85">
-              CleanFlow combines verified identities, verified assets, autonomous agents,
-              compliance, and real-time settlement into one platform.
+              Send, receive, approve, and track payments from one secure workspace.
             </p>
 
             <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
@@ -126,14 +125,14 @@ export function Hero() {
                 href="/demo"
                 className="group inline-flex items-center gap-2 rounded-full bg-lime px-7 py-[18px] text-base font-semibold text-black transition-transform hover:scale-105"
               >
-                Start demo
+                See it in action
                 <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
-                href="#platform"
+                href="#how-it-works"
                 className="inline-flex items-center gap-2 rounded-full border border-white/70 px-7 py-[18px] text-base font-semibold text-white transition-transform hover:scale-105"
               >
-                Explore platform
+                How it works
               </Link>
             </div>
 

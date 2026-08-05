@@ -33,12 +33,12 @@ interface StepDef {
 }
 
 const STEP_DEFS: Array<Omit<StepDef, "state">> = [
-  { key: "identity", label: "Identity verification", description: "CVI check on the sender", icon: FingerprintIcon },
-  { key: "asset", label: "Asset verification", description: "CVA check on the asset", icon: CoinsIcon },
-  { key: "rules", label: "Rule validation", description: "CCP policy evaluation", icon: ScaleIcon },
-  { key: "approval", label: "Transaction approval", description: "Risk threshold review", icon: BadgeCheckIcon },
-  { key: "settlement", label: "Settlement", description: "Funds released to receiver", icon: LandmarkIcon },
-  { key: "audit", label: "Audit generation", description: "Signed audit hash recorded", icon: FileCheck2Icon },
+  { key: "identity", label: "Business verified", description: "Business identity confirmed", icon: FingerprintIcon },
+  { key: "asset", label: "Funds checked", description: "Funds verified", icon: CoinsIcon },
+  { key: "rules", label: "Safety checks", description: "Payment rules reviewed", icon: ScaleIcon },
+  { key: "approval", label: "Approved", description: "Review completed", icon: BadgeCheckIcon },
+  { key: "settlement", label: "Payment sent", description: "Funds released to receiver", icon: LandmarkIcon },
+  { key: "audit", label: "Activity recorded", description: "Record saved to your history", icon: FileCheck2Icon },
 ];
 
 const STATE_META: Record<TimelineState, { icon: React.ComponentType<{ className?: string }> | null; dot: string; text: string }> = {

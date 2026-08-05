@@ -39,7 +39,7 @@ export function ComplianceView() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pending reviews</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Awaiting review</CardTitle>
           </CardHeader>
           <CardContent>
             {txLoading ? (
@@ -51,7 +51,7 @@ export function ComplianceView() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-muted-foreground">High-risk transactions</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Needs review</CardTitle>
           </CardHeader>
           <CardContent>
             {txLoading ? (
@@ -65,14 +65,14 @@ export function ComplianceView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Compliance policy rules</CardTitle>
+          <CardTitle className="text-sm font-medium">Account rules</CardTitle>
         </CardHeader>
         <CardContent>
           {rulesLoading ? (
             <Skeleton className="h-32 w-full" />
           ) : rulesError ? (
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-10 text-center">
-              <p className="text-sm text-muted-foreground">Couldn&apos;t load compliance rules.</p>
+              <p className="text-sm text-muted-foreground">Couldn&apos;t load account rules.</p>
               <Button variant="outline" size="sm" onClick={() => refetchRules()} disabled={rulesFetching}>
                 {rulesFetching ? "Retrying…" : "Retry"}
               </Button>
@@ -119,7 +119,7 @@ export function ComplianceView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Audit trail</CardTitle>
+          <CardTitle className="text-sm font-medium">Activity history</CardTitle>
         </CardHeader>
         <CardContent>
           {auditLoading ? (
@@ -128,8 +128,8 @@ export function ComplianceView() {
             <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-10 text-center">
               <p className="text-sm text-muted-foreground">
                 {auditError instanceof Error && auditError.message === "Request failed"
-                  ? "Audit logs are restricted to compliance officers."
-                  : "Couldn&apos;t load the audit trail."}
+                  ? "Activity history is restricted to review officers."
+                  : "Couldn&apos;t load the activity history."}
               </p>
               <Button variant="outline" size="sm" onClick={() => refetchAudit()} disabled={auditFetching}>
                 {auditFetching ? "Retrying…" : "Retry"}
@@ -159,7 +159,7 @@ export function ComplianceView() {
                 </div>
               ))}
               {(auditData?.logs ?? []).length === 0 && (
-                <p className="text-sm text-muted-foreground">No audit events yet.</p>
+                <p className="text-sm text-muted-foreground">No activity yet.</p>
               )}
             </div>
           )}

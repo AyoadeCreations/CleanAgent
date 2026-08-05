@@ -5,32 +5,32 @@ const steps = [
   {
     icon: FingerprintIcon,
     step: "01",
-    title: "Verify identity",
-    description: "CVI confirms every actor — humans, businesses, and agents — with a reusable on-chain attestation.",
+    title: "Verify your business",
+    description: "Complete a one-time verification so every payment you make is trusted.",
   },
   {
     icon: CoinsIcon,
     step: "02",
-    title: "Verify assets",
-    description: "CVA screens tokens, receivables, and collateral so only trusted assets are eligible.",
+    title: "Check your funds",
+    description: "Make sure you can pay before any payment is created.",
   },
   {
     icon: Settings2Icon,
     step: "03",
-    title: "Configure rules",
-    description: "Define allowlists, caps, blocklists, and risk thresholds as code that never goes stale.",
+    title: "Set your rules",
+    description: "Choose who can be paid and how much per payment.",
   },
   {
     icon: ZapIcon,
     step: "04",
-    title: "Execute transaction",
-    description: "CCP validates every request against rules and risk, then executes or blocks deterministically.",
+    title: "Approve a payment",
+    description: "Every payment is checked for safety before it moves.",
   },
   {
     icon: FileBarChart2Icon,
     step: "05",
-    title: "Generate reports",
-    description: "Immutable, hash-chained audit reports are produced for compliance and review.",
+    title: "Download your record",
+    description: "Keep a clean history of every payment, ready when you need it.",
   },
 ];
 
@@ -44,7 +44,7 @@ export function Workflow() {
               How it works
             </p>
             <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-              From identity to audit in one flow
+              From first payment to clean records
             </h2>
           </RevealItem>
         </RevealContainer>

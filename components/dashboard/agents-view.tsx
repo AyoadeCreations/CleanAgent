@@ -72,7 +72,7 @@ export function AgentsView() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim()) {
-      toast.error("Agent name is required.");
+      toast.error("Automation name is required.");
       return;
     }
     setSubmitting(true);
@@ -89,12 +89,12 @@ export function AgentsView() {
         }),
       });
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error ?? "Failed to create agent");
-      toast.success("Agent created");
+      if (!data.ok) throw new Error(data.error ?? "Failed to create automation");
+      toast.success("Automation created");
       setCreateOpen(false);
       queryClient.invalidateQueries({ queryKey: ["agents"] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to create agent");
+      toast.error(error instanceof Error ? error.message : "Failed to create automation");
     } finally {
       setSubmitting(false);
     }
@@ -116,12 +116,12 @@ export function AgentsView() {
         }),
       });
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error ?? "Failed to update agent");
-      toast.success("Agent updated");
+      if (!data.ok) throw new Error(data.error ?? "Failed to update automation");
+      toast.success("Automation updated");
       setEditAgent(null);
       queryClient.invalidateQueries({ queryKey: ["agents"] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update agent");
+      toast.error(error instanceof Error ? error.message : "Failed to update automation");
     } finally {
       setSubmitting(false);
     }
@@ -171,13 +171,13 @@ export function AgentsView() {
       {!isLoading && !error && (data?.agents ?? []).length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-lg border bg-card py-16 text-center">
           <BotIcon className="size-8 text-muted-foreground" />
-          <p className="mt-3 text-sm font-medium">No agents yet</p>
+          <p className="mt-3 text-sm font-medium">No automations yet</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Agents execute transactions with enforced spending limits.
+            Automations send payments within the spending limits you set.
           </p>
           <Button className="mt-4" onClick={openCreate}>
             <PlusIcon />
-            Create your first agent
+            Create your first automation
           </Button>
         </div>
       )}
@@ -214,7 +214,7 @@ export function AgentsView() {
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>
-                  {formatNumber(agent.transactionCount, 0)} txns
+                  {formatNumber(agent.transactionCount, 0)} payments
                   {agent.lastUsedAt ? ` · ${formatRelativeTime(agent.lastUsedAt)}` : ""}
                 </span>
                 <div className="flex gap-1.5">
@@ -241,9 +241,9 @@ export function AgentsView() {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>New agent</DialogTitle>
+            <DialogTitle>New automation</DialogTitle>
             <DialogDescription>
-              Agents execute transactions on your behalf within hard spending limits.
+              Automations send payments on your behalf within the spending limits you set.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreate} className="space-y-4">
@@ -253,7 +253,7 @@ export function AgentsView() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="ag-desc">Description (optional)</Label>
-              <Textarea id="ag-desc" placeholder="What this agent does" value={form.description} onChange={(e) => update("description", e.target.value)} />
+              <Textarea id="ag-desc" placeholder="What this automation does" value={form.description} onChange={(e) => update("description", e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="ag-wallet">Wallet address (optional)</Label>
@@ -271,7 +271,7 @@ export function AgentsView() {
             </div>
             <DialogFooter>
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Creating…" : "Create agent"}
+                {submitting ? "Creating…" : "Create automation"}
               </Button>
             </DialogFooter>
           </form>
@@ -281,8 +281,8 @@ export function AgentsView() {
       <Dialog open={Boolean(editAgent)} onOpenChange={(v) => !v && setEditAgent(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit agent</DialogTitle>
-            <DialogDescription>Update agent details and limits.</DialogDescription>
+            <DialogTitle>Edit automation</DialogTitle>
+            <DialogDescription>Update automation details and limits.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEdit} className="space-y-4">
             <div className="space-y-2">

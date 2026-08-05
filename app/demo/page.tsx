@@ -6,7 +6,7 @@ const DemoWorkflow = dynamic(() => import("@/components/demo/demo-workflow").the
 
 export const metadata = {
   title: "Live demo",
-  description: "Walk through identity verification, policy evaluation, settlement, and audit generation.",
+  description: "Walk through verifying your business, creating a payment, approving it, and downloading your record.",
 };
 
 export default function DemoPage() {

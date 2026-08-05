@@ -17,10 +17,10 @@ import type { Role } from "@/lib/types";
 
 const ICONS = {
   Overview: LayoutDashboardIcon,
-  Transactions: ArrowLeftRightIcon,
-  Agents: BotIcon,
-  Compliance: ShieldCheckIcon,
-  Reports: FileBarChart2Icon,
+  Payments: ArrowLeftRightIcon,
+  Automations: BotIcon,
+  "Account health": ShieldCheckIcon,
+  Activity: FileBarChart2Icon,
   Settings: SettingsIcon,
 } as const;
 

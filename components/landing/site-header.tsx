@@ -8,9 +8,8 @@ import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { href: "#platform", label: "Products" },
-  { href: "#use-cases", label: "Solutions" },
-  { href: "/compliance", label: "Developers" },
+  { href: "#how-it-works", label: "How it works" },
+  { href: "#who-its-for", label: "Who it&apos;s for" },
   { href: "/reports", label: "Resources" },
   { href: "/register", label: "Pricing" },
 ];
@@ -58,7 +57,7 @@ export function SiteHeader() {
             href="/demo"
             className="inline-flex items-center rounded-full bg-lime px-6 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-105"
           >
-            Start demo
+            See it in action
           </Link>
         </div>
 
@@ -96,7 +95,7 @@ export function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className="inline-flex items-center justify-center rounded-full bg-lime px-6 py-2.5 text-sm font-semibold text-black"
               >
-                Start demo
+                See it in action
               </Link>
             </div>
           </nav>

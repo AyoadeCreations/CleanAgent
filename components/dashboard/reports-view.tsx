@@ -37,10 +37,10 @@ export function ReportsView() {
       const res = await fetch("/api/report", { method: "POST" });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error ?? "Failed to generate report");
-      toast.success("Report generated");
+      toast.success("Activity record generated");
       queryClient.invalidateQueries({ queryKey: ["reports"] });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to generate report");
+      toast.error(error instanceof Error ? error.message : "Failed to generate activity record");
     } finally {
       setGenerating(false);
     }
@@ -53,7 +53,7 @@ export function ReportsView() {
       <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-12 text-center">
         <FileBarChart2Icon className="size-8 text-muted-foreground" />
         <div>
-          <p className="text-sm font-medium">Couldn&apos;t load reports</p>
+          <p className="text-sm font-medium">Couldn&apos;t load activity records</p>
           <p className="mt-1 text-xs text-muted-foreground">
             {error instanceof Error ? error.message : "Something went wrong."}
           </p>
@@ -71,20 +71,22 @@ export function ReportsView() {
       <div className="flex justify-end">
         <Button onClick={generate} disabled={generating || isLoading}>
           <FileBarChart2Icon />
-          {generating ? "Compiling audit report…" : "Generate report"}
+          {generating ? "Creating activity record…" : "Create activity record"}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Latest report</CardTitle>
+          <CardTitle className="text-sm font-medium">Latest record</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading || !latest ? (
             <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-12 text-center">
               <FileCheck2Icon className="size-8 text-muted-foreground" />
-              <p className="text-sm font-medium">No report yet</p>
-              <p className="text-xs text-muted-foreground">Generate a compliance report with a signed audit hash.</p>
+              <p className="text-sm font-medium">No activity recorded yet</p>
+              <p className="text-xs text-muted-foreground">
+                Create an activity record to keep a secure history of your payments.
+              </p>
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -93,15 +95,15 @@ export function ReportsView() {
                 <dd className="mt-1 font-mono text-lg font-semibold">{formatCompactCurrency(latest.data.totalVolume)}</dd>
               </div>
               <div className="rounded-lg border bg-background/60 p-4">
-                <dt className="text-xs text-muted-foreground">Transactions</dt>
+                <dt className="text-xs text-muted-foreground">Payments</dt>
                 <dd className="mt-1 font-mono text-lg font-semibold">{formatNumber(latest.data.transactions, 0)}</dd>
               </div>
               <div className="rounded-lg border bg-background/60 p-4">
-                <dt className="text-xs text-muted-foreground">Flags</dt>
+                <dt className="text-xs text-muted-foreground">Needs review</dt>
                 <dd className="mt-1 font-mono text-lg font-semibold">{formatNumber(latest.data.flags, 0)}</dd>
               </div>
               <div className="rounded-lg border bg-background/60 p-4">
-                <dt className="text-xs text-muted-foreground">Suspended / blocked</dt>
+                <dt className="text-xs text-muted-foreground">Needs review / declined</dt>
                 <dd className="mt-1 font-mono text-lg font-semibold">
                   {formatNumber(latest.data.suspensions, 0)} / {formatNumber(latest.data.blocked, 0)}
                 </dd>
@@ -113,7 +115,7 @@ export function ReportsView() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-medium">History</CardTitle>
+          <CardTitle className="text-sm font-medium">Activity history</CardTitle>
           <RefreshCwIcon className="size-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -124,12 +126,12 @@ export function ReportsView() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Generated</TableHead>
+                    <TableHead>Created</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead className="max-w-[260px]">Audit hash</TableHead>
+                    <TableHead className="max-w-[260px]">Record hash</TableHead>
                     <TableHead className="text-right">Volume</TableHead>
-                    <TableHead className="text-right">Transactions</TableHead>
-                    <TableHead className="text-right">Flags</TableHead>
+                    <TableHead className="text-right">Payments</TableHead>
+                    <TableHead className="text-right">Needs review</TableHead>
                     <TableHead className="text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -143,10 +145,10 @@ export function ReportsView() {
                         <span className="truncate font-mono text-[10px] text-muted-foreground">{r.reportHash}</span>
                         <button
                           type="button"
-                          aria-label="Copy audit hash"
+                          aria-label="Copy record hash"
                           onClick={() => {
                             navigator.clipboard?.writeText(r.reportHash);
-                            toast.success("Audit hash copied");
+                            toast.success("Record hash copied");
                           }}
                           className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
                         >
@@ -171,7 +173,7 @@ export function ReportsView() {
                         )}
                       >
                         <BadgeCheckIcon className="size-3" />
-                        signed
+                        recorded
                       </Badge>
                     </TableCell>
                   </TableRow>
@@ -179,7 +181,7 @@ export function ReportsView() {
                 {(data?.reports ?? []).length === 0 && (
                   <TableRow>
                     <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
-                      No reports generated yet.
+                      No activity records yet.
                     </TableCell>
                   </TableRow>
                 )}

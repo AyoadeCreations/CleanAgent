@@ -191,6 +191,13 @@ const RISK_COLORS: Record<string, string> = {
   CRITICAL: "bg-red-500",
 };
 
+const RISK_LABELS: Record<string, string> = {
+  LOW: "Passed",
+  MEDIUM: "Passed",
+  HIGH: "Needs review",
+  CRITICAL: "Needs review",
+};
+
 export function Overview() {
   const { data, isLoading } = useDashboard();
 
@@ -235,25 +242,25 @@ export function Overview() {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
-          label="Total transaction volume"
+          label="Total payment volume"
           value={isLoading ? "" : formatCompactCurrency(o?.totalVolume ?? 0)}
-          sub="Settled + approved volume"
+          sub="Sent + approved"
           icon={<WalletIcon className="size-4.5" />}
           spark={volumeSpark}
           trend={t?.volumePercent}
           loading={isLoading}
         />
         <StatCard
-          label="Completed settlements"
+          label="Completed payments"
           value={isLoading ? "" : formatNumber(o?.settlements ?? 0, 0)}
-          sub={`${formatNumber(o?.pendingCount ?? 0, 0)} pending review`}
+          sub={`${formatNumber(o?.pendingCount ?? 0, 0)} awaiting approval`}
           icon={<LandmarkIcon className="size-4.5" />}
           spark={settlementSpark}
           trend={t?.settlementsPercent}
           loading={isLoading}
         />
         <StatCard
-          label="Compliance score"
+          label="Account health"
           value={isLoading ? "" : `${o?.complianceScore ?? 0}`}
           sub="Out of 100 · this week"
           icon={<ShieldCheckIcon className="size-4.5" />}
@@ -263,26 +270,26 @@ export function Overview() {
           loading={isLoading}
         />
         <StatCard
-          label="Active agents"
+          label="Active automations"
           value={isLoading ? "" : formatNumber(o?.activeAgents ?? 0, 0)}
-          sub="Agents executing payments"
+          sub="Automations sending payments"
           icon={<BotIcon className="size-4.5" />}
           spark={riskSpark}
           trend={t?.agentsPercent}
           loading={isLoading}
         />
         <StatCard
-          label="Verified entities"
+          label="Verified businesses"
           value={isLoading ? "" : formatNumber(o?.verifiedUsers ?? 0, 0)}
-          sub="Passed CVI identity checks"
+          sub="Passed business verification"
           icon={<UsersIcon className="size-4.5" />}
           trend={t?.verifiedPercent}
           loading={isLoading}
         />
         <StatCard
-          label="Transactions"
+          label="Payments"
           value={isLoading ? "" : formatNumber(o?.transactionCount ?? 0, 0)}
-          sub={`${formatNumber(o?.blockedCount ?? 0, 0)} blocked by policy`}
+          sub={`${formatNumber(o?.blockedCount ?? 0, 0)} declined by safety checks`}
           icon={<ArrowLeftRightIcon className="size-4.5" />}
           trend={t?.transactionsPercent}
           loading={isLoading}
@@ -292,8 +299,8 @@ export function Overview() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Volume · last 7 days</CardTitle>
-            <CardDescription className="text-xs">Daily settled volume in USD</CardDescription>
+            <CardTitle className="text-sm font-medium">Money sent · last 7 days</CardTitle>
+            <CardDescription className="text-xs">Daily payment volume in USD</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -382,8 +389,8 @@ export function Overview() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Compliance score · last 7 days</CardTitle>
-            <CardDescription className="text-xs">Rolling score out of 100</CardDescription>
+            <CardTitle className="text-sm font-medium">Account health · last 7 days</CardTitle>
+            <CardDescription className="text-xs">Rolling account health out of 100</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -417,7 +424,7 @@ export function Overview() {
                     <Area
                       type="monotone"
                       dataKey="score"
-                      name="Compliance"
+                      name="Account health"
                       stroke="#8b5cf6"
                       strokeWidth={2}
                       fill="url(#scoreFill)"
@@ -434,8 +441,8 @@ export function Overview() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Settlements vs blocked</CardTitle>
-            <CardDescription className="text-xs">Daily transaction outcomes</CardDescription>
+            <CardTitle className="text-sm font-medium">Completed vs declined</CardTitle>
+            <CardDescription className="text-xs">Daily payment outcomes</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -460,8 +467,8 @@ export function Overview() {
                       width={30}
                     />
                     <Tooltip content={<ValueTooltip />} cursor={{ fill: "rgba(148,163,184,0.08)" }} />
-                    <Bar dataKey="settled" name="Settled" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={10} />
-                    <Bar dataKey="blocked" name="Blocked" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={10} />
+                    <Bar dataKey="settled" name="Completed" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={10} />
+                    <Bar dataKey="blocked" name="Declined" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={10} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -472,10 +479,10 @@ export function Overview() {
         </Card>
       </div>
 
-      <Card>
+        <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Risk distribution</CardTitle>
-          <CardDescription className="text-xs">Scored transactions by risk level</CardDescription>
+          <CardTitle className="text-sm font-medium">Payment safety overview</CardTitle>
+          <CardDescription className="text-xs">Payments by review outcome</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -493,12 +500,12 @@ export function Overview() {
                       style={{ height: `${Math.max(4, (r.count / maxRisk) * 100)}%` }}
                     />
                   </div>
-                  <span className="text-[10px] uppercase text-muted-foreground">{r.riskLevel}</span>
+                  <span className="text-[10px] uppercase text-muted-foreground">{RISK_LABELS[r.riskLevel] ?? r.riskLevel}</span>
                   <span className="font-mono text-xs tabular-nums">{r.count}</span>
                 </div>
               ))}
               {(data?.riskDistribution ?? []).length === 0 && (
-                <p className="text-sm text-muted-foreground">No transactions scored yet.</p>
+                <p className="text-sm text-muted-foreground">No payments reviewed yet.</p>
               )}
             </div>
           )}

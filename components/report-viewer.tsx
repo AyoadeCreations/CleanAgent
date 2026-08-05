@@ -24,6 +24,20 @@ const VALIDATION_STYLES: Record<string, string> = {
   PENDING: "bg-sky-500/10 text-sky-500 border-sky-500/30",
 };
 
+const VALIDATION_LABELS: Record<string, string> = {
+  PASS: "Passed",
+  FLAGGED: "Needs review",
+  REJECTED: "Declined",
+  PENDING: "Awaiting approval",
+};
+
+const RISK_LABELS: Record<string, string> = {
+  LOW: "Passed",
+  MEDIUM: "Passed",
+  HIGH: "Needs review",
+  CRITICAL: "Needs review",
+};
+
 const RISK_STYLES: Record<string, string> = {
   LOW: "bg-emerald-500/10 text-emerald-500",
   MEDIUM: "bg-amber-500/10 text-amber-500",
@@ -52,7 +66,7 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
               <FileCheck2Icon className="size-5" />
             </div>
             <div>
-              <p className="font-mono text-xs text-muted-foreground">Report identifier</p>
+              <p className="font-mono text-xs text-muted-foreground">Record identifier</p>
               <p className="break-all font-mono text-sm">{report.reportHash}</p>
             </div>
           </div>
@@ -68,19 +82,19 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
 
         <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-lg border bg-background/60 p-4">
-            <dt className="text-xs text-muted-foreground">Settled volume</dt>
+            <dt className="text-xs text-muted-foreground">Money sent</dt>
             <dd className="mt-1 font-mono text-lg font-semibold">{formatCompactCurrency(report.totalVolume)}</dd>
           </div>
           <div className="rounded-lg border bg-background/60 p-4">
-            <dt className="text-xs text-muted-foreground">Transactions</dt>
+            <dt className="text-xs text-muted-foreground">Payments</dt>
             <dd className="mt-1 font-mono text-lg font-semibold">{formatNumber(report.transactions, 0)}</dd>
           </div>
           <div className="rounded-lg border bg-background/60 p-4">
-            <dt className="text-xs text-muted-foreground">Flags</dt>
+            <dt className="text-xs text-muted-foreground">Needs review</dt>
             <dd className="mt-1 font-mono text-lg font-semibold text-amber-500">{formatNumber(report.flags, 0)}</dd>
           </div>
           <div className="rounded-lg border bg-background/60 p-4">
-            <dt className="text-xs text-muted-foreground">Suspended / blocked</dt>
+            <dt className="text-xs text-muted-foreground">Needs review / declined</dt>
             <dd className="mt-1 font-mono text-lg font-semibold">
               {formatNumber(report.suspensions, 0)} <span className="text-muted-foreground">/</span>{" "}
               <span className="text-red-500">{formatNumber(report.blocked, 0)}</span>
@@ -98,7 +112,7 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
         <div className="flex flex-wrap items-center justify-between gap-3 border-b p-5">
           <div className="flex items-center gap-2">
             <ScaleIcon className="size-4 text-primary" />
-            <h2 className="text-sm font-medium">Transaction validation ledger</h2>
+            <h2 className="text-sm font-medium">Payment checks ledger</h2>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {FILTERS.map((f) => (
@@ -112,7 +126,7 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
                     : "border-border text-muted-foreground hover:bg-accent"
                 )}
               >
-                {f === "ALL" ? "All" : f.toLowerCase()}
+                {f === "ALL" ? "All" : VALIDATION_LABELS[f] ?? f.toLowerCase()}
               </button>
             ))}
           </div>
@@ -126,8 +140,8 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
                 <TableHead>From → To</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Timestamp</TableHead>
-                <TableHead>Validation</TableHead>
-                <TableHead>Risk</TableHead>
+                <TableHead>Outcome</TableHead>
+                <TableHead>Checks</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -149,12 +163,12 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
                   <TableCell className="text-xs text-muted-foreground">{formatDateTime(e.timestamp)}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn("font-mono", VALIDATION_STYLES[e.validation] ?? "")}>
-                      {e.validation.toLowerCase()}
+                      {VALIDATION_LABELS[e.validation] ?? e.validation.toLowerCase()}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={cn("font-mono", RISK_STYLES[e.riskLevel] ?? "")}>
-                      {e.riskLevel.toLowerCase()} · {e.riskScore}
+                      {RISK_LABELS[e.riskLevel] ?? e.riskLevel.toLowerCase()}
                     </Badge>
                   </TableCell>
                 </TableRow>
@@ -180,7 +194,7 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
         >
           <div className="flex items-center gap-2">
             <ShieldCheckIcon className="size-4 text-primary" />
-            <h2 className="text-sm font-medium">Previous signed reports</h2>
+            <h2 className="text-sm font-medium">Previous activity records</h2>
           </div>
           <ul className="mt-3 space-y-2">
             {history.slice(1).map((h) => (

@@ -33,9 +33,9 @@ const columns = [
   {
     title: "Resources",
     links: [
-      { label: "Audit reports", href: "/reports" },
+      { label: "Activity records", href: "/reports" },
       { label: "Live demo", href: "/demo" },
-      { label: "Compliance center", href: "/compliance" },
+      { label: "Account health", href: "/compliance" },
       { label: "Business hub", href: "/business" },
     ],
   },
@@ -69,8 +69,8 @@ export function SiteFooter() {
               <Logo />
             </Link>
             <p className="mt-5 text-sm leading-7 text-muted-foreground">
-              The application layer on Cleanverse. Verified identity, verified assets,
-              programmable compliance, and autonomous execution with an immutable audit trail.
+              Send, receive, approve, and track payments from one secure workspace — with
+              safety checks on every payment and clean records for your books.
             </p>
             <div className="mt-6 flex items-center gap-3">
               {[

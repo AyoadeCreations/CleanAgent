@@ -11,12 +11,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const events = [
-  { icon: ShieldCheckIcon, title: "Identity verified", detail: "BluePeak Logistics · CVI attestation", tone: "text-emerald-600" },
-  { icon: ShieldCheckIcon, title: "Asset verified", detail: "USDC · USDT · T-bills collateral screened", tone: "text-emerald-600" },
-  { icon: ScaleIcon, title: "Compliance checks completed", detail: "CCP policy evaluated · 4/4 passed", tone: "text-amber-600" },
-  { icon: ArrowRightLeftIcon, title: "Settlement approved", detail: "INV-2026-001 · $4,200 USDC", tone: "text-blue-600" },
-  { icon: LandmarkIcon, title: "Settlement completed", detail: "Funds released on-chain", tone: "text-violet-600" },
-  { icon: FileCheck2Icon, title: "Audit report generated", detail: "Signed hash recorded to the ledger", tone: "text-rose-600" },
+  { icon: ShieldCheckIcon, title: "Business verified", detail: "BluePeak Logistics · business verified", tone: "text-emerald-600" },
+  { icon: ShieldCheckIcon, title: "Funds checked", detail: "USDC · USDT · T-bills checked", tone: "text-emerald-600" },
+  { icon: ScaleIcon, title: "Safety checks passed", detail: "4 of 4 safety checks passed", tone: "text-amber-600" },
+  { icon: ArrowRightLeftIcon, title: "Payment approved", detail: "INV-2026-001 · $4,200 USDC", tone: "text-blue-600" },
+  { icon: LandmarkIcon, title: "Payment sent", detail: "Funds released to recipient", tone: "text-violet-600" },
+  { icon: FileCheck2Icon, title: "Activity recorded", detail: "History saved to your workspace", tone: "text-rose-600" },
 ];
 
 export function ActivityFeed() {
@@ -24,8 +24,8 @@ export function ActivityFeed() {
     <div className="rounded-[24px] bg-card p-8 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold tracking-tight">Activity feed</h3>
-          <p className="mt-1 text-sm text-muted-foreground">Latest lifecycle across your workspace</p>
+          <h3 className="text-lg font-semibold tracking-tight">Activity history</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Latest activity across your workspace</p>
         </div>
         <Badge variant="outline" className="gap-1.5 text-emerald-600">
           <CheckCircle2Icon className="size-3.5" />

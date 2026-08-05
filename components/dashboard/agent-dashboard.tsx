@@ -67,23 +67,23 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
         <p className="text-xs font-medium uppercase tracking-widest text-violet-100 sm:text-sm">
           {greeting()}, {userName ?? "Agent"}
         </p>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Agent workspace</h1>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-4xl">Automation workspace</h1>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-violet-50 sm:text-base">
-          Scoped autonomous agents executing payments within hard spending limits.
+          Payment automations that work within the limits you set.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <BotIcon className="size-3" />
-            {activeAgents.length} active agents
+            {activeAgents.length} active automations
           </Badge>
-          <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+          <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <ActivityIcon className="size-3" />
             monitoring live
           </Badge>
           {verified !== undefined && (
-            <Badge variant="outline" className="border-white/20 bg-white/10 font-mono text-white">
+            <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
               <CheckCircle2Icon className="size-3" />
-              {verified ? "identity verified" : "identity pending"}
+              {verified ? "Verified business" : "Verification pending"}
             </Badge>
           )}
         </div>
@@ -91,18 +91,18 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Active tasks"
+          label="Active automations"
           value={activeAgents.length}
-          sub="Agents with active runbooks"
+          sub="Automations running on schedule"
           icon={<ListChecksIcon className="size-4.5" />}
           spark={execSpark}
           trend={t?.agentsPercent}
           loading={agentsLoading}
         />
         <StatCard
-          label="Execution history"
+          label="Automation history"
           value={(txData?.transactions ?? []).filter((tx) => tx.agentId).length}
-          sub="Transactions routed through agents"
+          sub="Payments run by automations"
           icon={<HistoryIcon className="size-4.5" />}
           spark={execSpark}
           trend={t?.transactionsPercent}
@@ -110,9 +110,9 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
           sparkColor="#8b5cf6"
         />
         <StatCard
-          label="Agent volume"
+          label="Automation volume"
           value={totalAgentVolume}
-          sub="Total volume via agents"
+          sub="Total volume via automations"
           icon={<WalletIcon className="size-4.5" />}
           spark={volumeSpark}
           trend={t?.volumePercent}
@@ -120,9 +120,9 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
           sparkColor="#10b981"
         />
         <StatCard
-          label="Compliance score"
+          label="Account health"
           value={o?.complianceScore ?? 0}
-          sub="Out of 100 · rolling"
+          sub="Business health score · /100"
           icon={<GaugeIcon className="size-4.5" />}
           spark={scoreSpark}
           trend={t?.complianceDelta}
@@ -136,7 +136,9 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
         {agentsLoading ? (
           <Skeleton className="h-40 w-full md:col-span-2 xl:col-span-4" />
         ) : agents.length === 0 ? (
-          <p className="md:col-span-2 xl:col-span-4 py-8 text-center text-sm text-muted-foreground">No agents yet.</p>
+          <p className="md:col-span-2 xl:col-span-4 py-8 text-center text-sm text-muted-foreground">
+            No automations yet. Create one to get started.
+          </p>
         ) : (
           agents.map((agent) => (
             <div
@@ -168,7 +170,7 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
                 </div>
               </dl>
               <p className="mt-3 text-xs text-muted-foreground">
-                {formatNumber(agent.transactionCount, 0)} executions
+                {formatNumber(agent.transactionCount, 0)} payments run
                 {agent.lastUsedAt ? ` · ${formatRelativeTime(agent.lastUsedAt)}` : ""}
               </p>
             </div>
@@ -182,7 +184,7 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
           <div className="flex items-center justify-between border-b px-5 py-4">
             <div className="flex items-center gap-2">
               <ScaleIcon className="size-4 text-primary" />
-              <h3 className="text-sm font-medium">Policy rules</h3>
+              <h3 className="text-sm font-medium">Account rules</h3>
             </div>
             <Link href="/dashboard/compliance" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80">
               Manage <MoveRightIcon className="size-3.5" />
@@ -194,7 +196,7 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
                 <Skeleton className="h-32 w-full" />
               </div>
             ) : (rulesData?.rules ?? []).length === 0 ? (
-              <p className="p-6 text-center text-sm text-muted-foreground">No policy rules configured.</p>
+              <p className="p-6 text-center text-sm text-muted-foreground">No account rules configured.</p>
             ) : (
               (rulesData?.rules ?? []).slice(0, 5).map((rule) => (
                 <div key={rule.id} className="flex items-center justify-between gap-3 px-5 py-3">
@@ -215,13 +217,13 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
         <div className="rounded-[20px] bg-card ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
           <div className="flex items-center gap-2 border-b px-5 py-4">
             <ArrowLeftRightIcon className="size-4 text-primary" />
-            <h3 className="text-sm font-medium">Transaction summaries</h3>
+            <h3 className="text-sm font-medium">Payment summaries</h3>
           </div>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Agent</TableHead>
+                  <TableHead>Automation</TableHead>
                   <TableHead>To</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
                   <TableHead>Status</TableHead>
@@ -238,7 +240,7 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
                 ) : recentAgentTxs.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-24 text-center text-sm text-muted-foreground">
-                      No agent executions yet.
+                      No payments run by automations yet.
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -251,7 +253,7 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className={cn("font-mono", TX_STYLES[tx.status])}>
-                          {tx.status.toLowerCase()}
+                          {TX_LABELS[tx.status] ?? tx.status.toLowerCase()}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">{formatRelativeTime(tx.createdAt)}</TableCell>
@@ -264,9 +266,9 @@ export function AgentDashboard({ userName, verified }: { userName?: string; veri
         </div>
       </div>
 
-      {/* Agent roles */}
+      {/* Automation ideas */}
       <div className="rounded-[20px] bg-card p-5 ring-1 ring-black/[0.06] shadow-[0_4px_12px_rgba(0,0,0,0.04)]">
-        <h3 className="text-sm font-medium">Agent roles</h3>
+        <h3 className="text-sm font-medium">Ways to automate</h3>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {WORLD_AGENTS.map((agent) => (
             <div key={agent.name} className="flex items-start gap-3 rounded-lg border bg-background/60 p-3">
@@ -288,6 +290,15 @@ const AGENT_STYLES: Record<string, string> = {
   PAUSED: "bg-amber-500/10 text-amber-500 border-amber-500/30",
   SUSPENDED: "bg-orange-500/10 text-orange-500 border-orange-500/30",
   DEACTIVATED: "bg-muted text-muted-foreground border-border",
+};
+
+const TX_LABELS: Record<string, string> = {
+  PENDING: "Awaiting approval",
+  APPROVED: "Approved",
+  EXECUTED: "Sent",
+  SUSPENDED: "Needs review",
+  BLOCKED: "Declined",
+  FAILED: "Failed",
 };
 
 const TX_STYLES: Record<string, string> = {

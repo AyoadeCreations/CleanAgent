@@ -58,12 +58,12 @@ export function VerifiedEntityBadge({ verified }: { verified: boolean }) {
   return verified ? (
     <Badge variant="outline" className="font-mono bg-emerald-500/10 text-emerald-500 border-emerald-500/30">
       <BadgeCheckIcon className="size-3" />
-      identity verified
+      Verified business
     </Badge>
   ) : (
     <Badge variant="outline" className="font-mono bg-amber-500/10 text-amber-500 border-amber-500/30">
       <ClockIcon className="size-3" />
-      identity pending
+      Verification pending
     </Badge>
   );
 }

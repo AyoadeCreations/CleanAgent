@@ -33,7 +33,7 @@ export function SettingsView({ user }: { user: SessionUser }) {
     setVerifying(true);
     try {
       const status = await verifyIdentity(user.walletAddress);
-      toast.success(status.verified ? "Identity re-verified" : "Verification rejected");
+      toast.success(status.verified ? "Business re-verified" : "Verification rejected");
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Verification failed");
@@ -47,7 +47,7 @@ export function SettingsView({ user }: { user: SessionUser }) {
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>Your account and identity status.</CardDescription>
+          <CardDescription>Your account and business verification status.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <dl className="space-y-3 text-sm">
@@ -73,20 +73,20 @@ export function SettingsView({ user }: { user: SessionUser }) {
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4">
-              <dt className="text-muted-foreground">Identity</dt>
+              <dt className="text-muted-foreground">Business verification</dt>
               <dd>
                 <Badge
                   variant="outline"
                   className={user.verified ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"}
                 >
-                  {user.verified ? `Verified · KYC ${user.kycLevel}` : "Unverified"}
+                  {user.verified ? "Verified business" : "Not verified yet"}
                 </Badge>
               </dd>
             </div>
           </dl>
           <Button variant="outline" className="w-full" onClick={handleVerify} disabled={verifying}>
             <FingerprintIcon />
-            {verifying ? "Running checks…" : "Re-run identity verification"}
+            {verifying ? "Running checks…" : "Re-run business verification"}
           </Button>
         </CardContent>
       </Card>

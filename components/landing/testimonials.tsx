@@ -4,7 +4,7 @@ import { RevealContainer, RevealItem } from "@/components/motion-reveal";
 const testimonials = [
   {
     quote:
-      "CleanFlow replaced our manual KYC spreadsheets and approval queues. Payments that used to take three days now settle in seconds — with a signed audit trail regulators actually like.",
+      "We used to chase payments across spreadsheets and approval queues. Now a payment that took three days takes minutes — and the records are right there when we need them.",
     name: "Amara Okafor",
     title: "CFO, Meridian Logistics",
     image:
@@ -12,7 +12,7 @@ const testimonials = [
   },
   {
     quote:
-      "We moved payroll, treasury sweeps, and supplier payouts onto CleanFlow. Every transfer is identity-checked, rule-validated, and hash-chained. Compliance went from a quarterly scramble to a dashboard.",
+      "Payroll, supplier payouts, everything lives in one place. Every payment is checked before it goes out, and compliance went from a quarterly scramble to something we just glance at.",
     name: "Daniel Reyes",
     title: "Treasury Lead, Northgate Capital",
     image:
@@ -20,7 +20,7 @@ const testimonials = [
   },
   {
     quote:
-      "The agents operate inside the guardrails we define — spending limits, allowlists, risk thresholds. We get automation without surrendering control. That is exactly what our compliance committee needed.",
+      "We set the limits, the workspace handles the rest. Payments go out on their own within the boundaries we define — without us surrendering control.",
     name: "Sofia Lindqvist",
     title: "Head of Compliance, Aurora Trust",
     image:

@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 const appDescription =
-  "Verified identity, verified assets, programmable compliance, autonomous execution, and immutable audit trails — the application layer on Cleanverse.";
+  "Send, receive, approve, and track payments from one secure workspace. Every payment is checked for safety before it moves, with clean records for your books.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cleanflow.dev"),
@@ -40,12 +40,12 @@ export const metadata: Metadata = {
   keywords: [
     "CleanFlow",
     "Cleanverse",
-    "compliance",
-    "payments",
-    "identity verification",
-    "blockchain",
+    "business payments",
+    "payment approval",
+    "payment safety",
+    "trusted payments",
     "Monad",
-    "transaction orchestration",
+    "payment records",
   ],
   openGraph: {
     type: "website",

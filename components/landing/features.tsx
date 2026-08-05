@@ -17,13 +17,13 @@ export function Features() {
         <RevealContainer className="mb-16 max-w-2xl">
           <RevealItem>
             <h2 className="text-balance text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-[64px] lg:leading-[1.05]">
-              Every layer of trust, automated
+              Trust built into every payment
             </h2>
           </RevealItem>
           <RevealItem>
             <p className="mt-6 max-w-xl text-lg leading-[1.8] text-muted-foreground">
-              CleanFlow replaces manual KYC spreadsheets, ad-hoc approvals, and un-auditable
-              treasury stacks with a single programmable layer.
+              We replace manual spreadsheets, approval queues, and paper trails with one simple,
+              secure workspace for your money.
             </p>
           </RevealItem>
         </RevealContainer>
@@ -51,10 +51,10 @@ export function Features() {
               </div>
 
               <div>
-                <h3 className="text-2xl font-semibold tracking-tight">Verified identities</h3>
+                <h3 className="text-2xl font-semibold tracking-tight">Verified businesses</h3>
                 <p className="mt-2 text-base leading-relaxed text-white/85">
-                  Every counterparty passes Cleanverse identity verification (CVI) with on-chain
-                  attestation before a single transaction is approved.
+                  Every business you pay is verified before the first transaction, so you only
+                  ever send money to who you mean to.
                 </p>
                 <Link
                   href="/onboarding"
@@ -88,10 +88,10 @@ export function Features() {
                   />
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Verified assets</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight">Protected payments</h3>
                   <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                    Assets screened through Cleanverse&apos;s registry (CVA) — only risk-verified
-                    collateral and tokens move through your flows.
+                    Every payment is screened against fraud and sanctions before it moves — only
+                    safe, approved funds flow through your account.
                   </p>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export function Features() {
                 href="/dashboard"
                 className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
               >
-                Explore assets
+                Explore payments
                 <ArrowRightIcon className="size-4" />
               </Link>
             </div>
@@ -126,10 +126,10 @@ export function Features() {
                   />
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">AI agents</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight">Payment automations</h3>
                   <p className="mt-2 text-base leading-relaxed text-black/70">
-                    Grant agents granular permissions and spending limits. They execute approved
-                    actions within boundaries you control.
+                    Automate recurring payments within limits you set. They run on schedule, and
+                    you stay in control.
                   </p>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export function Features() {
                 href="/dashboard/agents"
                 className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-black transition-transform group-hover:translate-x-0.5"
               >
-                Create an agent
+                Create an automation
                 <ArrowRightIcon className="size-4" />
               </Link>
             </div>
@@ -164,10 +164,10 @@ export function Features() {
                   />
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Compliance automation</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight">Account safety</h3>
                   <p className="mt-2 text-base leading-relaxed text-white/70">
-                    Compliance as code — allowlists, caps, and risk thresholds enforced
-                    deterministically on every execution.
+                    Account rules, limits, and safety checks are applied to every payment
+                    automatically — consistent, every time.
                   </p>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export function Features() {
                 href="/dashboard/compliance"
                 className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform group-hover:translate-x-0.5"
               >
-                View compliance
+                View account health
                 <ArrowRightIcon className="size-4" />
               </Link>
             </div>
@@ -202,10 +202,10 @@ export function Features() {
                   />
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Audit reporting</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight">Activity records</h3>
                   <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                    Every decision is hashed and logged to an immutable trail, ready for regulators
-                    and proof of control.
+                    Every payment leaves a clear, shareable record — ready for your accountant
+                    or auditor whenever you need it.
                   </p>
                 </div>
               </div>
@@ -213,7 +213,7 @@ export function Features() {
                 href="/dashboard/reports"
                 className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
               >
-                View reports
+                View activity
                 <ArrowRightIcon className="size-4" />
               </Link>
             </div>
