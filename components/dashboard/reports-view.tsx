@@ -3,12 +3,20 @@
 import * as React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { FileBarChart2Icon, RefreshCwIcon, FileCheck2Icon } from "lucide-react";
+import {
+  FileBarChart2Icon,
+  RefreshCwIcon,
+  FileCheck2Icon,
+  CopyIcon,
+  BadgeCheckIcon,
+} from "lucide-react";
 import { useReports } from "@/hooks/use-api";
 import { formatCompactCurrency, formatDateTime, formatNumber } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -63,7 +71,7 @@ export function ReportsView() {
       <div className="flex justify-end">
         <Button onClick={generate} disabled={generating || isLoading}>
           <FileBarChart2Icon />
-          {generating ? "Generating…" : "Generate report"}
+          {generating ? "Compiling audit report…" : "Generate report"}
         </Button>
       </div>
 
@@ -118,8 +126,11 @@ export function ReportsView() {
                   <TableRow>
                     <TableHead>Generated</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead className="max-w-[240px]">Audit hash</TableHead>
+                    <TableHead className="max-w-[260px]">Audit hash</TableHead>
                     <TableHead className="text-right">Volume</TableHead>
+                    <TableHead className="text-right">Transactions</TableHead>
+                    <TableHead className="text-right">Flags</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
               <TableBody>
@@ -127,17 +138,47 @@ export function ReportsView() {
                   <TableRow key={r.id}>
                     <TableCell className="text-xs text-muted-foreground">{formatDateTime(r.createdAt)}</TableCell>
                     <TableCell className="font-mono text-xs">{r.type.toLowerCase()}</TableCell>
-                    <TableCell className="max-w-[240px] truncate font-mono text-[10px] text-muted-foreground">
-                      {r.reportHash}
+                    <TableCell>
+                      <div className="flex max-w-[260px] items-center gap-1.5">
+                        <span className="truncate font-mono text-[10px] text-muted-foreground">{r.reportHash}</span>
+                        <button
+                          type="button"
+                          aria-label="Copy audit hash"
+                          onClick={() => {
+                            navigator.clipboard?.writeText(r.reportHash);
+                            toast.success("Audit hash copied");
+                          }}
+                          className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          <CopyIcon className="size-3.5" />
+                        </button>
+                      </div>
                     </TableCell>
                     <TableCell className="text-right font-mono text-xs">
                       {formatCompactCurrency(r.data.totalVolume)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-xs">
+                      {formatNumber(r.data.transactions, 0)}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-xs text-amber-500">
+                      {formatNumber(r.data.flags, 0)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "gap-1 border-emerald-500/30 bg-emerald-500/10 font-mono text-[10px] text-emerald-500"
+                        )}
+                      >
+                        <BadgeCheckIcon className="size-3" />
+                        signed
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}
                 {(data?.reports ?? []).length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-20 text-center text-sm text-muted-foreground">
+                    <TableCell colSpan={7} className="h-20 text-center text-sm text-muted-foreground">
                       No reports generated yet.
                     </TableCell>
                   </TableRow>

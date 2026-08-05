@@ -67,9 +67,9 @@ interface DemoInput {
 }
 
 const DEFAULT_INPUT: DemoInput = {
-  name: "Helios Logistics",
+  name: "BluePeak Logistics",
   industry: "Freight & logistics",
-  agentName: "Payables Agent",
+  agentName: "Settlement Agent",
   dailyLimit: 10_000,
   amount: 4_200,
   assetType: "USDC",
@@ -469,15 +469,40 @@ export function DemoWorkflow() {
                           <div className="text-xs text-muted-foreground">Signed report identifier</div>
                           <div className="mt-1 break-all font-mono text-xs text-emerald-500">{String(result.reportHash)}</div>
                         </div>
-                        <div className="rounded-xl border bg-emerald-500/5 p-5">
-                          <p className="text-sm font-semibold text-emerald-500">Workflow complete</p>
-                          <ul className="mt-3 space-y-2">
-                            {STATUS_LINE.map((line) => (
-                              <li key={line} className="flex items-center gap-2 text-sm">
-                                <CheckIcon className="size-4 text-emerald-500" />
+                        <div className="rounded-xl border bg-emerald-500/5 p-6 text-center">
+                          <motion.div
+                            initial={{ scale: 0, rotate: -30 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
+                            className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500 text-background"
+                          >
+                            <CheckIcon className="size-8" />
+                          </motion.div>
+                          <motion.div
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.25 }}
+                          >
+                            <p className="mt-4 text-lg font-semibold text-emerald-500">Workflow complete</p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              Every stage cleared — the payment is verified, governed, settled, and audit-signed.
+                            </p>
+                          </motion.div>
+                          <ul className="mx-auto mt-5 max-w-md space-y-2 text-left">
+                            {STATUS_LINE.map((line, i) => (
+                              <motion.li
+                                key={line}
+                                initial={{ opacity: 0, x: -8 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.35 + i * 0.08 }}
+                                className="flex items-center gap-2 rounded-lg border bg-background/60 px-3 py-2 text-sm"
+                              >
+                                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-500">
+                                  <CheckIcon className="size-3.5" />
+                                </span>
                                 {line}
-                                <span className="text-emerald-500">✓</span>
-                              </li>
+                                <span className="ml-auto font-mono text-[11px] text-emerald-500">✓</span>
+                              </motion.li>
                             ))}
                           </ul>
                         </div>

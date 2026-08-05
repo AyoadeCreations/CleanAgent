@@ -11,12 +11,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const events = [
-  { icon: ShieldCheckIcon, title: "Identity verified", detail: "Helios Logistics · CVI attestation", tone: "text-emerald-600" },
-  { icon: ShieldCheckIcon, title: "Asset verified", detail: "USDC collateral · CVA screening", tone: "text-emerald-600" },
-  { icon: ScaleIcon, title: "Rules executed", detail: "CCP policy evaluated · 3/3 passed", tone: "text-amber-600" },
-  { icon: ArrowRightLeftIcon, title: "Transaction approved", detail: "PAY-2026-001 · $4,200 USDC", tone: "text-blue-600" },
+  { icon: ShieldCheckIcon, title: "Identity verified", detail: "BluePeak Logistics · CVI attestation", tone: "text-emerald-600" },
+  { icon: ShieldCheckIcon, title: "Asset verified", detail: "USDC · USDT · T-bills collateral screened", tone: "text-emerald-600" },
+  { icon: ScaleIcon, title: "Compliance checks completed", detail: "CCP policy evaluated · 4/4 passed", tone: "text-amber-600" },
+  { icon: ArrowRightLeftIcon, title: "Settlement approved", detail: "INV-2026-001 · $4,200 USDC", tone: "text-blue-600" },
   { icon: LandmarkIcon, title: "Settlement completed", detail: "Funds released on-chain", tone: "text-violet-600" },
-  { icon: FileCheck2Icon, title: "Audit report generated", detail: "Signed hash recorded", tone: "text-rose-600" },
+  { icon: FileCheck2Icon, title: "Audit report generated", detail: "Signed hash recorded to the ledger", tone: "text-rose-600" },
 ];
 
 export function ActivityFeed() {

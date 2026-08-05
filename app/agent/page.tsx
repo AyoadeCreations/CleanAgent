@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { getSessionUser } from "@/lib/auth/session";
-import { RoleHome } from "@/components/dashboard/role-home";
+import { AgentDashboard } from "@/components/dashboard/agent-dashboard";
 
 export const metadata: Metadata = { title: "Agent" };
 
@@ -11,7 +11,7 @@ export default async function AgentHomePage() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <RoleHome role={user.role} verified={user.verified} />
+      <AgentDashboard userName={user.name ?? undefined} verified={user.verified} />
     </div>
   );
 }

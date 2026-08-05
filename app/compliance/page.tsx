@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { requirePageRole } from "@/lib/auth/rbac";
-import { RoleHome } from "@/components/dashboard/role-home";
+import { ComplianceDashboard } from "@/components/dashboard/compliance-dashboard";
 
 export const metadata: Metadata = { title: "Compliance" };
 
@@ -9,7 +9,7 @@ export default async function ComplianceHomePage() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <RoleHome role="COMPLIANCE" verified={user.verified} />
+      <ComplianceDashboard userName={user.name ?? undefined} verified={user.verified} />
     </div>
   );
 }

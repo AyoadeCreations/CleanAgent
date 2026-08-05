@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { PublicReport } from "@/lib/database/reports";
+import { counterpartyName } from "@/lib/world";
 
 const VALIDATION_STYLES: Record<string, string> = {
   PASS: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
@@ -137,7 +138,10 @@ export function ReportViewer({ report, history }: { report: PublicReport; histor
                     <div className="text-[10px] uppercase text-muted-foreground">{e.type.toLowerCase()}</div>
                   </TableCell>
                   <TableCell className="font-mono text-xs">
-                    {truncateAddress(e.sender)} → {truncateAddress(e.receiver)}
+                    <div>{counterpartyName(e.sender)} → {counterpartyName(e.receiver)}</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {truncateAddress(e.sender)} → {truncateAddress(e.receiver)}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right font-mono text-xs">
                     {formatNumber(e.amount)} {e.assetType}

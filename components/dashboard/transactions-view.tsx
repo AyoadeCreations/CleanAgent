@@ -18,6 +18,7 @@ import { useAgents, useTransactions, useTransactionActions } from "@/hooks/use-a
 import { formatNumber, formatDateTime, truncateAddress } from "@/lib/format";
 import type { TransactionStatus, TransactionType, Role, TransactionDTO } from "@/lib/types";
 import { TransactionTimeline } from "@/components/transaction-timeline";
+import { TransactionVerificationStages } from "@/components/dashboard/transaction-stages";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -111,6 +112,9 @@ export function TransactionsView({ role }: { role: Role }) {
     agentId: "",
   });
   const [creating, setCreating] = React.useState(false);
+  const [stageRunKey, setStageRunKey] = React.useState(0);
+  const [stageBlocked, setStageBlocked] = React.useState(false);
+  const [showStages, setShowStages] = React.useState(false);
 
   const transactions = (data?.transactions ?? [])
     .filter((t) => statusFilter === "ALL" || t.status === statusFilter)
@@ -163,6 +167,7 @@ export function TransactionsView({ role }: { role: Role }) {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreating(true);
+    setShowStages(false);
     try {
       const res = await fetch("/api/transaction/create", {
         method: "POST",
@@ -178,20 +183,24 @@ export function TransactionsView({ role }: { role: Role }) {
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error ?? "Failed to create transaction");
-      toast.success(
-        data.data.transaction.status === "BLOCKED"
-          ? "Transaction blocked by compliance policy"
-          : `Transaction ${data.data.transaction.status.toLowerCase()}`
-      );
-      setOpen(false);
-      setForm({ receiver: "", amount: "", assetType: "USDC", type: "PAYMENT", reference: "", agentId: "" });
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      const blocked = data.data.transaction.status === "BLOCKED";
+      setStageBlocked(blocked);
+      setStageRunKey((k) => k + 1);
+      setShowStages(true);
+      setCreating(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to create transaction");
-    } finally {
       setCreating(false);
+      setShowStages(false);
     }
+  }
+
+  function onStagesComplete() {
+    toast.success(stageBlocked ? "Transaction blocked by compliance policy" : "Transaction approved & settled");
+    setOpen(false);
+    setForm({ receiver: "", amount: "", assetType: "USDC", type: "PAYMENT", reference: "", agentId: "" });
+    queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
   }
 
   async function runAction(id: string, action: string) {
@@ -400,6 +409,16 @@ export function TransactionsView({ role }: { role: Role }) {
               Evaluated against CCP rules, agent limits, and Cleanverse risk scoring.
             </DialogDescription>
           </DialogHeader>
+          {showStages ? (
+            <div className="rounded-lg border bg-muted/30 p-4">
+              <TransactionVerificationStages
+                key={`${stageRunKey}-${stageBlocked}`}
+                run={showStages}
+                failedAtKey={stageBlocked ? "approval" : null}
+                onComplete={() => onStagesComplete()}
+              />
+            </div>
+          ) : (
           <form onSubmit={handleCreate} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="tx-receiver">Receiver</Label>
@@ -495,6 +514,7 @@ export function TransactionsView({ role }: { role: Role }) {
               </Button>
             </DialogFooter>
           </form>
+          )}
         </DialogContent>
       </Dialog>
 
