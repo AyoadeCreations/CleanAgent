@@ -36,7 +36,7 @@ const steps = [
 
 export function Workflow() {
   return (
-    <section id="workflow" className="scroll-mt-20 border-y bg-muted/30 py-24">
+    <section id="workflow" className="scroll-mt-20 border-y bg-muted/30 py-[120px]">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <RevealContainer className="mx-auto mb-16 max-w-2xl text-center">
           <RevealItem>

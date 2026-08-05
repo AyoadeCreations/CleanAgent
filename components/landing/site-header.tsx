@@ -33,7 +33,7 @@ export function SiteHeader() {
         scrolled ? "border-border/70 bg-background/80" : "border-transparent bg-background/40",
       )}
     >
-      <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-6 lg:px-12">
+      <div className="mx-auto flex h-20 w-full max-w-[1440px] items-center justify-between px-8">
         <Link href="/" className="shrink-0" aria-label="CleanFlow home">
           <Logo />
         </Link>

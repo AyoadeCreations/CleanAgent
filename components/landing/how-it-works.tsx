@@ -42,8 +42,8 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="scroll-mt-20 py-24">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="how-it-works" className="scroll-mt-20 py-[120px]">
+      <div className="mx-auto w-full max-w-[1440px] px-8">
         <RevealContainer className="mx-auto mb-16 max-w-2xl text-center">
           <RevealItem>
             <p className="mb-3 text-xs font-medium tracking-widest text-primary uppercase">

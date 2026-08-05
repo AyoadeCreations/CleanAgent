@@ -62,8 +62,8 @@ const columns = [
 export function SiteFooter() {
   return (
     <footer className="border-t bg-surface/60">
-      <div className="mx-auto w-full max-w-7xl px-6 py-16 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_3fr_1fr]">
+      <div className="mx-auto w-full max-w-[1440px] px-6 py-16 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.3fr_3fr_1fr]">
           <div className="max-w-sm">
             <Link href="/" aria-label="CleanFlow home" className="inline-flex">
               <Logo />
@@ -135,7 +135,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs text-muted-foreground sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs text-muted-foreground sm:flex-row">
           <p>&copy; {new Date().getFullYear()} CleanFlow. Built on Cleanverse.</p>
           <p>Monad testnet &middot; Demo data &middot; Not financial advice</p>
         </div>

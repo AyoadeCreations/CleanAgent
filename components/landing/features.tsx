@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  BadgeCheckIcon,
   ShieldCheckIcon,
-  ScaleIcon,
   BotIcon,
   GlobeIcon,
   ZapIcon,
@@ -13,6 +13,7 @@ import { RevealContainer, RevealItem } from "@/components/motion-reveal";
 
 interface Feature {
   icon: React.ComponentType<{ className?: string }>;
+  label: string;
   image: string;
   imageAlt: string;
   title: string;
@@ -22,79 +23,84 @@ interface Feature {
 
 const FEATURES: Feature[] = [
   {
-    icon: ShieldCheckIcon,
+    icon: BadgeCheckIcon,
+    label: "Identity",
     image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Team verifying a business on a laptop",
     title: "Business verification",
-    description:
-      "Verify your business once. After that, every payment you send carries your verified status — no repeated paperwork.",
+    description: "Confirm the identity of every company before payments are approved.",
     cta: { label: "Verify your business", href: "/onboarding" },
   },
   {
-    icon: ScaleIcon,
+    icon: ShieldCheckIcon,
+    label: "Safety",
     image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Payment protection dashboard",
     title: "Payment protection",
-    description:
-      "Every payment is checked for fraud and sanctions before it moves. Only safe, approved funds leave your account.",
+    description: "Protect transfers using automated verification checks.",
     cta: { label: "Explore payments", href: "/dashboard" },
   },
   {
     icon: BotIcon,
+    label: "Automation",
     image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Autonomous payment automation",
     title: "AI automations",
-    description:
-      "Set the limits, then let automations run payroll and supplier payments on schedule — you stay in control.",
+    description: "Create intelligent workflows that operate inside predefined rules.",
     cta: { label: "Create an automation", href: "/dashboard/agents" },
   },
   {
     icon: GlobeIcon,
+    label: "Network",
     image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Cross-border payment network",
     title: "Cross-border payments",
-    description:
-      "Pay suppliers and partners anywhere in the world without bank queues, high fees, or international friction.",
+    description: "Move money internationally in real time.",
     cta: { label: "Send a payment", href: "/dashboard/transactions" },
   },
   {
     icon: ZapIcon,
+    label: "Speed",
     image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Instant settlement speed",
     title: "Instant settlement",
-    description:
-      "Payments move in minutes, not days. Once approved, funds are delivered to your recipient right away.",
+    description: "Complete transactions within seconds.",
     cta: { label: "See it in action", href: "/demo" },
   },
   {
     icon: FileBarChart2Icon,
+    label: "Records",
     image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
     imageAlt: "Activity records document",
     title: "Activity history",
-    description:
-      "Every payment leaves a clean, shareable record — ready for your accountant, auditor, or your own books.",
+    description: "Track every payment from beginning to end.",
     cta: { label: "View activity", href: "/dashboard/reports" },
   },
 ];
 
 export function Features() {
   return (
-    <section id="platform" className="scroll-mt-20 py-24">
+    <section id="platform" className="scroll-mt-20 py-[120px]">
       <div className="mx-auto w-full max-w-[1440px] px-8">
-        <RevealContainer className="mb-16 max-w-2xl">
+        <RevealContainer className="mx-auto mb-16 max-w-3xl text-center">
           <RevealItem>
-            <h2 className="text-balance text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-[64px] lg:leading-[1.05]">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
+              The platform
+            </p>
+          </RevealItem>
+          <RevealItem>
+            <h2 className="text-balance text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-6xl">
               Everything a modern business needs to move money
             </h2>
           </RevealItem>
           <RevealItem>
-            <p className="mt-6 max-w-xl text-lg leading-[1.8] text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-[1.8] text-muted-foreground">
               One secure workspace for sending, checking, approving, and tracking every payment.
             </p>
           </RevealItem>
         </RevealContainer>
 
-        <RevealContainer className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <RevealContainer className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => {
             const Icon = feature.icon;
             return (
@@ -103,6 +109,9 @@ export function Features() {
                   <div className="flex items-center justify-between">
                     <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                       <Icon className="size-5" aria-hidden="true" />
+                    </span>
+                    <span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      {feature.label}
                     </span>
                   </div>
 
@@ -124,10 +133,10 @@ export function Features() {
                     </p>
                     <Link
                       href={feature.cta.href}
-                      className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
+                      className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-full border bg-background px-4 py-2.5 text-sm font-semibold text-foreground transition-colors group-hover:border-primary/40 group-hover:text-primary"
                     >
                       {feature.cta.label}
-                      <ArrowUpRightIcon className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      <ArrowUpRightIcon className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
