@@ -6,10 +6,10 @@ const columns = [
   {
     title: "Products",
     links: [
-      { label: "Verified identity", href: "#platform" },
-      { label: "Verified assets", href: "#platform" },
-      { label: "Compliance rules", href: "#platform" },
-      { label: "Autonomous agents", href: "#platform" },
+      { label: "Business verification", href: "#platform" },
+      { label: "Payment protection", href: "#platform" },
+      { label: "Account rules", href: "#platform" },
+      { label: "AI automations", href: "#platform" },
     ],
   },
   {
@@ -53,7 +53,7 @@ const columns = [
     links: [
       { label: "Privacy", href: "/" },
       { label: "Terms", href: "/" },
-      { label: "Compliance", href: "/compliance" },
+      { label: "Account health", href: "/compliance" },
       { label: "Licensing", href: "/" },
     ],
   },

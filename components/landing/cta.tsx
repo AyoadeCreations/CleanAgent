@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DemoButton } from "@/components/landing/demo-button";
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
 
 export function Cta() {
@@ -28,13 +28,7 @@ export function Cta() {
                 in minutes.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link
-                  href="/demo"
-                  className="group inline-flex items-center gap-2 rounded-full bg-lime px-7 py-[18px] text-base font-semibold text-black transition-transform hover:scale-105"
-                >
-                  See it in action
-                  <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
-                </Link>
+                <DemoButton className="px-7 py-[18px] text-base" />
                 <Button size="lg" variant="outline" render={<Link href="/register" />}>
                   Create account
                 </Button>

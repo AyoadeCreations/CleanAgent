@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MenuIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
+import { DemoButton } from "@/components/landing/demo-button";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -53,12 +54,7 @@ export function SiteHeader() {
           <Button variant="ghost" render={<Link href="/login" />}>
             Login
           </Button>
-          <Link
-            href="/demo"
-            className="inline-flex items-center rounded-full bg-lime px-6 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-105"
-          >
-            See it in action
-          </Link>
+          <DemoButton className="px-6 py-2.5" />
         </div>
 
         <Button
@@ -90,13 +86,7 @@ export function SiteHeader() {
               <Button variant="outline" render={<Link href="/login" onClick={() => setOpen(false)} />}>
                 Login
               </Button>
-              <Link
-                href="/demo"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center rounded-full bg-lime px-6 py-2.5 text-sm font-semibold text-black"
-              >
-                See it in action
-              </Link>
+              <DemoButton className="w-full px-6 py-2.5" />
             </div>
           </nav>
         </div>

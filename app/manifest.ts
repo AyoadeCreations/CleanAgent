@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `${APP_NAME} — ${APP_TAGLINE}`,
     short_name: APP_NAME,
     description:
-      "Verified identity, verified assets, programmable compliance, autonomous execution, and immutable audit trails — the application layer on Cleanverse.",
+      "Send, receive, approve, and track payments from one secure workspace. Every payment is checked for safety before it moves, with clean records for your books.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

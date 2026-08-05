@@ -2,222 +2,138 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ShieldCheckIcon,
-  DatabaseIcon,
   ScaleIcon,
   BotIcon,
-  FileTextIcon,
-  ArrowRightIcon,
+  GlobeIcon,
+  ZapIcon,
+  FileBarChart2Icon,
+  ArrowUpRightIcon,
 } from "lucide-react";
 import { RevealContainer, RevealItem } from "@/components/motion-reveal";
+
+interface Feature {
+  icon: React.ComponentType<{ className?: string }>;
+  image: string;
+  imageAlt: string;
+  title: string;
+  description: string;
+  cta: { label: string; href: string };
+}
+
+const FEATURES: Feature[] = [
+  {
+    icon: ShieldCheckIcon,
+    image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Team verifying a business on a laptop",
+    title: "Business verification",
+    description:
+      "Verify your business once. After that, every payment you send carries your verified status — no repeated paperwork.",
+    cta: { label: "Verify your business", href: "/onboarding" },
+  },
+  {
+    icon: ScaleIcon,
+    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Payment protection dashboard",
+    title: "Payment protection",
+    description:
+      "Every payment is checked for fraud and sanctions before it moves. Only safe, approved funds leave your account.",
+    cta: { label: "Explore payments", href: "/dashboard" },
+  },
+  {
+    icon: BotIcon,
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Autonomous payment automation",
+    title: "AI automations",
+    description:
+      "Set the limits, then let automations run payroll and supplier payments on schedule — you stay in control.",
+    cta: { label: "Create an automation", href: "/dashboard/agents" },
+  },
+  {
+    icon: GlobeIcon,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Cross-border payment network",
+    title: "Cross-border payments",
+    description:
+      "Pay suppliers and partners anywhere in the world without bank queues, high fees, or international friction.",
+    cta: { label: "Send a payment", href: "/dashboard/transactions" },
+  },
+  {
+    icon: ZapIcon,
+    image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Instant settlement speed",
+    title: "Instant settlement",
+    description:
+      "Payments move in minutes, not days. Once approved, funds are delivered to your recipient right away.",
+    cta: { label: "See it in action", href: "/demo" },
+  },
+  {
+    icon: FileBarChart2Icon,
+    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80",
+    imageAlt: "Activity records document",
+    title: "Activity history",
+    description:
+      "Every payment leaves a clean, shareable record — ready for your accountant, auditor, or your own books.",
+    cta: { label: "View activity", href: "/dashboard/reports" },
+  },
+];
 
 export function Features() {
   return (
     <section id="platform" className="scroll-mt-20 py-24">
-      <div className="mx-auto w-full max-w-[1440px] px-6 lg:px-12">
+      <div className="mx-auto w-full max-w-[1440px] px-8">
         <RevealContainer className="mb-16 max-w-2xl">
           <RevealItem>
             <h2 className="text-balance text-4xl font-bold tracking-[-0.03em] sm:text-5xl lg:text-[64px] lg:leading-[1.05]">
-              Trust built into every payment
+              Everything a modern business needs to move money
             </h2>
           </RevealItem>
           <RevealItem>
             <p className="mt-6 max-w-xl text-lg leading-[1.8] text-muted-foreground">
-              We replace manual spreadsheets, approval queues, and paper trails with one simple,
-              secure workspace for your money.
+              One secure workspace for sending, checking, approving, and tracking every payment.
             </p>
           </RevealItem>
         </RevealContainer>
 
-        <RevealContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Large card — verified identities (blue, photo) */}
-          <RevealItem className="md:col-span-2 lg:col-span-1 lg:row-span-2 lg:h-[450px]">
-            <div className="group flex h-full flex-col justify-between overflow-hidden rounded-[24px] bg-gradient-to-b from-[#3da7ff] to-[#2784e0] p-8 text-white transition-transform duration-300 hover:-translate-y-2">
-              <div className="flex items-center justify-between">
-                <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur">
-                  <ShieldCheckIcon className="size-6" />
-                </span>
-                <span className="font-mono text-sm font-semibold tracking-tight">15,000+</span>
-              </div>
+        <RevealContainer className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <RevealItem key={feature.title} className="h-full">
+                <div className="group flex h-full flex-col overflow-hidden rounded-[32px] bg-card p-8 shadow-[0_30px_80px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_40px_100px_rgba(0,0,0,0.12)]">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Icon className="size-5" aria-hidden="true" />
+                    </span>
+                  </div>
 
-              <div className="relative my-6 aspect-[4/3] w-full overflow-hidden rounded-2xl">
-                <Image
-                  src="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80"
-                  alt="Team reviewing identity verification on a laptop"
-                  fill
-                  sizes="(min-width: 1024px) 30vw, 100vw"
-                  className="object-cover"
-                  loading="lazy"
-                />
-              </div>
+                  <div className="relative mt-6 aspect-[16/10] w-full overflow-hidden rounded-2xl">
+                    <Image
+                      src={feature.image}
+                      alt={feature.imageAlt}
+                      fill
+                      sizes="(min-width: 1024px) 30vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
 
-              <div>
-                <h3 className="text-2xl font-semibold tracking-tight">Verified businesses</h3>
-                <p className="mt-2 text-base leading-relaxed text-white/85">
-                  Every business you pay is verified before the first transaction, so you only
-                  ever send money to who you mean to.
-                </p>
-                <Link
-                  href="/onboarding"
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform group-hover:translate-x-0.5"
-                >
-                  Learn more
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </div>
-            </div>
-          </RevealItem>
-
-          {/* Medium gray card — verified assets */}
-          <RevealItem className="lg:col-span-1">
-            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
-                    <DatabaseIcon className="size-6 text-[#2563eb]" />
-                  </span>
-                  <span className="font-mono text-2xl font-semibold tracking-tight text-foreground">100%</span>
+                  <div className="mt-6 flex flex-1 flex-col">
+                    <h3 className="text-xl font-semibold tracking-tight">{feature.title}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
+                      {feature.description}
+                    </p>
+                    <Link
+                      href={feature.cta.href}
+                      className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary/80"
+                    >
+                      {feature.cta.label}
+                      <ArrowUpRightIcon className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </Link>
+                  </div>
                 </div>
-                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80"
-                    alt="Asset portfolio dashboard"
-                    fill
-                    sizes="(min-width: 1024px) 30vw, 100vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Protected payments</h3>
-                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                    Every payment is screened against fraud and sanctions before it moves — only
-                    safe, approved funds flow through your account.
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard"
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
-              >
-                Explore payments
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </div>
-          </RevealItem>
-
-          {/* Lime card — AI agents */}
-          <RevealItem className="lg:col-span-1">
-            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-lime p-8 text-black transition-transform duration-300 hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-black/10">
-                    <BotIcon className="size-6" />
-                  </span>
-                  <span className="font-mono text-2xl font-semibold tracking-tight">0 approvals</span>
-                </div>
-                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
-                    alt="Autonomous agent interface"
-                    fill
-                    sizes="(min-width: 1024px) 30vw, 100vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Payment automations</h3>
-                  <p className="mt-2 text-base leading-relaxed text-black/70">
-                    Automate recurring payments within limits you set. They run on schedule, and
-                    you stay in control.
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard/agents"
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-black transition-transform group-hover:translate-x-0.5"
-              >
-                Create an automation
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </div>
-          </RevealItem>
-
-          {/* Black card — compliance automation */}
-          <RevealItem className="lg:col-span-1">
-            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#111111] p-8 text-white transition-transform duration-300 hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10">
-                    <ScaleIcon className="size-6" />
-                  </span>
-                  <span className="font-mono text-2xl font-semibold tracking-tight">98.6%</span>
-                </div>
-                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=900&q=80"
-                    alt="Team reviewing compliance policy"
-                    fill
-                    sizes="(min-width: 1024px) 30vw, 100vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Account safety</h3>
-                  <p className="mt-2 text-base leading-relaxed text-white/70">
-                    Account rules, limits, and safety checks are applied to every payment
-                    automatically — consistent, every time.
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard/compliance"
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform group-hover:translate-x-0.5"
-              >
-                View account health
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </div>
-          </RevealItem>
-
-          {/* Small gray card — audit reporting */}
-          <RevealItem className="lg:col-span-1">
-            <div className="group flex h-full flex-col justify-between rounded-[24px] bg-[#f8f8f8] p-8 transition-transform duration-300 hover:-translate-y-2">
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-white ring-1 ring-black/[0.06]">
-                    <FileTextIcon className="size-6 text-[#2563eb]" />
-                  </span>
-                  <span className="font-mono text-2xl font-semibold tracking-tight">3.1s</span>
-                </div>
-                <div className="relative mt-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
-                  <Image
-                    src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=900&q=80"
-                    alt="Signed audit report document"
-                    fill
-                    sizes="(min-width: 1024px) 30vw, 100vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mt-6">
-                  <h3 className="text-2xl font-semibold tracking-tight">Activity records</h3>
-                  <p className="mt-2 text-base leading-relaxed text-muted-foreground">
-                    Every payment leaves a clear, shareable record — ready for your accountant
-                    or auditor whenever you need it.
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/dashboard/reports"
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2563eb] transition-transform group-hover:translate-x-0.5"
-              >
-                View activity
-                <ArrowRightIcon className="size-4" />
-              </Link>
-            </div>
-          </RevealItem>
+              </RevealItem>
+            );
+          })}
         </RevealContainer>
       </div>
     </section>

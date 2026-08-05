@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   SendIcon,
   ArrowDownToLineIcon,
@@ -17,6 +17,7 @@ import {
   WalletIcon,
   FileCheck2Icon,
   MoveRightIcon,
+  BellIcon,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -109,6 +110,7 @@ export function MerchantDashboard({
 }) {
   const { data, isLoading } = useDashboard();
   const { data: txData, isLoading: txLoading } = useTransactions();
+  const [notificationsOpen, setNotificationsOpen] = React.useState(false);
 
   const o = data?.overview;
   const t = data?.trends;
@@ -155,6 +157,20 @@ export function MerchantDashboard({
     { href: "/dashboard/agents", label: "Create automation", icon: BotIcon },
   ];
 
+  const notifications = [
+    { title: "Payment approved", detail: "INV-2026-001 · $4,200 USDC is ready to send.", tone: "bg-emerald-500/10 text-emerald-500" },
+    { title: "Funds received", detail: "SwiftPay Africa sent you $12,400 USDT.", tone: "bg-sky-500/10 text-sky-500" },
+    { title: "Review needed", detail: "One payment is waiting for your approval.", tone: "bg-amber-500/10 text-amber-500" },
+  ];
+
+  const initials =
+    (userName ?? first)
+      ?.split(" ")
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() ?? "BP";
+
   return (
     <div className="space-y-6">
       {/* Hero greeting */}
@@ -165,19 +181,84 @@ export function MerchantDashboard({
         className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-blue-600 to-indigo-700 px-6 py-8 text-white shadow-[0_20px_50px_-20px_rgba(37,99,235,0.5)] sm:px-10 sm:py-10"
       >
         <div className="absolute -right-10 -top-12 size-48 rounded-full bg-white/10 blur-2xl" aria-hidden="true" />
-        <p className="text-xs font-medium uppercase tracking-widest text-blue-100 sm:text-sm">
-          {WORLD.merchant.name}
-        </p>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-          {greeting()}, {userName ?? first}.
-        </h1>
-        <p className="mt-2 max-w-xl text-base leading-relaxed text-blue-50">
+        <div className="relative z-10 flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="flex size-12 items-center justify-center rounded-full bg-white/15 text-sm font-semibold ring-2 ring-white/30">
+                {initials}
+              </div>
+              <span className="absolute -right-0.5 -bottom-0.5 size-3.5 rounded-full bg-emerald-400 ring-2 ring-indigo-700" aria-hidden="true" />
+            </div>
+            <div>
+              <p className="text-xs font-medium uppercase tracking-widest text-blue-100 sm:text-sm">
+                {WORLD.merchant.name}
+              </p>
+              <h1 className="mt-0.5 text-2xl font-bold tracking-tight sm:text-3xl">
+                {greeting()}, {userName ?? first}.
+              </h1>
+            </div>
+          </div>
+
+          <div className="relative shrink-0">
+            <button
+              type="button"
+              aria-label="Open notifications"
+              aria-expanded={notificationsOpen}
+              onClick={() => setNotificationsOpen((v) => !v)}
+              className="relative flex size-10 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:outline-none"
+            >
+              <BellIcon className="size-4.5" />
+              <span className="absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full bg-lime text-[9px] font-bold text-black">
+                3
+              </span>
+            </button>
+
+            <AnimatePresence>
+              {notificationsOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setNotificationsOpen(false)} aria-hidden="true" />
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 z-50 mt-2 w-72 origin-top-right rounded-xl border border-white/20 bg-white p-2 text-foreground shadow-[0_24px_64px_rgba(0,0,0,0.2)]"
+                  >
+                    <p className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Notifications
+                    </p>
+                    <div className="space-y-0.5">
+                      {notifications.map((n) => (
+                        <button
+                          key={n.title}
+                          type="button"
+                          onClick={() => setNotificationsOpen(false)}
+                          className="flex w-full items-start gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted"
+                        >
+                          <span className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full ${n.tone}`}>
+                            <BellIcon className="size-3" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block text-sm font-medium">{n.title}</span>
+                            <span className="block text-xs text-muted-foreground">{n.detail}</span>
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        <p className="relative z-10 mt-5 max-w-xl text-base leading-relaxed text-blue-50">
           Your business is verified and ready to send payments.
         </p>
-        <div className="mt-5 flex flex-wrap gap-2.5">
+        <div className="relative z-10 mt-5 flex flex-wrap gap-2.5">
           <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <CheckCircle2Icon className="size-3.5" />
-            Verified business
+            {verified ? "Verified business" : "Verification in progress"}
           </Badge>
           <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
             <ShieldCheckIcon className="size-3.5" />
@@ -188,7 +269,7 @@ export function MerchantDashboard({
             Activity history available
           </Badge>
         </div>
-        <div className="mt-6 flex flex-wrap gap-2.5">
+        <div className="relative z-10 mt-6 flex flex-wrap gap-2.5">
           {actions.map((a) => {
             const Icon = a.icon;
             return (
@@ -208,18 +289,18 @@ export function MerchantDashboard({
       {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Money sent today"
+          label="Money received"
           value={o?.settlements ?? 0}
-          sub="Completed this billing period"
+          sub="Money that arrived this period"
           icon={<LandmarkIcon className="size-4.5" />}
           spark={settlementSpark}
           trend={t?.settlementsPercent}
           loading={isLoading}
         />
         <StatCard
-          label="Funds in transit"
+          label="Money processing"
           value={o?.pendingCount ?? 0}
-          sub="Awaiting final confirmation"
+          sub="Payments still being processed"
           icon={<WalletIcon className="size-4.5" />}
           spark={approvalSpark}
           trend={t?.volumePercent}
@@ -237,9 +318,9 @@ export function MerchantDashboard({
           sparkColor="#10b981"
         />
         <StatCard
-          label="Awaiting approval"
+          label="Payments waiting"
           value={o?.transactionCount ?? 0}
-          sub="Transactions this period"
+          sub="Payments waiting for approval"
           icon={<Clock3Icon className="size-4.5" />}
           spark={volumeSpark}
           trend={t?.transactionsPercent}
@@ -442,9 +523,9 @@ function EmptyChart({ line }: { line: string }) {
 }
 
 const FEED = [
-  { icon: FileCheck2Icon, title: "Verified business", detail: "BluePeak Logistics · your business identity", tone: "text-emerald-600" },
-  { icon: WalletIcon, title: "Assets verified", detail: "USDC · USDT · T-bills confirmed as yours", tone: "text-emerald-600" },
-  { icon: ShieldCheckIcon, title: "Transaction checks passed", detail: "Review passed · ready to send", tone: "text-amber-600" },
+  { icon: FileCheck2Icon, title: "Business verified", detail: "BluePeak Logistics · your business", tone: "text-emerald-600" },
+  { icon: WalletIcon, title: "Funds checked", detail: "USDC · USDT · T-bills confirmed as yours", tone: "text-emerald-600" },
+  { icon: ShieldCheckIcon, title: "Safety checks passed", detail: "Review passed · ready to send", tone: "text-amber-600" },
   { icon: LandmarkIcon, title: "Payment completed", detail: "Funds sent to your recipient", tone: "text-blue-600" },
   { icon: FileBarChart2Icon, title: "Activity recorded", detail: "History saved to your account", tone: "text-rose-600" },
 ];

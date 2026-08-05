@@ -2,41 +2,225 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRightIcon, ShieldCheckIcon, LandmarkIcon, CoinsIcon } from "lucide-react";
+import { SparklesIcon, CheckCircle2Icon } from "lucide-react";
+import { DemoButton } from "@/components/landing/demo-button";
+import { cn } from "@/lib/utils";
 
-const FLOATING_CARDS = [
+/* ---------- Token glyphs (inline SVG, brand-accurate enough) ---------- */
+
+function UsdcIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="12" fill="#2775CA" />
+      <circle cx="12" cy="12" r="9.2" stroke="#fff" strokeOpacity="0.35" strokeWidth="1" />
+      <path
+        d="M12 7.2v9.6M14.6 9.6c-.3-1.2-1.3-1.9-2.6-1.9-1.5 0-2.6.8-2.6 2.1 0 2.8 5.2 1.4 5.2 4.2 0 1.3-1.1 2.1-2.6 2.1-1.3 0-2.3-.7-2.6-1.9"
+        stroke="#fff"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function UsdtIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="12" fill="#26A17B" />
+      <path d="M13.4 10.4V8.6h5.2V5.4H5.4v3.2h5.2v1.8c-4.2.2-7.3 1-7.3 2 0 1 3.1 1.8 7.3 2v6.4h1.6v-6.4c4.2-.2 7.3-1 7.3-2 0-1-3.1-1.8-7.3-2z" fill="#fff" />
+    </svg>
+  );
+}
+
+function MonadIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="monad-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#a78bfa" />
+          <stop offset="100%" stopColor="#7c3aed" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="22" height="22" rx="7" fill="url(#monad-grad)" />
+      <path
+        d="M7 16.5v-9h2.4l2.6 4v-4h2v9h-2.4l-2.6-4v4H7z"
+        fill="#fff"
+      />
+      <rect x="1" y="1" width="22" height="22" rx="7" stroke="#fff" strokeOpacity="0.25" />
+    </svg>
+  );
+}
+
+function EthereumIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="12" fill="#627EEA" />
+      <path d="M12 5.5l4.8 6.6-4.8 2.8-4.8-2.8L12 5.5z" fill="#fff" opacity="0.95" />
+      <path d="M12 15.6v2.9l4.8-6.6L12 15.6z" fill="#fff" opacity="0.6" />
+      <path d="M12 5.5v3.6L7.2 11.9 12 5.5z" fill="#fff" opacity="0.8" />
+    </svg>
+  );
+}
+
+/* ---------- Floating cards ---------- */
+
+interface FloatCard {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  value: string;
+  status: string;
+  tone: "blue" | "white" | "violet" | "dark" | "green";
+  rotate: number;
+  className: string;
+  visible: string;
+}
+
+const FLOAT_CARDS: FloatCard[] = [
   {
-    icon: ShieldCheckIcon,
-    label: "Business verified",
-    subtitle: "Ready to pay",
-    stat: "Approved",
-    rotate: -8,
-    x: -46,
+    id: "usdc",
+    icon: <UsdcIcon className="size-4" />,
+    title: "USDC Transfer",
+    value: "$50,000",
+    status: "Verified",
+    tone: "blue",
+    rotate: -7,
+    className: "bottom-[168px] left-[4%]",
+    visible: "sm:flex",
   },
   {
-    icon: CoinsIcon,
-    label: "Funds checked",
-    subtitle: "Payment approved",
-    stat: "Approved",
+    id: "usdt",
+    icon: <UsdtIcon className="size-4" />,
+    title: "Supplier payment",
+    value: "$12,400",
+    status: "Approved",
+    tone: "white",
     rotate: 5,
-    x: 0,
+    className: "bottom-[58px] left-[13%]",
+    visible: "md:flex",
   },
   {
-    icon: LandmarkIcon,
-    label: "Payment sent",
-    subtitle: "Recipient notified",
-    stat: "Sent",
-    rotate: 8,
-    x: 46,
+    id: "monad",
+    icon: <MonadIcon className="size-4" />,
+    title: "Cross-chain",
+    value: "$8,900",
+    status: "Settled",
+    tone: "violet",
+    rotate: -4,
+    className: "right-[13%] bottom-[58px]",
+    visible: "md:flex",
+  },
+  {
+    id: "ethereum",
+    icon: <EthereumIcon className="size-4" />,
+    title: "Wallet verification",
+    value: "0x1a…f4",
+    status: "Verified",
+    tone: "white",
+    rotate: 7,
+    className: "right-[4%] bottom-[168px]",
+    visible: "sm:flex",
+  },
+  {
+    id: "ai",
+    icon: <SparklesIcon className="size-4" />,
+    title: "Autonomous workflow",
+    value: "Payroll on schedule",
+    status: "Running",
+    tone: "dark",
+    rotate: -5,
+    className: "right-[30%] bottom-[168px]",
+    visible: "lg:flex",
+  },
+  {
+    id: "settlement",
+    icon: <CheckCircle2Icon className="size-4" />,
+    title: "Funds delivered",
+    value: "$50,000",
+    status: "Complete",
+    tone: "green",
+    rotate: 4,
+    className: "left-[30%] bottom-[58px]",
+    visible: "lg:flex",
   },
 ];
 
-const METRICS = [
-  { value: "$12.4M", label: "Payments processed" },
-  { value: "99.2%", label: "Payments approved" },
-  { value: "15,000", label: "Verified businesses" },
-  { value: "24/7", label: "Payments running" },
-];
+const TONE_CLASSES: Record<FloatCard["tone"], string> = {
+  blue: "bg-gradient-to-br from-[#2f83da] to-[#1c4d8f] text-white border-white/20",
+  white: "bg-white text-foreground border-white/60",
+  violet: "bg-gradient-to-br from-[#a78bfa] to-[#7c3aed] text-white border-white/20",
+  dark: "bg-[#0b1020] text-white border-white/10",
+  green: "bg-gradient-to-br from-[#10b981] to-[#059669] text-white border-white/20",
+};
+
+const STATUS_CLASSES: Record<FloatCard["status"], string> = {
+  Verified: "bg-lime text-black",
+  Approved: "bg-emerald-500 text-white",
+  Settled: "bg-white/20 text-white",
+  Running: "bg-lime text-black",
+  Complete: "bg-white/20 text-white",
+};
+
+function FloatCard({ card, reduce }: { card: FloatCard; reduce: boolean }) {
+  const Icon = card.icon;
+  return (
+    <motion.div
+      initial={reduce ? undefined : { opacity: 0, y: 24 }}
+      animate={
+        reduce
+          ? undefined
+          : {
+              opacity: 1,
+              y: [0, -9, 0],
+            }
+      }
+      transition={{
+        duration: 0.7,
+        delay: 0.3 + parseFloat(card.id.length.toString()) * 0.05,
+        ease: [0.22, 1, 0.36, 1],
+        y: {
+          duration: 5.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: (card.id.length % 3) * 0.7,
+        },
+      }}
+      style={{ rotate: card.rotate, boxShadow: "0 40px 80px rgba(0,0,0,0.12)" }}
+      className={cn(
+        "pointer-events-none absolute z-20 hidden w-[172px] flex-col rounded-3xl border p-3.5 backdrop-blur-[20px]",
+        card.visible,
+        TONE_CLASSES[card.tone],
+      )}
+    >
+      <div className="flex items-center justify-between">
+        <span
+          className={cn(
+            "flex size-8 items-center justify-center rounded-xl",
+            card.tone === "white" ? "bg-muted" : "bg-white/20",
+          )}
+        >
+          {Icon}
+        </span>
+        <span
+          className={cn(
+            "rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide",
+            STATUS_CLASSES[card.status],
+          )}
+        >
+          {card.status}
+        </span>
+      </div>
+      <div className="mt-2.5">
+        <p className={cn("text-[10px] uppercase tracking-wider", card.tone === "white" ? "text-muted-foreground" : "text-white/70")}>
+          {card.title}
+        </p>
+        <p className="mt-0.5 truncate font-mono text-base font-semibold tracking-tight">{card.value}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ---------- Clouds ---------- */
 
 function Clouds() {
   return (
@@ -91,12 +275,21 @@ function Clouds() {
   );
 }
 
+/* ---------- Hero ---------- */
+
+const METRICS = [
+  { value: "$12.4M", label: "Payments processed" },
+  { value: "99.2%", label: "Payments approved" },
+  { value: "15,000", label: "Verified businesses" },
+  { value: "24/7", label: "Payments running" },
+];
+
 export function Hero() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="mx-auto w-full max-w-[1440px] px-6 py-12 lg:px-12">
-      <div className="relative h-[760px] overflow-hidden rounded-[32px] bg-gradient-to-b from-[#0a79d8] to-[#18a6ff]">
+    <section className="mx-auto w-full max-w-[1440px] px-8 py-12">
+      <div className="relative h-[820px] overflow-hidden rounded-[40px] bg-gradient-to-b from-[#0a79d8] to-[#18a6ff]">
         {/* light bloom */}
         <div
           className="pointer-events-none absolute -top-1/4 left-1/2 h-[80%] w-[80%] -translate-x-1/2 rounded-full blur-3xl"
@@ -105,7 +298,7 @@ export function Hero() {
         />
 
         {/* centered content */}
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pb-56 text-white sm:pb-60">
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pb-56 text-white sm:pb-56">
           <div className="flex max-w-[700px] flex-col items-center text-center">
             <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md">
               <span className="size-1.5 rounded-full bg-lime" aria-hidden="true" />
@@ -121,13 +314,7 @@ export function Hero() {
             </p>
 
             <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row">
-              <Link
-                href="/demo"
-                className="group inline-flex items-center gap-2 rounded-full bg-lime px-7 py-[18px] text-base font-semibold text-black transition-transform hover:scale-105"
-              >
-                See it in action
-                <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
+              <DemoButton className="px-7 py-[18px] text-base" />
               <Link
                 href="#how-it-works"
                 className="inline-flex items-center gap-2 rounded-full border border-white/70 px-7 py-[18px] text-base font-semibold text-white transition-transform hover:scale-105"
@@ -149,47 +336,10 @@ export function Hero() {
           </div>
         </div>
 
-        {/* floating cards in the clouds */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 flex items-end justify-center" aria-hidden="true">
-          {FLOATING_CARDS.map((card, i) => (
-            <motion.div
-              key={card.label}
-              initial={reduceMotion ? undefined : { opacity: 0, y: 60 }}
-              animate={
-                reduceMotion
-                  ? undefined
-                  : {
-                      opacity: 1,
-                      y: [60, 64, 60],
-                    }
-              }
-              transition={{
-                duration: 0.7,
-                delay: 0.2 + i * 0.15,
-                ease: [0.22, 1, 0.36, 1],
-                y: {
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.6,
-                },
-              }}
-              style={{ rotate: card.rotate, marginLeft: card.x, marginRight: card.x, zIndex: 10 - i }}
-              className="relative hidden h-[232px] w-[184px] flex-col justify-between rounded-3xl bg-white/95 p-6 text-black shadow-[0_16px_48px_rgba(0,0,0,0.18)] backdrop-blur sm:flex"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex size-10 items-center justify-center rounded-2xl bg-black/5">
-                  <card.icon className="size-5 text-[#2563eb]" />
-                </div>
-                <span className="rounded-full bg-lime/80 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black">
-                  {card.stat}
-                </span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold">{card.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{card.subtitle}</p>
-              </div>
-            </motion.div>
+        {/* floating cards */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[300px] z-10">
+          {FLOAT_CARDS.map((card) => (
+            <FloatCard key={card.id} card={card} reduce={Boolean(reduceMotion)} />
           ))}
         </div>
 

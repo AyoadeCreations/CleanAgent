@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const STAGES = [
   { label: "Business", detail: "Set up · welcome", icon: StoreIcon, tone: "text-sky-400" },
-  { label: "Business verified", detail: "Identity confirmed", icon: FingerprintIcon, tone: "text-emerald-400" },
+  { label: "Business verified", detail: "Business confirmed", icon: FingerprintIcon, tone: "text-emerald-400" },
   { label: "Funds checked", detail: "Funds verified", icon: CoinsIcon, tone: "text-emerald-400" },
   { label: "Safety checks", detail: "Rules reviewed", icon: ScaleIcon, tone: "text-amber-400" },
   { label: "Payment sent", detail: "Funds released", icon: LandmarkIcon, tone: "text-blue-400" },
